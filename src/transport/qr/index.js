@@ -1,6 +1,44 @@
 import qrImage from 'qr-image'
 import SVG from './assets.js'
 
+// TODO use this func above, maybe offer some configs
+/**
+  *  A QR tranpsort which uses our provide QR modal to relay a request to a uport client
+  *
+  *  @return   {Function}             a configured QRTransport Function
+  *  @param    {String}       uri     a uport client request URI
+  *  @return   {Function}             a function to close the QR modal
+  */
+const QRTransport = () => (uri) => {
+  openQr(paramsToQueryString(uri, {'type': 'post'}))
+  return closeQr
+}
+
+
+/**
+  *  A QR Code and Chasqui Transport. The QR modal is configured for tranporting the request, while the
+  *  response will be returned through Chasqui.
+  *
+  *  @param    {Object}       [config={}]      an optional config object
+  *  @param    {String}       chasquiUrl       url of messaging server, defaults to Chasqui instance run by uPort
+  *  @param    {String}       pollingInterval  milisecond interval at which the messaging server will be polled for a response
+  *  @return   {Function}                      a configured QRTransport Function
+  *  @param    {String}       uri              a uport client request URI
+  *  @return   {Promise<Object, Error>}        a function to close the QR modal
+  */
+const QRChasquiTransport = ({chasquiUrl = CHASQUI_URL, pollingInterval = POLLING_INTERVAL} = {}) => {
+  const transport = URIHandlerChasquiTransport({ chasquiUrl, pollingInterval})
+  return (uri) => {
+    return transport(uri).then(res => {
+      closeQr()
+      return res
+    })
+  }
+}
+
+
+
+
 /**  @module uport-connect/util/qrdisplay
  *  @description
  *  A set of QR utility functions and default displays to use with Connect.
