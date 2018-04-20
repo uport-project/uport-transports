@@ -1,3 +1,6 @@
+
+
+// TODO can the name of URIHandler be changed
 /**
   *  A general Chasqui Transport. Allows you to configure the transport with any uriHandler for the request,
   *  while the response will always be returned through Chasqui. Chasqui is a simple messaging server that
@@ -11,7 +14,7 @@
   *  @param    {String}       uri              a uport client request URI
   *  @return   {Promise<Object, Error>}        a function to close the QR modal
   */
-const URIHandlerChasquiTransport = ({uriHandler = openQr, chasquiUrl = CHASQUI_URL, pollingInterval = POLLING_INTERVAL} = {}) => {
+const URIHandlerTransport = ({uriHandler = openQr, chasquiUrl = CHASQUI_URL, pollingInterval = POLLING_INTERVAL} = {}) => {
   return (uri) => {
     let isCancelled = false
     const cancel = () => { isCancelled = true }
@@ -32,19 +35,17 @@ const URIHandlerChasquiTransport = ({uriHandler = openQr, chasquiUrl = CHASQUI_U
   *  @param    {Function}                cancelled          function which returns boolean, if returns true, polling stops
   *  @return   {Promise<Object, Error>}                     a promise which resolves with obj/message or rejects with an error
   */
-const pollChasqui = (url, pollingInterval, cancelled) => {
+const poll = (url, pollingInterval, cancelled) => {
   const messageParse = (res) => res.message['access_token']
   const errorParse = (res) => res.message.error
   return poll(url, messageParse, errorParse, pollingInterval, cancelled).then(res => {
-    console.log('res!')
     clearChasqui(url)
-    console.log(res)
     return res
   })
 }
 
 // TODO maybe remove and just have reasonable removal times
-const clearChasqui = (url) => {
+const clearResponse = (url) => {
   nets({
     uri: url,
     method: 'DELETE',
@@ -52,3 +53,7 @@ const clearChasqui = (url) => {
     rejectUnauthorized: false
   }, function (err) { if (err) { throw err } /* Errors without this cb */ })
 }
+
+export { URIHandlerTransport,
+         poll,
+         clearResponse }

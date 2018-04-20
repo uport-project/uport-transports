@@ -13,7 +13,7 @@
   */
 
   // TODO uri vs payload? and how to handle both to them, once again where is the right place for something like message, in config or inner func???
-const pushNotificationTransport = (token, pubEncKey) => {
+const transport = (token, pubEncKey) => {
   return (uri, {message}) => {
     return new Promise((resolve, reject) => {
       let endpoint = '/api/v2/sns'
@@ -53,32 +53,6 @@ const pushNotificationTransport = (token, pubEncKey) => {
   }
 }
 
-
-
-
-/**
- *  Encrypts a message
- *
- *  @param      {String}        the message to be encrypted
- *  @param      {String}        the public encryption key of the receiver, encoded as base64
- *  @return     {String}        the encrypted message, encoded as base64
- *  @private
- */
-const encryptMessage = (message, receiverKey) => {
-  const tmpKp = nacl.box.keyPair()
-  const decodedKey = naclutil.decodeBase64(receiverKey)
-  const decodedMsg = naclutil.decodeUTF8(message)
-  const nonce = nacl.randomBytes(24)
-
-  const ciphertext = nacl.box(decodedMsg, nonce, decodedKey, tmpKp.secretKey)
-  return {
-    from: naclutil.encodeBase64(tmpKp.publicKey),
-    nonce: naclutil.encodeBase64(nonce),
-    ciphertext: naclutil.encodeBase64(ciphertext)
-  }
-}
-
-
 /**
  *  Adds padding to a string
  *
@@ -91,3 +65,5 @@ const padMessage = (message) => {
   const padLength = INTERVAL_LENGTH - message.length % INTERVAL_LENGTH
   return message + ' '.repeat(padLength)
 }
+
+export { transport }

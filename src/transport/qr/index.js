@@ -9,7 +9,7 @@ import SVG from './assets.js'
   *  @param    {String}       uri     a uport client request URI
   *  @return   {Function}             a function to close the QR modal
   */
-const QRTransport = () => (uri) => {
+const transport = () => (uri) => {
   openQr(paramsToQueryString(uri, {'type': 'post'}))
   return closeQr
 }
@@ -26,7 +26,7 @@ const QRTransport = () => (uri) => {
   *  @param    {String}       uri              a uport client request URI
   *  @return   {Promise<Object, Error>}        a function to close the QR modal
   */
-const QRChasquiTransport = ({chasquiUrl = CHASQUI_URL, pollingInterval = POLLING_INTERVAL} = {}) => {
+const chasquiSend = ({chasquiUrl = CHASQUI_URL, pollingInterval = POLLING_INTERVAL} = {}) => {
   const transport = URIHandlerChasquiTransport({ chasquiUrl, pollingInterval})
   return (uri) => {
     return transport(uri).then(res => {
@@ -35,8 +35,6 @@ const QRChasquiTransport = ({chasquiUrl = CHASQUI_URL, pollingInterval = POLLING
     })
   }
 }
-
-
 
 
 /**  @module uport-connect/util/qrdisplay
@@ -52,7 +50,7 @@ const QRChasquiTransport = ({chasquiUrl = CHASQUI_URL, pollingInterval = POLLING
  *  @param    {String}     data      data string, typically a uPort URI
  *  @return   {String}               image URI
  */
-const getQRDataURI = (data) => {
+const getImageDataURI = (data) => {
   let pngBuffer = qrImage.imageSync(data, {type: 'png'})
   return 'data:image/png;charset=utf-8;base64, ' + pngBuffer.toString('base64')
 }
@@ -65,15 +63,15 @@ const getQRDataURI = (data) => {
  *  @param    {String}     appName    name of the users app
  *  @param    {Boolean}    introModal a flag for displaying the intro
  */
-const openQr = (data, cancel, appName, introModal) => {
+const open = (data, cancel, appName, introModal) => {
 
   let wrapper = document.createElement('div')
   wrapper.setAttribute('id', 'uport-wrapper')
 
   wrapper.innerHTML =
     introModal
-      ? introModalDisplay(appName)
-      : uportQRDisplay({qrImageUri: getQRDataURI(data), cancel})
+      ? introModalTemplate(appName)
+      : modalTemplate({qrImageUri: getQRDataURI(data), cancel})
 
   const cancelClick = (event) => {
     document.getElementById('uport-qr-text').innerHTML = 'Cancelling';
@@ -81,7 +79,7 @@ const openQr = (data, cancel, appName, introModal) => {
   }
 
   const uportTransition = (event) => {
-    wrapper.innerHTML = uportQRDisplay({qrImageUri: getQRDataURI(data), cancel})
+    wrapper.innerHTML = modalTemplate({qrImageUri: getQRDataURI(data), cancel})
     document.getElementById('uport-qr-cancel').addEventListener('click', cancelClick)
   }
 
@@ -95,7 +93,7 @@ const openQr = (data, cancel, appName, introModal) => {
 /**
  *  Closes the default QR pop over
  */
-const closeQr = () => {
+const close = () => {
   const uportWrapper = document.getElementById('uport-wrapper')
   document.body.removeChild(uportWrapper)
 }
@@ -107,7 +105,7 @@ const closeQr = () => {
  *  @param    {String}     appNamme  Name of users uPort App
  *  @return   {Object}     populated modal
  */
-const introModalDisplay = (appName) => {
+const introModalTemplate = (appName) => {
   let content = `
     <div style="${uportModalIntroWrapper}">
       <div>
@@ -151,7 +149,7 @@ const introModalDisplay = (appName) => {
  *  @param    {Object}     args
  *  @param    {String}     args.qrImageUri    a image URI for the QR code
  */
-const uportQRDisplay = ({qrImageUri}) => uportModal(`
+const modalTemplate = ({qrImageUri}) => uportModal(`
   <div>
     <div style="${uportLogoWithBg}">${SVG.logowithBG}</div>
     <p id="uport-qr-text" style="${uportQRInstructions}">Scan QR code with uPort Mobile App</p>
@@ -392,8 +390,8 @@ const googleStoreLink = 'https://play.google.com/store/apps/details?id=com.uport
  */
 
 export {
-  closeQr,
-  openQr,
-  getQRDataURI,
-  uportQRDisplay
+  close,
+  open,
+  getImageDataURI,
+  modalTemplate
 }

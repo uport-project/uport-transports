@@ -17,7 +17,7 @@
   *  @param    {String}       opts.type      specifies callback type 'post' or 'redirect' for response
   *  @param    {String}       opts.callback  specifies url which a uport client will return to control once request is handled, depending on request type it may or may not be returned with the response as well.
   */
-const URLTransport = ({uriHandler}={}) => {
+const transport = ({uriHandler}={}) => {
   // TODO args below or above? extra details above
   return (uri, {id, data, type, callback}) => {
   // what if has no protocol in passed in string
@@ -32,7 +32,7 @@ const URLTransport = ({uriHandler}={}) => {
     if (cb) {
       if (data) cb = paramsToUrlFragment(cb, {data})
       if (id) cb = paramsToUrlFragment(cb, {id})
-      uri = paramsToQueryString(uri, {'callback_url': cb})
+      uri = /access_token/.test(uri) ? paramsToQueryString(uri, {'redirect_url': cb}) : paramsToQueryString(uri, {'callback_url': cb})
     }
     uriHandler ? uriHandler(uri) : window.location.assign(uri)
   }
@@ -43,7 +43,7 @@ const URLTransport = ({uriHandler}={}) => {
   *
   *  @return   {Object}   A response object if repsonse is available, otherwise null.
   */
-const getURLResponse = () => {
+const getResponse = () => {
   if (!!window.location.hash) { // TODO remove redundant
     const params = qs.parse(window.location.hash.slice(1))
     window.location.hash = ''
@@ -59,7 +59,7 @@ const getURLResponse = () => {
   *
   *  @param    {Function}     cb     a callback function called as cb(err, res) when a response becomes available
   */
-const listenURLResponse = (cb) => {
+const listenResponse = (cb) => {
   window.onhashchange = () => {
     const res = getMobileResponse()
     !res ? cb(null, null) : (res.error ?  cb(res.error, null) : cb(null, res))
@@ -71,6 +71,11 @@ const listenURLResponse = (cb) => {
   *
   *  @return   {Promise<Object, Error>}    a promise which resolves with a response object or rejects with an error.
   */
-const onURLResponse = () => new Promise((resolve, reject) => {
+const onResponse = () => new Promise((resolve, reject) => {
   listenMobileResponse((err, res) => { err ? reject(err) : resolve(res)})
 })
+
+export { transport,
+         getResponse,
+         listenResponse,
+         onResponse }

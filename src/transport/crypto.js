@@ -37,15 +37,5 @@ const encryptMessage = (message, receiverKey) => {
 }
 
 
-/**
- *  Adds padding to a string
- *
- *  @param      {String}        the message to be padded
- *  @return     {String}        the padded message
- *  @private
- */
-const padMessage = (message) => {
-  const INTERVAL_LENGTH = 50
-  const padLength = INTERVAL_LENGTH - message.length % INTERVAL_LENGTH
-  return message + ' '.repeat(padLength)
-}
+
+export { randomString, encryptMessage }
