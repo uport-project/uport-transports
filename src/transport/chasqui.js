@@ -1,6 +1,6 @@
 import nets from 'nets'
 import * as qr from './qr/index.js'
-import { paramsToQueryString } from './Message.js'
+import { paramsToQueryString } from './../message/util.js'
 const CHASQUI_URL = 'https://chasqui.uport.me/api/v1/topic/'
 const POLLING_INTERVAL = 2000
 
