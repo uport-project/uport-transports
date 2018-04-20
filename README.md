@@ -1,4 +1,4 @@
-# uport-core
+# uport-core-js
 
 ### Modules
 
@@ -39,3 +39,10 @@
 - ##### Poll
 
     - `uport.transport.poll()`
+
+#### `Message`
+
+  - ##### Util
+
+    - `uport.message.util.paramsToUrlFragment()`
+    - `uport.messasge.util.paramsToQueryString()`

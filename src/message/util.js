@@ -29,4 +29,4 @@ const paramsToQueryString = (url, params = {} ) => {
 }
 
 
-export { paramsToUrlFragment, paramsToQueryString}
+export { paramsToUrlFragment, paramsToQueryString }
