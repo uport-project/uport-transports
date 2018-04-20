@@ -1,5 +1,8 @@
-// TODO move elsewhere/generalize, just here as helper for push right now.
+import nets from 'nets'
+const PUTUTU_URL = 'https://pututu.uport.me'
 
+// TODO move elsewhere/generalize, just here as helper for push right now.
+// TODO still add redirect opt and
 /**
   *  Send a push notification to a user, consumes a token which allows you to send push notifications
   *  and a url/uri request you want to send to the user.

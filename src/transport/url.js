@@ -1,4 +1,4 @@
-
+import { paramsToQueryString, paramsToUrlFragment } from './Message.js'
 
 // TODO Could have separate func for signed payloads (below)
 // TODO id and data or one field here with two in connect

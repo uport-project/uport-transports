@@ -1,4 +1,8 @@
-
+import nets from 'nets'
+import * as qr from './qr/index.js'
+import { paramsToQueryString } from './Message.js'
+const CHASQUI_URL = 'https://chasqui.uport.me/api/v1/topic/'
+const POLLING_INTERVAL = 2000
 
 // TODO can the name of URIHandler be changed
 /**
@@ -14,7 +18,7 @@
   *  @param    {String}       uri              a uport client request URI
   *  @return   {Promise<Object, Error>}        a function to close the QR modal
   */
-const URIHandlerTransport = ({uriHandler = openQr, chasquiUrl = CHASQUI_URL, pollingInterval = POLLING_INTERVAL} = {}) => {
+const URIHandlerSend = ({uriHandler = qr.open, chasquiUrl = CHASQUI_URL, pollingInterval = POLLING_INTERVAL} = {}) => {
   return (uri) => {
     let isCancelled = false
     const cancel = () => { isCancelled = true }

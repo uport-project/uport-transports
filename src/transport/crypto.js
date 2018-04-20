@@ -1,5 +1,7 @@
+import nacl from 'tweetnacl'
+import naclutil from 'tweetnacl-util'
 
-// TODO Move to some utils?
+// TODO Move to some utils in transport or move out of transport entirely?
 /**
   *  Given a length, returns a random string of that length
   *

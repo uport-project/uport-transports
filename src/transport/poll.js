@@ -1,3 +1,6 @@
+import nets from 'nets'
+const POLLING_INTERVAL = 2000
+
 /**
   *  A general polling function. Polls a given url and parse message according to given parsing functions, promise resolves on response or error.
   *
@@ -8,7 +11,7 @@
   *  @param    {Function}                cancelled          function which returns boolean, if returns true, polling stops
   *  @return   {Promise<Object, Error>}                     a promise which resolves with obj/message or rejects with an error
   */
-const poll = (url, messageParse, errorParse, pollingInterval, cancelled) => new Promise((resolve, reject) => {
+const poll = (url, messageParse, errorParse, cancelled = () => false, pollingInterval = POLLING_INTERVAL) => new Promise((resolve, reject) => {
   let interval = setInterval(
     () => {
       nets({

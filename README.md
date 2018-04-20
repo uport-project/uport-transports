@@ -4,37 +4,38 @@
 
 #### `Transport`
 
-- ##### Transport with Message Service Chasqui
+- ##### QR
 
-  - `uport.transport.URIHandlerChasquiTransport()`
-  - `uport.transport.QRChasquiTransport()`
+    - `uport.transport.qr.send()`
+    - `uport.transport.qr.chasquiSend()`
+    - `uport.transport.qr.open()`
+    - `uport.transport.qr.close()`
+    - `uport.transport.qr.getImageDataURI()`
+    - `uport.transport.qr.modalTemplate()`
+
+
+- ##### URL
+
+    - `uport.transport.url.send()`
+    - `uport.transport.url.getResponse()`
+    - `uport.transport.url.listenResponse()`
+    - `uport.transport.url.onResponse()`
 
 - ##### Push Notifications
 
-  - `uport.transport.pushNotificationTransport()`
+    - `uport.transport.push.send()`
 
-- ##### Transport Mobile Browser to uPort Client
+- ##### Chasqui
 
-    - `uport.transport.MobileTransport()`
+    - `uport.transport.chasqui.URIHandlerSend()`
+    - `uport.transport.chasqui.poll()`
+    - `uport.transport.chasqui.clearResponse()`
 
-- ##### Get responses in URL
+- ##### Crypto
 
-    - `uport.transport.getMobileResponse()`
-    - `uport.transport.onMobileResponse()`
-    - `uport.transport.listenMobileResponse()`
+    - `uport.transport.crypto.encryptMessage()`
+    - `uport.transport.crypto.randomString()`
 
-- ##### Transport Helpers
+- ##### Poll
 
     - `uport.transport.poll()`
-    - `uport.transport.pollChasqui()`
-
-#### `QR`
-
-  - `uport.QR.getQRDataURI()`
-  - `uport.QR.openQr()`
-  - `uport.QR.closeQr()`
-  - `uport.QR.uportQRDisplay()`
-
-#### `Util`
-
-  Some functions could be moved to collection of utils, as well as other util/helper funcs exported here
