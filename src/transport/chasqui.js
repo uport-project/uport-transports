@@ -1,7 +1,6 @@
 import { paramsToQueryString } from './../message/util.js'
 import { randomString } from './../crypto/index.js'
 import nets from 'nets'
-import * as qr from './qr/index.js'
 const CHASQUI_URL = 'https://chasqui.uport.me/api/v1/topic/'
 const POLLING_INTERVAL = 2000
 
@@ -11,15 +10,16 @@ const POLLING_INTERVAL = 2000
   *  while the response will always be returned through Chasqui. Chasqui is a simple messaging server that
   *  allows responses to be relayed from a uport client to the original callee.
   *
-  *  @param    {Object}       [config={}]      an optional config object
-  *  @param    {String}       uriHandler       a function called with the requestURI once it is formatted for this transport
-  *  @param    {String}       chasquiUrl       url of messaging server, defaults to Chasqui instance run by uPort
-  *  @param    {String}       pollingInterval  milisecond interval at which the messaging server will be polled for a response
-  *  @return   {Function}                      a configured QRTransport Function
-  *  @param    {String}       uri              a uport client request URI
-  *  @return   {Promise<Object, Error>}        a function to close the QR modal
+  *  @param    {String}       uriHandler              a function called with the requestURI once it is formatted for this transport
+  *  @param    {Object}       [config={}]             an optional config object
+  *  @param    {String}       config.chasquiUrl       url of messaging server, defaults to Chasqui instance run by uPort
+  *  @param    {String}       config.pollingInterval  milisecond interval at which the messaging server will be polled for a response
+  *  @return   {Function}                             a configured QRTransport Function
+  *  @param    {String}       uri                     a uport client request URI
+  *  @return   {Promise<Object, Error>}               a function to close the QR modal
   */
-const URIHandlerSend = ({uriHandler = qr.open, chasquiUrl = CHASQUI_URL, pollingInterval = POLLING_INTERVAL} = {}) => {
+const URIHandlerSend = (uriHandler, {chasquiUrl = CHASQUI_URL, pollingInterval = POLLING_INTERVAL} = {}) => {
+  if (!uriHandler) throw new Error('uriHandler function required')
   return (uri) => {
     let isCancelled = false
     const cancel = () => { isCancelled = true }

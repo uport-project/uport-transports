@@ -31,11 +31,6 @@
     - `uport.transport.chasqui.poll()`
     - `uport.transport.chasqui.clearResponse()`
 
-- ##### Crypto
-
-    - `uport.transport.crypto.encryptMessage()`
-    - `uport.transport.crypto.randomString()`
-
 - ##### Poll
 
     - `uport.transport.poll()`
@@ -46,3 +41,9 @@
 
     - `uport.message.util.paramsToUrlFragment()`
     - `uport.messasge.util.paramsToQueryString()`
+
+
+#### `Crypto`
+
+  - `uport.crypto.encryptMessage()`
+  - `uport.crypto.randomString()`
