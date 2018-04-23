@@ -1,3 +1,4 @@
+import { encryptMessage } from './../crypto/index.js'
 import nets from 'nets'
 const PUTUTU_URL = 'https://pututu.uport.me'
 
@@ -16,7 +17,7 @@ const PUTUTU_URL = 'https://pututu.uport.me'
   */
 
   // TODO uri vs payload? and how to handle both to them, once again where is the right place for something like message, in config or inner func???
-const transport = (token, pubEncKey) => {
+const send = (token, pubEncKey) => {
   return (uri, {message}) => {
     return new Promise((resolve, reject) => {
       let endpoint = '/api/v2/sns'
@@ -69,4 +70,4 @@ const padMessage = (message) => {
   return message + ' '.repeat(padLength)
 }
 
-export { transport }
+export { send }

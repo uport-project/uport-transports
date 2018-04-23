@@ -12,7 +12,7 @@ const POLLING_INTERVAL = 2000
   *  @param    {String}       uri     a uport client request URI
   *  @return   {Function}             a function to close the QR modal
   */
-const transport = () => (uri) => {
+const send = () => (uri) => {
   openQr(paramsToQueryString(uri, {'type': 'post'}))
   return closeQr
 }
@@ -392,9 +392,9 @@ const googleStoreLink = 'https://play.google.com/store/apps/details?id=com.uport
  *  export
  */
 
-export {
-  close,
-  open,
-  getImageDataURI,
-  modalTemplate
-}
+export { send,
+         chasquiSend,
+         close,
+         open,
+         getImageDataURI,
+         modalTemplate }

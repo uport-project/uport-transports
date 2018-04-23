@@ -17,7 +17,7 @@ import { paramsToQueryString, paramsToUrlFragment } from './../message/util.js'
   *  @param    {String}       opts.type      specifies callback type 'post' or 'redirect' for response
   *  @param    {String}       opts.callback  specifies url which a uport client will return to control once request is handled, depending on request type it may or may not be returned with the response as well.
   */
-const transport = ({uriHandler}={}) => {
+const send = ({uriHandler}={}) => {
   // TODO args below or above? extra details above
   return (uri, {id, data, type, callback}) => {
   // what if has no protocol in passed in string
@@ -75,7 +75,7 @@ const onResponse = () => new Promise((resolve, reject) => {
   listenMobileResponse((err, res) => { err ? reject(err) : resolve(res)})
 })
 
-export { transport,
+export { send,
          getResponse,
          listenResponse,
          onResponse }

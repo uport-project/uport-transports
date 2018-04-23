@@ -1,6 +1,7 @@
+import { paramsToQueryString } from './../message/util.js'
+import { randomString } from './../crypto/index.js'
 import nets from 'nets'
 import * as qr from './qr/index.js'
-import { paramsToQueryString } from './../message/util.js'
 const CHASQUI_URL = 'https://chasqui.uport.me/api/v1/topic/'
 const POLLING_INTERVAL = 2000
 
@@ -58,6 +59,6 @@ const clearResponse = (url) => {
   }, function (err) { if (err) { throw err } /* Errors without this cb */ })
 }
 
-export { URIHandlerTransport,
+export { URIHandlerSend,
          poll,
          clearResponse }
