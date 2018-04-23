@@ -5,6 +5,8 @@ const CHASQUI_URL = 'https://chasqui.uport.me/api/v1/topic/'
 const POLLING_INTERVAL = 2000
 
 // TODO can the name of URIHandler be changed
+// TODO should it just allow cancel func to be passed in??
+// TODO Should it return uri append to promise? instead of a promise??
 /**
   *  A general Chasqui Transport. Allows you to configure the transport with any uriHandler for the request,
   *  while the response will always be returned through Chasqui. Chasqui is a simple messaging server that
