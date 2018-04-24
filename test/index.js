@@ -1,1 +1,3 @@
-require('./transport/chasqui.js')
+require('./transport/index.js')
+require('./message/index.js')
+require('./crypto/index.js')

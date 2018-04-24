@@ -1,5 +1,6 @@
 import { paramsToQueryString } from './../message/util.js'
 import { randomString } from './../crypto/index.js'
+import generalPoll from './poll.js'
 import nets from 'nets'
 const CHASQUI_URL = 'https://chasqui.uport.me/api/v1/topic/'
 const POLLING_INTERVAL = 2000
@@ -28,7 +29,7 @@ const URIHandlerSend = (uriHandler, {chasquiUrl = CHASQUI_URL, pollingInterval =
     const cb = chasquiUrl + randomString(16)
     uri = paramsToQueryString(uri, {'callback_url': cb, 'type': 'post'})
     uriHandler(uri, cancel)
-    const returnVal = pollChasqui(cb, pollingInterval, () => isCancelled)
+    const returnVal = poll(cb, pollingInterval, () => isCancelled)
     returnVal.cancel = cancel
     return returnVal
   }
@@ -45,8 +46,8 @@ const URIHandlerSend = (uriHandler, {chasquiUrl = CHASQUI_URL, pollingInterval =
 const poll = (url, pollingInterval, cancelled) => {
   const messageParse = (res) => res.message['access_token']
   const errorParse = (res) => res.message.error
-  return poll(url, messageParse, errorParse, pollingInterval, cancelled).then(res => {
-    clearChasqui(url)
+  return generalPoll(url, messageParse, errorParse, pollingInterval, cancelled).then(res => {
+    clearResponse(url)
     return res
   })
 }
