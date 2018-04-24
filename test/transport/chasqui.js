@@ -5,7 +5,7 @@ const proxyquire = require('proxyquire')
 var chai = require('chai');
 const expect = chai.expect
 chai.use(require('sinon-chai'))
-let chasqui
+let chasqui = require('./../../src/transport/chasqui.js')
 const CHASQUI_URL = 'https://chasqui.uport.me/api/v1/topic/'
 const ranStr = '4242'
 
