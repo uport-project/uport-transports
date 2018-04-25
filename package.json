@@ -6,7 +6,7 @@
   "scripts": {
     "build:dist": "./node_modules/.bin/webpack --config webpack.config.js",
     "build:es5": "./node_modules/.bin/babel src -d lib",
-    "test": "./node_modules/.bin/mocha test/index.js --compilers js:babel-core/register",
+    "test": "./node_modules/.bin/mocha test/index.js --require babel-core/register",
     "build:docs:html": "./node_modules/.bin/jsdoc *.js -d docs",
     "build:docs:md": "./node_modules/jsdoc-to-markdown/bin/cli.js src/* > DOCS.md",
     "build:docs": "npm run build:docs:html && npm run build:docs:md"

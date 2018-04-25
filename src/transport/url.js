@@ -1,4 +1,5 @@
 import { paramsToQueryString, paramsToUrlFragment } from './../message/util.js'
+import qs from 'qs'
 
 // TODO Could have separate func for signed payloads (below)
 // TODO id and data or one field here with two in connect
@@ -19,7 +20,7 @@ import { paramsToQueryString, paramsToUrlFragment } from './../message/util.js'
   */
 const send = ({uriHandler}={}) => {
   // TODO args below or above? extra details above
-  return (uri, {id, data, type, callback}) => {
+  return (uri, {id, data, type, callback} = {}) => {
   // what if has no protocol in passed in string
   // if( md.userAgent() === 'Chrome' && md.os() === 'iOS' ) {
   //    url = 'googlechrome:' + window.location.href.substring(window.location.protocol.length)
@@ -28,11 +29,11 @@ const send = ({uriHandler}={}) => {
   //  }
     if (type) uri = paramsToQueryString(uri, {type})
     // Maybe move this logic (line) up a level to connect?
-    let cb = /access_token/.test(uri) ? callback || null : callback || window.location.href
+    let cb = /requestToken/.test(uri) ? callback || null : callback || window.location.href
     if (cb) {
       if (data) cb = paramsToUrlFragment(cb, {data})
       if (id) cb = paramsToUrlFragment(cb, {id})
-      uri = /access_token/.test(uri) ? paramsToQueryString(uri, {'redirect_url': cb}) : paramsToQueryString(uri, {'callback_url': cb})
+      uri = /requestToken/.test(uri) ? paramsToQueryString(uri, {'redirect_url': cb}) : paramsToQueryString(uri, {'callback_url': cb})
     }
     uriHandler ? uriHandler(uri) : window.location.assign(uri)
   }
@@ -62,7 +63,7 @@ const getResponse = () => {
 const listenResponse = (cb) => {
   window.onhashchange = () => {
     const res = getResponse()
-    !res ? cb(null, null) : (res.error ?  cb(res.error, null) : cb(null, res))
+    if (res) res.error ?  cb(res.error, null) : cb(null, res)
   }
 }
 
