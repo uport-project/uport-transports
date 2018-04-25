@@ -72,7 +72,6 @@ const listenResponse = (cb) => {
   *
   *  @return   {Promise<Object, Error>}    a promise which resolves with a response object or rejects with an error.
   */
-// TODO done return if cb returns null null, or don't return null above
 const onResponse = () => new Promise((resolve, reject) => {
   listenResponse((err, res) => { err ? reject(err) : resolve(res)})
 })

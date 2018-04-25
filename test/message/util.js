@@ -40,7 +40,7 @@ describe('message.util', function () {
     })
   })
 
-  describe('getResponse()', function () {
+  describe('paramsToQueryString()', function () {
 
     it('Supports adding: value, function, bytecode, label, callback_url, redirect_url, client_id, network_id, gas, gasPrice, type', () => {
       const url = util.paramsToQueryString(
@@ -76,12 +76,12 @@ describe('message.util', function () {
     })
 
     it('Adds query params to urls that already have url fragments ', () => {
-      const url = util.paramsToUrlFragment(unsignedRequest + '#id=idString', {callback_url: 'callback_urlString'})
+      const url = util.paramsToQueryString(unsignedRequest + '#id=idString', {callback_url: 'callback_urlString'})
       expect(url).to.match(/\?callback_url=callback_urlString#id=idString/)
     })
 
     it('Adds query params to urls that already have url fragments and query params', () => {
-      const url = util.paramsToUrlFragment(signedRequest + '#id=idString', {callback_url: 'callback_urlString'})
+      const url = util.paramsToQueryString(signedRequest + '#id=idString', {callback_url: 'callback_urlString'})
       expect(url).to.match(/&callback_url=callback_urlString#id=idString/)
     })
   })

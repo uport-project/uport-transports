@@ -26,7 +26,7 @@ describe('transport.url', function () {
     it('Adds type to uri if given one', () => {
       const assign = sinon.spy()
       global.window = {location : {href: windowUrl, assign}}
-      send('request')
+      send(signedRequest, {type: 'post'})
       expect(assign).to.be.calledWithMatch('type=post')
     })
 
@@ -49,22 +49,22 @@ describe('transport.url', function () {
       const assign = sinon.spy()
       global.window = {location : {href: windowUrl, assign}}
       const callback = 'https://myserver.web'
-      send(signedRequest, {callback})
+      send(unsignedRequest, {callback})
       expect(assign).to.be.calledWithMatch(`callback_url=${encodeURIComponent(callback)}`)
     })
 
-    it('Adds id to uri if given one', () => {
+    it('Adds id to callback if given one', () => {
       const assign = sinon.spy()
       global.window = {location : {href: windowUrl, assign}}
-      send(signedRequest, {id: 'idString'})
-      expect(assign).to.be.calledWithMatch('id=idString')
+      send(unsignedRequest, {id: 'idString'})
+      expect(assign).to.be.calledWithMatch(encodeURIComponent('id=idString'))
     })
 
-    it('Adds data to uri if given one', () => {
+    it('Adds data to callback if given one', () => {
       const assign = sinon.spy()
       global.window = {location : {href: windowUrl, assign}}
-      send(signedRequest, {data: 'dataString'})
-      expect(assign).to.be.calledWithMatch('data=dataString')
+      send(unsignedRequest, {data: 'dataString'})
+      expect(assign).to.be.calledWithMatch(encodeURIComponent('data=dataString'))
     })
   })
 
@@ -119,22 +119,23 @@ describe('transport.url', function () {
   })
 
   describe('onResponse()', function () {
-    it('Calls listenResponse and returns promise which resolves on successful response', () => {
+    it('Calls listenResponse and returns promise which resolves on successful response', (done) => {
       global.window = {location : {hash: `?access_token=${res}`}, onhashchange: () => { throw new Error('expected listenResponse to set this function')}}
-      const cb = sinon.spy()
-      return url.onResponse().then(res => {
-        expect(res).to.deep.equal({ data: undefined, id: undefined, res })
+      url.onResponse().then(response => {
+        expect(response.res).to.equal(res)
+        done()
       })
       window.onhashchange()
     })
 
-    it('Calls listenResponse and returns promise which rejects on error response', () => {
+    it('Calls listenResponse and returns promise which rejects on error response', (done) => {
       global.window = {location : {hash: `?error=error`}, onhashchange: () => { throw new Error('expected listenResponse to set this function')}}
-      const cb = sinon.spy()
-      return url.onResponse().then(res => {
+      url.onResponse().then(res => {
         throw new Error('transport.url.onReponse Promise resolved, expected it to reject')
+        done()
       }, err => {
-        expect(err).to.match('error');
+        expect(err).to.match(/error/)
+        done()
       })
       window.onhashchange()
     })
