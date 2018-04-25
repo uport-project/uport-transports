@@ -21,7 +21,7 @@ const poll = (url, messageParse, errorParse, cancelled = () => false, pollingInt
         withCredentials: false,
         rejectUnauthorized: false
       },
-      function (err, res, body) {
+      (err, res, body) => {
         if (err) return reject(err)
 
         if (cancelled()) {

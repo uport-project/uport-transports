@@ -1,9 +1,8 @@
 import { encryptMessage } from './../crypto/index.js'
 import nets from 'nets'
-const PUTUTU_URL = 'https://pututu.uport.me'
+const PUTUTU_URL = 'https://pututu.uport.me/api/v2/sns'
 
-// TODO move elsewhere/generalize, just here as helper for push right now.
-// TODO still add redirect opt and
+// TODO still add redirect opt and type
 /**
   *  Send a push notification to a user, consumes a token which allows you to send push notifications
   *  and a url/uri request you want to send to the user.
@@ -15,46 +14,33 @@ const PUTUTU_URL = 'https://pututu.uport.me'
   *  @param    {String}                  pubEncKey          the public encryption key of the receiver, encoded as a base64 string
   *  @return   {Promise<Object, Error>}              a promise which resolves with successful status or rejects with an error
   */
+const send = (token, pubEncKey, pushServiceUrl = PUTUTU_URL) => {
+  if (!token) throw new Error('Requires push notification token')
+  if (!pubEncKey) throw new Error('Requires public encryption key of the receiver')
 
-  // TODO uri vs payload? and how to handle both to them, once again where is the right place for something like message, in config or inner func???
-const send = (token, pubEncKey) => {
-  return (uri, {message}) => {
-    return new Promise((resolve, reject) => {
-      let endpoint = '/api/v2/sns'
-      if (!token) return reject(new Error('Missing push notification token'))
-      if (!pubEncKey) return reject(new Error('Missing public encryption key of the receiver'))
-      if (pubEncKey.url) {
-        console.error('WARNING: Calling push without a public encryption key is deprecated')
-        endpoint = '/api/v1/sns'
-        payload = pubEncKey
-      } else {
-        if (!uri) return reject(new Error('Missing payload url for sending to users device'))
-        const plaintext = padMessage(JSON.stringify(payload))
-        const enc = encryptMessage(plaintext, pubEncKey)
-        payload = { message: JSON.stringify(enc) }
+  return (uri, {message}={}) => new Promise((resolve, reject) => {
+    if (!uri) return reject(new Error('Requires uri request for sending to users device'))
+    const plaintext = padMessage(JSON.stringify({uri, message}))
+    const enc = encryptMessage(plaintext, pubEncKey)
+    const payload = { message: JSON.stringify(enc) }
+    nets({
+      uri:  pushServiceUrl,
+      json: payload,
+      method: 'POST',
+      withCredentials: false,
+      headers: {
+        Authorization: `Bearer ${token}`
       }
-
-      nets({
-        uri: PUTUTU_URL + endpoint,
-        json: payload,
-        method: 'POST',
-        withCredentials: false,
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      },
-      (error, res, body) => {
-        if (error) return reject(error)
-        if (res.statusCode === 200) {
-          resolve(body)
-        }
-        if (res.statusCode === 403) {
-          return reject(new Error('Error sending push notification to user: Invalid Token'))
-        }
-        reject(new Error(`Error sending push notification to user: ${res.statusCode} ${body.toString()}`))
-      })
+    },
+    (error, res, body) => {
+      if (error) return reject(error)
+      if (res.statusCode === 200) return resolve(body)
+      if (res.statusCode === 403) {
+        return reject(new Error('Error sending push notification to user: Invalid Token'))
+      }
+      reject(new Error(`Error sending push notification to user: ${res.statusCode} ${body.toString()}`))
     })
-  }
+  })
 }
 
 /**

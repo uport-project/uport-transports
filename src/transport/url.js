@@ -61,18 +61,19 @@ const getResponse = () => {
   */
 const listenResponse = (cb) => {
   window.onhashchange = () => {
-    const res = getMobileResponse()
+    const res = getResponse()
     !res ? cb(null, null) : (res.error ?  cb(res.error, null) : cb(null, res))
   }
 }
 
 /**
-  *  A promise which resolves once a response become available in the hash params (url frament)
+  *  A promise which resolves once a response become available in the hash params (url fragment)
   *
   *  @return   {Promise<Object, Error>}    a promise which resolves with a response object or rejects with an error.
   */
+// TODO done return if cb returns null null, or don't return null above
 const onResponse = () => new Promise((resolve, reject) => {
-  listenMobileResponse((err, res) => { err ? reject(err) : resolve(res)})
+  listenResponse((err, res) => { err ? reject(err) : resolve(res)})
 })
 
 export { send,

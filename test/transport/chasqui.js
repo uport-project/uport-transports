@@ -16,8 +16,8 @@ describe('transport.chasqui', function () {
 
   describe('URIHandlerSend()', function () {
     it('Requires a uriHandler', () => {
-      expect(chasqui.URIHandlerSend, 'uport.network.id').to.throw(/required/)
-      expect(() => chasqui.URIHandlerSend(()=>{}), 'uport.network.id').to.not.throw()
+      expect(chasqui.URIHandlerSend).to.throw(/required/)
+      expect(() => chasqui.URIHandlerSend(()=>{})).to.not.throw()
     })
   })
 
