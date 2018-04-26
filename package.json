@@ -1,17 +1,18 @@
 {
-  "name": "uport",
+  "name": "uport-core",
   "version": "0.0.1",
   "description": "",
   "main": "lib/index.js",
   "scripts": {
     "build:dist": "./node_modules/.bin/webpack --config webpack.config.js",
     "build:es5": "./node_modules/.bin/babel src -d lib",
+    "build": "npm run build:es5 && npm run build:dist",
     "test": "./node_modules/.bin/mocha test/index.js --require babel-core/register",
     "build:docs:html": "./node_modules/.bin/jsdoc *.js -d docs",
     "build:docs:md": "./node_modules/jsdoc-to-markdown/bin/cli.js src/* > DOCS.md",
     "build:docs": "npm run build:docs:html && npm run build:docs:md"
   },
-  "author": "",
+  "author": "Zach Ferland <zach.ferland@consensys.net> (http://consensys.net/)",
   "license": "Apache-2.0",
   "dependencies": {
     "nets": "^3.2.0",
@@ -20,6 +21,7 @@
     "tweetnacl-util": "^0.15.0"
   },
   "devDependencies": {
+    "babel-cli": "^6.26.0",
     "babel-core": "^6.21.0",
     "babel-loader": "^6.2.10",
     "babel-plugin-external-helpers": "^6.18.0",
