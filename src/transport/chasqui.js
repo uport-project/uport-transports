@@ -28,7 +28,7 @@ const URIHandlerSend = (uriHandler, {chasquiUrl = CHASQUI_URL, pollingInterval =
     const cancel = () => { isCancelled = true }
     const cb = chasquiUrl + randomString(16)
     uri = paramsToQueryString(uri, {'callback_url': cb, 'type': 'post'})
-    uriHandler(uri, cancel)
+    uriHandler(uri, { cancel })
     const returnVal = poll(cb, pollingInterval, () => isCancelled)
     returnVal.cancel = cancel
     return returnVal
@@ -43,10 +43,10 @@ const URIHandlerSend = (uriHandler, {chasquiUrl = CHASQUI_URL, pollingInterval =
   *  @param    {Function}                cancelled          function which returns boolean, if returns true, polling stops
   *  @return   {Promise<Object, Error>}                     a promise which resolves with obj/message or rejects with an error
   */
-const poll = (url, pollingInterval, cancelled) => {
+const poll = (url, pollingInterval, cancelled ) => {
   const messageParse = (res) => { if (res.message) return res.message['access_token'] }
   const errorParse = (res) => { if (res.message) return res.message.error }
-  return generalPoll(url, messageParse, errorParse, pollingInterval, cancelled).then(res => {
+  return generalPoll(url, messageParse, errorParse, cancelled, pollingInterval).then(res => {
     clearResponse(url)
     return res
   })

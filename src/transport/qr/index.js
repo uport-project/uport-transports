@@ -1,6 +1,7 @@
 import qrImage from 'qr-image'
 import SVG from './assets.js'
 import { paramsToQueryString, paramsToUrlFragment } from './../../message/util.js'
+import { URIHandlerSend } from './../chasqui.js'
 const CHASQUI_URL = 'https://chasqui.uport.me/api/v1/topic/'
 const POLLING_INTERVAL = 2000
 
@@ -12,9 +13,9 @@ const POLLING_INTERVAL = 2000
   *  @param    {String}       uri     a uport client request URI
   *  @return   {Function}             a function to close the QR modal
   */
-const send = () => (uri) => {
-  openQr(paramsToQueryString(uri, {'type': 'post'}))
-  return closeQr
+const send = (appName) => (uri, {cancel, introModal} = {}) => {
+  open(paramsToQueryString(uri, {'type': 'post'}), cancel, appName, introModal)
+  return close
 }
 
 
@@ -30,13 +31,14 @@ const send = () => (uri) => {
   *  @return   {Promise<Object, Error>}        a function to close the QR modal
   */
 const chasquiSend = ({chasquiUrl = CHASQUI_URL, pollingInterval = POLLING_INTERVAL} = {}) => {
-  const transport = URIHandlerChasquiTransport({ chasquiUrl, pollingInterval})
-  return (uri) => {
-    return transport(uri).then(res => {
-      closeQr()
-      return res
-    })
-  }
+  const transport = URIHandlerSend(send(), {chasquiUrl, pollingInterval})
+  return (uri) => transport(uri).then(res => {
+    close()
+    return res
+  }, err => {
+    close()
+    throw new Error(err)
+  })
 }
 
 
@@ -74,7 +76,7 @@ const open = (data, cancel, appName, introModal) => {
   wrapper.innerHTML =
     introModal
       ? introModalTemplate(appName)
-      : modalTemplate({qrImageUri: getQRDataURI(data), cancel})
+      : modalTemplate({qrImageUri: getImageDataURI(data), cancel})
 
   const cancelClick = (event) => {
     document.getElementById('uport-qr-text').innerHTML = 'Cancelling';
@@ -82,7 +84,7 @@ const open = (data, cancel, appName, introModal) => {
   }
 
   const uportTransition = (event) => {
-    wrapper.innerHTML = modalTemplate({qrImageUri: getQRDataURI(data), cancel})
+    wrapper.innerHTML = modalTemplate({qrImageUri: getImageDataURI(data), cancel})
     document.getElementById('uport-qr-cancel').addEventListener('click', cancelClick)
   }
 
