@@ -1,6 +1,6 @@
 import { encryptMessage } from './../crypto/index.js'
 import nets from 'nets'
-const PUTUTU_URL = 'https://pututu.uport.me/api/v2/sns'
+const PUTUTU_URL = 'https://api.uport.me/pututu/sns/'
 
 // TODO still add redirect opt and type
 /**
