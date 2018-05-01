@@ -98,6 +98,22 @@ Only contains `encryptMessage()` at this time, which is used for push notificati
   - `uport.crypto.encryptMessage()`
   - `uport.crypto.randomString()`
 
+#### `Provider`
+
+  - `uport.provider()`
+
+#### `Network`
+
+  - ##### Config
+
+    - `uport.network.config.network()`
+    - `uport.network.config.networkSet()`
+    - `uport.network.config.networkToNetworkSet()`
+
+  - ##### Defaults
+
+    - `uport.network.default.networks`
+    - `uport.network.default.NETWORK`
 
 ## <a name="development-guide"></a> Development Guide
 
