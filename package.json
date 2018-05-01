@@ -15,10 +15,12 @@
   "author": "Zach Ferland <zach.ferland@consensys.net> (http://consensys.net/)",
   "license": "Apache-2.0",
   "dependencies": {
+    "mnid": "^0.1.1",
     "nets": "^3.2.0",
     "qr-image": "^3.1.0",
     "qs": "^6.2.1",
-    "tweetnacl-util": "^0.15.0"
+    "tweetnacl-util": "^0.15.0",
+    "uport-registry": "^5.1.0"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",
