@@ -1,4 +1,4 @@
-import { NETWORK } from './defaults.js'
+import { NETWORK, networks } from './defaults.js'
 
 const network = (net = NETWORK) => {
   if (typeof net === 'object') {
@@ -30,4 +30,4 @@ const networkSet = (nets) => {
 
 const networkToNetworkSet = (net) => ({[net.id]: {registry: net.registry, rpcUrl: net.rpcUrl}})
 
-export { configNetwork, configNetworkSet, networkToNetworkSet }
+export { network, networkSet, networkToNetworkSet }

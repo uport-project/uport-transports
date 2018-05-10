@@ -44,7 +44,7 @@ const URIHandlerSend = (uriHandler, {chasquiUrl = CHASQUI_URL, pollingInterval =
   *  @return   {Promise<Object, Error>}                     a promise which resolves with obj/message or rejects with an error
   */
 const poll = (url, pollingInterval, cancelled ) => {
-  const messageParse = (res) => { if (res.message) return res.message['access_token'] }
+  const messageParse = (res) => { if (res.message) return res.message['access_token'] || res.message['tx'] }
   const errorParse = (res) => { if (res.message) return res.message.error }
   return generalPoll(url, messageParse, errorParse, cancelled, pollingInterval).then(res => {
     clearResponse(url)

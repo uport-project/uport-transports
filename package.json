@@ -1,6 +1,6 @@
 {
   "name": "uport-core",
-  "version": "0.0.11",
+  "version": "0.0.18",
   "description": "",
   "main": "lib/index.js",
   "scripts": {
@@ -15,6 +15,7 @@
   "author": "Zach Ferland <zach.ferland@consensys.net> (http://consensys.net/)",
   "license": "Apache-2.0",
   "dependencies": {
+    "async": "^2.6.0",
     "base64url": "^3.0.0",
     "mnid": "^0.1.1",
     "nets": "^3.2.0",

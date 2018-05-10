@@ -14,11 +14,12 @@ const POLLING_INTERVAL = 2000
   *  @return   {Function}             a function to close the QR modal
   */
 const send = (appName) => (uri, {cancel, introModal} = {}) => {
-  open(paramsToQueryString(uri, {'type': 'post'}), cancel, appName, introModal)
+  uri = /type=/.test(uri) ? uri : paramsToQueryString(uri, {type: 'post'})
+  open(uri, cancel, appName, introModal)
   return close
 }
 
-
+// TODO intro modal not passed here
 /**
   *  A QR Code and Chasqui Transport. The QR modal is configured for tranporting the request, while the
   *  response will be returned through Chasqui.
