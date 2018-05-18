@@ -31,8 +31,8 @@ const send = (appName) => (uri, {cancel, introModal} = {}) => {
   *  @param    {String}       uri              a uport client request URI
   *  @return   {Promise<Object, Error>}        a function to close the QR modal
   */
-const chasquiSend = ({chasquiUrl = CHASQUI_URL, pollingInterval = POLLING_INTERVAL} = {}) => {
-  const transport = URIHandlerSend(send(), {chasquiUrl, pollingInterval})
+const chasquiSend = ({chasquiUrl = CHASQUI_URL, pollingInterval = POLLING_INTERVAL, appName } = {}) => {
+  const transport = URIHandlerSend(send(appName), {chasquiUrl, pollingInterval})
   return (uri) => transport(uri).then(res => {
     close()
     return res

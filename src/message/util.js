@@ -1,4 +1,3 @@
-// TODO make so the following funcs don't necessarily need to be used and order, and they are redundant.
 /**
   *  Add params as url fragment (hash params)
   *
@@ -31,5 +30,18 @@ const paramsToQueryString = (url, params = {} ) => {
                   .toString()
 }
 
+/**
+  *  Returns params object of query params in given url
+  *
+  *  @param    {String}       url           a url
+  *  @return   {Object}                     object of param key and values
+  */
+const getUrlQueryParams = (url) => (
+  url.match(/[^&?]*?=[^&?]*/g)
+     .map((param) => param.split('='))
+     .reduce((params, param) => {
+       params[param[0]] = param[1]
+       return params
+     }, {}))
 
-export { paramsToUrlFragment, paramsToQueryString }
+export { paramsToUrlFragment, paramsToQueryString, getUrlQueryParams }

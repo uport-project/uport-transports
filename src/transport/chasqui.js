@@ -1,6 +1,7 @@
-import { paramsToQueryString } from './../message/util.js'
+import { paramsToQueryString, getUrlQueryParams } from './../message/util.js'
 import { randomString } from '../crypto.js'
 import generalPoll from './poll.js'
+import { decodeJWT } from 'did-jwt'
 import nets from 'nets'
 const CHASQUI_URL = 'https://chasqui.uport.me/api/v1/topic/'
 const POLLING_INTERVAL = 2000
@@ -24,12 +25,12 @@ const POLLING_INTERVAL = 2000
 const URIHandlerSend = (uriHandler, {chasquiUrl = CHASQUI_URL, pollingInterval = POLLING_INTERVAL} = {}) => {
   if (!uriHandler) throw new Error('uriHandler function required')
   return (uri) => {
+    const callback = getCallback(uri)
     let isCancelled = false
     const cancel = () => { isCancelled = true }
-    const cb = chasquiUrl + randomString(16)
-    uri = paramsToQueryString(uri, {'callback_url': cb, 'type': 'post'})
+    uri = paramsToQueryString(uri, {'type': 'post'})
     uriHandler(uri, { cancel })
-    const returnVal = poll(cb, pollingInterval, () => isCancelled)
+    const returnVal = poll(callback, pollingInterval, () => isCancelled)
     returnVal.cancel = cancel
     return returnVal
   }
@@ -62,6 +63,12 @@ const clearResponse = (url) => {
   }, function (err) { if (err) { throw err } /* Errors without this cb */ })
 }
 
+const genCallback = () => `https://chasqui.uport.me/api/v1/topic/${crypto.randomString(16)}`
+const isChasquiCallback = (uri) => new RegExp(CHASQUI_URL).test(getCallback(uri))
+const getCallback = (uri) => decodeJWT(getUrlQueryParams(uri)['requestToken']).payload.callback
+
 export { URIHandlerSend,
          poll,
-         clearResponse }
+         clearResponse,
+         genCallback,
+         isChasquiCallback }
