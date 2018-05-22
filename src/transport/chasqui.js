@@ -1,6 +1,5 @@
-import { paramsToQueryString, getUrlQueryParams } from './../message/util.js'
+import { paramsToQueryString, getUrlQueryParams, getURLJWT } from './../message/util.js'
 import { randomString } from '../crypto.js'
-import generalPoll from './poll.js'
 import { decodeJWT } from 'did-jwt'
 import nets from 'nets'
 const CHASQUI_URL = 'https://chasqui.uport.me/api/v1/topic/'
@@ -63,9 +62,9 @@ const clearResponse = (url) => {
   }, function (err) { if (err) { throw err } /* Errors without this cb */ })
 }
 
-const genCallback = () => `https://chasqui.uport.me/api/v1/topic/${crypto.randomString(16)}`
+const genCallback = () => `${CHASQUI_URL}${randomString(16)}`
 const isChasquiCallback = (uri) => new RegExp(CHASQUI_URL).test(getCallback(uri))
-const getCallback = (uri) => decodeJWT(getUrlQueryParams(uri)['requestToken']).payload.callback
+const getCallback = (uri) => decodeJWT(getURLJWT(uri)).payload.callback
 
 export { URIHandlerSend,
          poll,

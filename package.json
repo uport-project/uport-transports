@@ -1,6 +1,6 @@
 {
   "name": "uport-core",
-  "version": "0.0.19",
+  "version": "0.0.24",
   "description": "",
   "main": "lib/index.js",
   "scripts": {
@@ -28,7 +28,6 @@
   "devDependencies": {
     "babel-cli": "^6.26.0",
     "babel-core": "^6.21.0",
-    "babel-loader": "^6.2.10",
     "babel-plugin-external-helpers": "^6.18.0",
     "babel-plugin-syntax-object-rest-spread": "^6.13.0",
     "babel-plugin-transform-es2015-modules-umd": "^6.18.0",

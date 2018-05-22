@@ -36,12 +36,17 @@ const paramsToQueryString = (url, params = {} ) => {
   *  @param    {String}       url           a url
   *  @return   {Object}                     object of param key and values
   */
-const getUrlQueryParams = (url) => (
-  url.match(/[^&?]*?=[^&?]*/g)
-     .map((param) => param.split('='))
-     .reduce((params, param) => {
-       params[param[0]] = param[1]
-       return params
-     }, {}))
+const getUrlQueryParams = (url) => {
+  const params = url.match(/[^&?]*?=[^&?]*/g)
+  if (!params) return {}
+  return params.map((param) => param.split('='))
+               .reduce((params, param) => {
+                 params[param[0]] = param[1]
+                 return params
+                }, {})
+}
 
-export { paramsToUrlFragment, paramsToQueryString, getUrlQueryParams }
+const getURLJWT = (url) => url.replace(/https:\/\/id.uport.me\/req\//, '').replace(/(\#|\?)(.*)/, '')
+
+
+export { paramsToUrlFragment, paramsToQueryString, getUrlQueryParams, getURLJWT }
