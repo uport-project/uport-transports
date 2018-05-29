@@ -46,7 +46,30 @@ const getUrlQueryParams = (url) => {
                 }, {})
 }
 
+/**
+  * Returns request token (JWT) from a request URI
+  *
+  *  @param    {String}       url           a url
+  *  @return   {String}                     a JWT string
+  */
 const getURLJWT = (url) => url.replace(/https:\/\/id.uport.me\/req\//, '').replace(/(\#|\?)(.*)/, '')
 
+/**
+  * Given string, returns boolean if string is JWT
+  *
+  *  @param    {String}       jwt           A JWT string
+  *  @return   {Boolean}
+  */
+const isJWT = (jwt) => /^([a-zA-Z0-9_=]+)\.([a-zA-Z0-9_=]+)\.([a-zA-Z0-9_\-\+\/=]*)/.test(jwt)
 
-export { paramsToUrlFragment, paramsToQueryString, getUrlQueryParams, getURLJWT }
+/**
+  * Given token request (JWT), wraps in request URI
+  *
+  *  @param    {String}       jwt           A JWT string
+  *  @return   {Staring}                    A valid request URI, including the given request token
+  */
+const tokenRequest = (jwt) =>  `https://id.uport.me/req/${jwt}`
+
+
+
+export { paramsToUrlFragment, paramsToQueryString, getUrlQueryParams, getURLJWT, isJWT, tokenRequest }
