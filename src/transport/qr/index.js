@@ -81,6 +81,7 @@ const open = (data, cancel, appName, introModal) => {
 
   const cancelClick = (event) => {
     document.getElementById('uport-qr-text').innerHTML = 'Cancelling';
+    if (!cancel) close();
     cancel();
   }
 
