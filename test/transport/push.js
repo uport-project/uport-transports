@@ -51,7 +51,7 @@ describe('transport.push', function () {
       const encryptMessage = sinon.stub().returns(encryptedMessage)
       const push = proxyquire( './../../src/transport/push.js', {
         'nets': nets,
-        './../crypto/index.js': { encryptMessage }
+        '../crypto.js': { encryptMessage }
       })
       const send = push.send('token', 'key')
       return send('request')
@@ -64,7 +64,7 @@ describe('transport.push', function () {
       const encryptMessage = sinon.stub().returns(encryptedMessage)
       const push = proxyquire( './../../src/transport/push.js', {
         'nets': nets,
-        './../crypto/index.js': { encryptMessage }
+        '../crypto.js': { encryptMessage }
       })
       const send = push.send('token', 'key')
       return send('request').then(res => {
@@ -79,7 +79,7 @@ describe('transport.push', function () {
       const encryptMessage = sinon.stub().returns(encryptedMessage)
       const push = proxyquire( './../../src/transport/push.js', {
         'nets': nets,
-        './../crypto/index.js': { encryptMessage }
+        '../crypto.js': { encryptMessage }
       })
       const send = push.send('token', 'key')
       return send('request').then(res => {
@@ -96,7 +96,7 @@ describe('transport.push', function () {
       const encryptMessage = sinon.stub().returns(encryptedMessage)
       const push = proxyquire( './../../src/transport/push.js', {
         'nets': nets,
-        './../crypto/index.js': { encryptMessage }
+        '../crypto.js': { encryptMessage }
       })
       const send = push.send('token', 'key')
       return send('request').then(res => {

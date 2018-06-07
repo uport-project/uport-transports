@@ -1,5 +1,5 @@
 import { paramsToQueryString } from './../message/util.js'
-import { randomString } from './../crypto/index.js'
+import { randomString } from '../crypto.js'
 import generalPoll from './poll.js'
 import nets from 'nets'
 const CHASQUI_URL = 'https://chasqui.uport.me/api/v1/topic/'

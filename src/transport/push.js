@@ -1,4 +1,4 @@
-import { encryptMessage } from './../crypto/index.js'
+import { encryptMessage } from '../crypto.js'
 import nets from 'nets'
 const PUTUTU_URL = 'https://api.uport.me/pututu/sns/'
 
