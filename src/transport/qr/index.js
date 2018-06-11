@@ -5,7 +5,6 @@ import { URIHandlerSend } from './../chasqui.js'
 const CHASQUI_URL = 'https://chasqui.uport.me/api/v1/topic/'
 const POLLING_INTERVAL = 2000
 
-// TODO use this func above, maybe offer some configs
 /**
   *  A QR tranpsort which uses our provide QR modal to relay a request to a uport client
   *
@@ -14,12 +13,11 @@ const POLLING_INTERVAL = 2000
   *  @return   {Function}             a function to close the QR modal
   */
 const send = (appName) => (uri, {cancel, introModal} = {}) => {
-  uri = /type=/.test(uri) ? uri : paramsToQueryString(uri, {type: 'post'})
+  uri = /callback_type=/.test(uri) ? uri : paramsToQueryString(uri, {callback_type: 'post'})
   open(uri, cancel, appName, introModal)
   return close
 }
 
-// TODO intro modal not passed here
 /**
   *  A QR Code and Chasqui Transport. The QR modal is configured for tranporting the request, while the
   *  response will be returned through Chasqui.
@@ -33,7 +31,7 @@ const send = (appName) => (uri, {cancel, introModal} = {}) => {
   */
 const chasquiSend = ({chasquiUrl = CHASQUI_URL, pollingInterval = POLLING_INTERVAL, appName } = {}) => {
   const transport = URIHandlerSend(send(appName), {chasquiUrl, pollingInterval})
-  return (uri) => transport(uri).then(res => {
+  return (uri, params) => transport(uri, params).then(res => {
     close()
     return res
   }, err => {
@@ -41,7 +39,6 @@ const chasquiSend = ({chasquiUrl = CHASQUI_URL, pollingInterval = POLLING_INTERV
     throw new Error(err)
   })
 }
-
 
 /**  @module uport-connect/util/qrdisplay
  *  @description
@@ -104,7 +101,6 @@ const close = () => {
   const uportWrapper = document.getElementById('uport-wrapper')
   document.body.removeChild(uportWrapper)
 }
-
 
 /**
  *  The first content you will see in the modal

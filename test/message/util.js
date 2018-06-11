@@ -4,6 +4,8 @@ var chai = require('chai');
 const expect = chai.expect
 chai.use(require('sinon-chai'))
 
+// TODO removed unsigned reqs and use new urls
+
 const unsignedRequest = `https://id.uport.me/me`
 const signedRequest = `https://id.uport.me/me?requestToken=eyJ0eXAiOiJK`
 const data = 'dataString'
@@ -71,7 +73,7 @@ describe('message.util', function () {
     })
 
     it('Adds query params to urls with existing params already', () => {
-      const url = util.paramsToQueryString(unsignedRequest + '?type=typeString', {callback_url: 'callback_urlString'})
+      const url = util.paramsToQueryString(`https://id.uport.me/req/eyJ0eXAiOiJKV1QiLCJhbGciOiJFUzI1NksifQ.eyJpYXQiOjE1Mjg0MDc4MTgsImV4cCI6MTUyODQwODQxOCwicmVxdWVzdGVkIjpbIm5hbWUiLCJwaG9uZSIsImNvdW50cnkiXSwicGVybWlzc2lvbnMiOlsibm90aWZpY2F0aW9ucyJdLCJjYWxsYmFjayI6Imh0dHBzOi8vY2hhc3F1aS51cG9ydC5tZS9hcGkvdjEvdG9waWMvQUhTMHhLckp5Z1M1TW9KQSIsInR5cGUiOiJzaGFyZVJlcSIsImlzcyI6ImRpZDp1cG9ydDoyb2VYdWZIR0RwVTUxYmZLQnNaRGR1N0plOXdlSjNyN3NWRyJ9.8Sl4gXED0f0cEssZYc5ClmBzfjHknY1sxB9FGVtOx_sOEg2JduRWxq6fWAB8UKe0IkRyO535or_ae-545sso2A?type=redirect`, {callback_url: 'callback_urlString'})
       expect(url).to.match(/&callback_url=callback_urlString/)
     })
 

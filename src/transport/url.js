@@ -1,17 +1,14 @@
 import { paramsToQueryString, paramsToUrlFragment } from './../message/util.js'
 import qs from 'qs'
 
-// TODO Could have separate func for signed payloads (below)
-// TODO id and data or one field here with two in connect
 // TODO callback_url and redirect or just one
-// TODO details docs or give reference to specs
 /**
   *  A mobile transport for handling and configuring requests which are sent from a mobile browser to a uport client, in this case the uPort mobile app.
   *
   *  @param    {Object}       [config={}]    an optional config object
   *  @param    {String}       uriHandler     a function called with the requestURI once it is formatted for this transport, default opens URI
   *  @return   {Function}                    a configured MobileTransport Function
-  *  @param    {String}       uri            a uport client request URI
+  *  @param    {String}       uri            a uport client request message
   *  @param    {Object}       [opts={}]      an optional config object
   *  @param    {String}       opts.id        an id string for a request, used to identify response once returned
   *  @param    {String}       opts.data      additional data specific to your application that you can later receive with the response
@@ -19,21 +16,18 @@ import qs from 'qs'
   *  @param    {String}       opts.callback  specifies url which a uport client will return to control once request is handled, depending on request type it may or may not be returned with the response as well.
   */
 const send = ({uriHandler}={}) => {
-  // TODO args below or above? extra details above
-  return (uri, {id, data, type, callback} = {}) => {
-  // what if has no protocol in passed in string
+  return (uri, {id, data, type, redirectUrl} = {}) => {
+  // what if has no protocol in passed in string, can probably go here
   // if( md.userAgent() === 'Chrome' && md.os() === 'iOS' ) {
   //    url = 'googlechrome:' + window.location.href.substring(window.location.protocol.length)
   //  } else {
   //    url = window.location.href
   //  }
-    if (type) uri = paramsToQueryString(uri, {type})
-    // Maybe move this logic (line) up a level to connect?
-    let cb = /requestToken/.test(uri) ? callback || null : callback || window.location.href
-    if (cb) {
-      if (data) cb = paramsToUrlFragment(cb, {data})
-      if (id) cb = paramsToUrlFragment(cb, {id})
-      uri = /requestToken/.test(uri) ? paramsToQueryString(uri, {'redirect_url': cb}) : paramsToQueryString(uri, {'callback_url': cb})
+    if (type) uri = paramsToQueryString(uri, {callback_type: type})
+    if (redirectUrl) {
+      if (data) redirectUrl = paramsToUrlFragment(redirectUrl, {data})
+      if (id) redirectUrl = paramsToUrlFragment(redirectUrl, {id})
+      if (redirectUrl) uri = paramsToQueryString(uri, {'redirect_url': redirectUrl})
     }
     uriHandler ? uriHandler(uri) : window.location.assign(uri)
   }
@@ -49,7 +43,10 @@ const getResponse = () => {
     const params = qs.parse(window.location.hash.slice(1))
     window.location.hash = ''
     if (params.error) return {error: params.error}
-    return {res: params['access_token'], data: params['data'],  id: params['id']}
+    const res = { data: params['data'],  id: params['id']}
+    if (params['access_token']) return Object.assign(res, {res: params['access_token']})
+    if (params['verification']) return Object.assign(res, {res: params['verification']})
+    return Object.assign(res, {res: null})
   }
   return null
 }

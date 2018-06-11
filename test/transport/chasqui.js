@@ -13,7 +13,7 @@ const ranStr = '4242'
 // Cleanup imports and redundancy
 
 describe('transport.chasqui', function () {
-
+  
   describe('URIHandlerSend()', function () {
     it('Requires a uriHandler', () => {
       expect(chasqui.URIHandlerSend).to.throw(/required/)

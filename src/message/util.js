@@ -21,11 +21,11 @@ const paramsToUrlFragment = (url, params = {} ) => {
   *  @return   {String}                     a url with valid params added as url query framents
   */
 const paramsToQueryString = (url, params = {} ) => {
-  const supported = ['value', 'function', 'bytecode', 'label', 'callback_url', 'redirect_url', 'client_id', 'network_id', 'gas', 'gasPrice', 'type']
+  const supported = ['value', 'function', 'bytecode', 'label', 'callback_url', 'redirect_url', 'client_id', 'network_id', 'gas', 'gasPrice', 'callback_type']
   return supported.filter(val => params[val])
                   .reduce((uri = url, val) => {
                       const split = uri.split('#')
-                      return `${split[0]}${/uport.me\/(me|(0x)?[0-9a-f]+|[0-9a-zA-Z]+)?\?/.test(split[0]) ? '&' : '?'}${val}=${encodeURIComponent(params[val])}${split[1]  ? '#' + split[1] : ''}`
+                      return `${split[0]}${/uport.me\/req\/([a-zA-Z0-9_=]+)\.([a-zA-Z0-9_=]+)\.([a-zA-Z0-9_\-\+\/=]*)?\?/.test(split[0]) ? '&' : '?'}${val}=${encodeURIComponent(params[val])}${split[1]  ? '#' + split[1] : ''}`
                   }, url)
                   .toString()
 }

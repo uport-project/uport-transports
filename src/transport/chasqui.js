@@ -23,12 +23,12 @@ const POLLING_INTERVAL = 2000
   */
 const URIHandlerSend = (uriHandler, {chasquiUrl = CHASQUI_URL, pollingInterval = POLLING_INTERVAL} = {}) => {
   if (!uriHandler) throw new Error('uriHandler function required')
-  return (uri) => {
+  return (uri, params) => {
     const callback = getCallback(uri)
     let isCancelled = false
     const cancel = () => { isCancelled = true }
-    uri = paramsToQueryString(uri, {'type': 'post'})
-    uriHandler(uri, { cancel })
+    uri = paramsToQueryString(uri, {'callback_type': 'post'})
+    uriHandler(uri, Object.assign(params, {cancel}))
     const returnVal = poll(callback, pollingInterval, () => isCancelled)
     returnVal.cancel = cancel
     return returnVal
