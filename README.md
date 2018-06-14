@@ -7,7 +7,7 @@
 
 [Introduction](#introduction) | [Quick Start](#quick-start) | [Modules](#modules) | [Development Guide](#development-guide)
 
-:bangbang: :warning: Transport modules rely on a spec change that is yet to be released in an external release of the mobile app. But it will be released soon and this message removed at that time. Until then, integrating the transport modules is not fully supported.
+:bangbang: :warning: Transport modules rely on a spec change that is yet to be released in the uPort mobile app. Until the new mobile app is released, integrating the transport modules is not fully supported. Once it is fully supported, we will remove this message.
 
 ## <a name="introduction"></a> Introduction
 
