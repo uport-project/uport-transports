@@ -6,7 +6,14 @@ export const ASYNC_ENC_ALGORITHM = 'x25519-xsalsa20-poly1305'
 const BLOCK_SIZE = 64
 
 function pad (message) {
-  return message.padEnd(Math.ceil(message.length / BLOCK_SIZE) * BLOCK_SIZE, '\0')
+  const paddedSize = Math.ceil(message.length / BLOCK_SIZE) * BLOCK_SIZE
+  // use `String.prototype.padEnd()` if available
+  if (typeof message.padEnd === 'function') return message.padEnd(paddedSize, '\0')
+  let padded = message
+  while (padded.length < paddedSize) {
+    padded += '\0'
+  }
+  return padded
 }
 
 function unpad (padded) {
