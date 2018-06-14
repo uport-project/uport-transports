@@ -1,12 +1,14 @@
-import { pad, unpad, encryptMessage, decryptMessage, randomString } from '../src/crypto.js'
+import { pad, unpad, encryptMessage, decryptMessage, randomString, decryptResponse } from '../src/crypto.js'
 import nacl from 'tweetnacl'
 import naclutil from 'tweetnacl-util'
 
 const sinon = require('sinon')
 const chai = require('chai');
+const chaiAsPromised = require("chai-as-promised");
 const expect = chai.expect
 
 chai.use(require('sinon-chai'))
+chai.use(chaiAsPromised);
 
 describe('pad', () => {
   it('pads correctly', () => {
@@ -54,10 +56,54 @@ describe('encryptMessage', () => {
 })
 
 describe('decryptMessage', () => {
-  it('encrypts correctly', () => {
+  it('decrypts correctly', () => {
     nacl.box.keyPair = () => KP
     nacl.randomBytes = () => naclutil.decodeBase64(nonce)
     expect(decryptMessage(VALID_ENCRYPTED_PAYLOAD, KP.secretKey)).to.equal(message)
+  })
+
+  it('fails with incorrect algorithm', () => {
+    nacl.box.keyPair = () => KP
+    nacl.randomBytes = () => naclutil.decodeBase64(nonce)
+    expect(() => decryptMessage({...VALID_ENCRYPTED_PAYLOAD, version: 'enigma-code'}, KP.secretKey)).to.throw('Unsupported encryption algorithm: enigma-code')
+  })
+
+  it('fails without secretKey', () => {
+    nacl.box.keyPair = () => KP
+    nacl.randomBytes = () => naclutil.decodeBase64(nonce)
+    expect(() => decryptMessage(VALID_ENCRYPTED_PAYLOAD)).to.throw('Encryption secret key has not been configured')
+  })
+
+  describe('validate payload', () => {
+    ['ciphertext', 'ephemPublicKey', 'nonce'].forEach(attr => {
+      it('fails with missing data', () => {
+        nacl.box.keyPair = () => KP
+        nacl.randomBytes = () => naclutil.decodeBase64(nonce)
+        const payload = {...VALID_ENCRYPTED_PAYLOAD}
+        delete payload[attr]
+        expect(() => decryptMessage(payload, KP.secretKey)).to.throw('Invalid encrypted message')
+      })    
+    })
+  })
+})
+
+describe('decryptResponse', () => {
+  it('decrypts correctly', (done) => {
+    nacl.box.keyPair = () => KP
+    nacl.randomBytes = () => naclutil.decodeBase64(nonce)
+    expect(decryptResponse(VALID_ENCRYPTED_PAYLOAD, KP.secretKey)).to.eventually.equal(message).notify(done)
+  })
+
+  it('fails with incorrect algorithm', (done) => {
+    nacl.box.keyPair = () => KP
+    nacl.randomBytes = () => naclutil.decodeBase64(nonce)
+    expect(decryptResponse({...VALID_ENCRYPTED_PAYLOAD, version: 'enigma-code'}, KP.secretKey)).to.be.rejectedWith('Unsupported encryption algorithm: enigma-code').notify(done)
+  })
+
+  it('fails without secretKey', (done) => {
+    nacl.box.keyPair = () => KP
+    nacl.randomBytes = () => naclutil.decodeBase64(nonce)
+    expect(decryptResponse(VALID_ENCRYPTED_PAYLOAD)).to.be.rejectedWith('Encryption secret key has not been configured').notify(done)
   })
 })
 
