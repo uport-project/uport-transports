@@ -49,7 +49,7 @@ describe('encryptMessage', () => {
   it('encrypts correctly', () => {
     nacl.box.keyPair = () => KP
     nacl.randomBytes = () => naclutil.decodeBase64(nonce)
-    expect(encryptMessage(message, boxPub)).to.equal(VALID_ENCRYPTED_PAYLOAD)
+    expect(encryptMessage(message, boxPub)).to.deep.equal(VALID_ENCRYPTED_PAYLOAD)
   })
 })
 
