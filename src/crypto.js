@@ -6,7 +6,7 @@ export const ASYNC_ENC_ALGORITHM = 'x25519-xsalsa20-poly1305'
 const BLOCK_SIZE = 64
 
 function pad (message) {
-  return message.padEnd(Math.ceil(message.length / 64) * BLOCK_SIZE, '\0')
+  return message.padEnd(Math.ceil(message.length / BLOCK_SIZE) * BLOCK_SIZE, '\0')
 }
 
 function unpad (padded) {
@@ -67,6 +67,7 @@ function decryptMessage ({version, ciphertext, nonce, ephemPublicKey}, secretKey
     naclutil.decodeBase64(nonce),
     naclutil.decodeBase64(ephemPublicKey),
     secretKey)
+  if (!decrypted) throw new Error('Could not decrypt message')
   return unpad(naclutil.encodeUTF8(decrypted))
 }
 
