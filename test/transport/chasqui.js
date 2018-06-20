@@ -5,7 +5,7 @@ const proxyquire = require('proxyquire')
 var chai = require('chai');
 const expect = chai.expect
 chai.use(require('sinon-chai'))
-let chasqui = require('./../../src/transport/chasqui.js')
+let chasqui = require('../../src/transport/chasqui.js')
 const CHASQUI_URL = 'https://chasqui.uport.me/api/v1/topic/'
 const ranStr = '4242'
 
@@ -31,7 +31,7 @@ describe('transport.chasqui', function () {
     before(() => {
       chasqui = proxyquire( './../../src/transport/chasqui.js', {
         './poll.js': {default: pollGeneral},
-        './../crypto/index.js': { randomString }
+        '../crypto.js': { randomString }
       })
       URIHandlerSend = chasqui.URIHandlerSend(uriHandler)
     });
