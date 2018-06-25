@@ -27,7 +27,7 @@ const send = ({uriHandler}={}) => {
     if (redirectUrl) {
       if (data) redirectUrl = paramsToUrlFragment(redirectUrl, {data})
       if (id) redirectUrl = paramsToUrlFragment(redirectUrl, {id})
-      if (redirectUrl) uri = paramsToQueryString(uri, {'redirect_url': redirectUrl})
+      uri = paramsToQueryString(uri, {'redirect_url': redirectUrl})
     }
     uriHandler ? uriHandler(uri) : window.location.assign(uri)
   }
@@ -42,11 +42,13 @@ const getResponse = () => {
   if (!!window.location.hash) { // TODO remove redundant
     const params = qs.parse(window.location.hash.slice(1))
     window.location.hash = ''
-    if (params.error) return {error: params.error}
-    const res = { data: params['data'],  id: params['id']}
-    if (params['access_token']) return Object.assign(res, {res: params['access_token']})
-    if (params['verification']) return Object.assign(res, {res: params['verification']})
-    return Object.assign(res, {res: null})
+    if (params.id) {
+      const payload = { data: params.data,  id: params.id}
+      if (params.error) return Object.assign(payload, {error: params.error, res: null})
+      if (params['access_token']) return Object.assign(payload, {res: params['access_token']})
+      if (params['verification']) return Object.assign(payload, {res: params['verification']})
+      return Object.assign(payload, {res: null})
+    }
   }
   return null
 }
@@ -59,8 +61,8 @@ const getResponse = () => {
   */
 const listenResponse = (cb) => {
   window.onhashchange = () => {
-    const res = getResponse()
-    if (res) res.error ?  cb(res.error, null) : cb(null, res)
+    const payload = getResponse()
+    if (payload) payload.error ?  cb(payload.error, payload) : cb(null, payload)
   }
 }
 
@@ -70,7 +72,7 @@ const listenResponse = (cb) => {
   *  @return   {Promise<Object, Error>}    a promise which resolves with a response object or rejects with an error.
   */
 const onResponse = () => new Promise((resolve, reject) => {
-  listenResponse((err, res) => { err ? reject(err) : resolve(res)})
+  listenResponse((err, res) => { err ? reject(res) : resolve(res)})
 })
 
 export { send,
