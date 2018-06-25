@@ -76,11 +76,11 @@ Only contains `encryptMessage()` at this time, which is used for push notificati
 
     - `uport.transport.push.send()`
 
-- ##### Chasqui
+- ##### Chasqui / Message server
 
-    - `uport.transport.chasqui.URIHandlerSend()`
-    - `uport.transport.chasqui.poll()`
-    - `uport.transport.chasqui.clearResponse()`
+    - `uport.transport.messageServer.URIHandlerSend()`
+    - `uport.transport.messageServer.poll()`
+    - `uport.transport.messageServer.clearResponse()`
 
 - ##### Poll
 

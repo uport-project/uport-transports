@@ -1,8 +1,7 @@
 import qrImage from 'qr-image'
 import SVG from './assets.js'
 import { paramsToQueryString, paramsToUrlFragment } from './../../message/util.js'
-import { URIHandlerSend } from './../chasqui.js'
-const CHASQUI_URL = 'https://chasqui.uport.me/api/v1/topic/'
+import { URIHandlerSend, CHASQUI_URL } from './../messageServer.js'
 const POLLING_INTERVAL = 2000
 
 /**
