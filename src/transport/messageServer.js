@@ -1,5 +1,6 @@
 import { paramsToQueryString, getUrlQueryParams, getURLJWT } from './../message/util.js'
 import { randomString } from '../crypto.js'
+import generalPoll from './poll.js'
 import { decodeJWT } from 'did-jwt'
 import nets from 'nets'
 const CHASQUI_URL = 'https://chasqui.uport.me/api/v1/'
@@ -25,7 +26,7 @@ const URIHandlerSend = (uriHandler, {messageServerUrl = CHASQUI_URL, pollingInte
   if (!uriHandler) throw new Error('uriHandler function required')
   return (uri, params = {}) => {
     const callback = getCallback(uri)
-    if (!isMessageServerCallback(messageServerUrl)) throw new Error('Not a request that can be handled by this configured messaging server transport')
+    if (!isMessageServerCallback(uri, messageServerUrl)) throw new Error('Not a request that can be handled by this configured messaging server transport')
     let isCancelled = false
     const cancel = () => { isCancelled = true }
     uri = paramsToQueryString(uri, {'callback_type': 'post'})
@@ -72,6 +73,7 @@ const formatMessageServerUrl = (url) => {
 const genCallback = (messageServerUrl = CHASQUI_URL) => `${formatMessageServerUrl(messageServerUrl)}${randomString(16)}`
 const isMessageServerCallback = (uri, messageServerUrl = CHASQUI_URL) => new RegExp(formatMessageServerUrl(messageServerUrl)).test(getCallback(uri))
 const getCallback = (uri) => decodeJWT(getURLJWT(uri)).payload.callback
+
 
 export { URIHandlerSend,
          poll,

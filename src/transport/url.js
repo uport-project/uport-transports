@@ -42,8 +42,9 @@ const getResponse = () => {
   if (!!window.location.hash) { // TODO remove redundant
     const params = qs.parse(window.location.hash.slice(1))
     window.location.hash = ''
+    // TODO this params id logic should be elsewhere
     if (params.id) {
-      const payload = { data: params.data,  id: params.id}
+      const payload = { data: params.data || null,  id: params.id}
       if (params.error) return Object.assign(payload, {error: params.error, res: null})
       if (params['access_token']) return Object.assign(payload, {res: params['access_token']})
       if (params['verification']) return Object.assign(payload, {res: params['verification']})

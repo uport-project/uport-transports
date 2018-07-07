@@ -1,5 +1,5 @@
 let push = require('./../../src/transport/push.js')
-const PUTUTU_URL = 'https://api.uport.me/pututu/sns/'
+const PUTUTU_URL = 'https://api.uport.me/pututu/sns'
 const sinon = require('sinon')
 const proxyquire = require('proxyquire')
 var chai = require('chai');
