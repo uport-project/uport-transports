@@ -4,8 +4,11 @@ var chai = require('chai');
 const expect = chai.expect
 chai.use(require('sinon-chai'))
 
-const unsignedRequest = `https://id.uport.me/me`
-const signedRequest = `https://id.uport.me/me?requestToken=eyJ0eXAiOiJK`
+// TODO removed unsigned reqs and use new urls
+
+// const unsignedRequest = `https://id.uport.me/me`
+const request = 'https://id.uport.me/req/eyJ0eXAiOiJKV1QiLCJhbGciOiJFUzI1NksifQ.eyJpYXQiOjE1Mjk5NTQxMjcsImV4cCI6MTUyOTk1NDcyNywicmVxdWVzdGVkIjpbIm5hbWUiLCJwaG9uZSIsImNvdW50cnkiXSwicGVybWlzc2lvbnMiOlsibm90aWZpY2F0aW9ucyJdLCJjYWxsYmFjayI6Imh0dHBzOi8vY2hhc3F1aS51cG9ydC5tZS9hcGkvdjEvdG9waWMvYVZLY0VkNWp6bm1Xc2xqMyIsInR5cGUiOiJzaGFyZVJlcSIsImlzcyI6ImRpZDp1cG9ydDoyb2VYdWZIR0RwVTUxYmZLQnNaRGR1N0plOXdlSjNyN3NWRyJ9.ISlUPHoqmGru_MfwjGzq1xxuTKeYIVr4V7g40HeUVsZ-j_gxOkJSzYsTd7AGpth-CwjaPmFLGXnyDG2aiE7NXA'
+// const signedRequest = `https://id.uport.me/me?requestToken=eyJ0eXAiOiJK`
 const data = 'dataString'
 const id = 'idString'
 const value = 'valueString'
@@ -17,34 +20,34 @@ const client_id = 'client_idString'
 const network_id = 'network_idString'
 const gas = 'gasString'
 const gasPrice = 'gasPriceString'
-const type = 'typeString'
+const callback_type = 'typeString'
 
 // TODO make sure properly appended
 describe('message.util', function () {
 
   describe('paramsToUrlFragment()', function () {
     it('Supports adding: data, id ', () => {
-      const url = util.paramsToUrlFragment(unsignedRequest, {data, id})
+      const url = util.paramsToUrlFragment(request, {data, id})
       expect(url).to.match(/data=dataString/)
       expect(url).to.match(/id=idString/)
     })
 
     it('Adds url fragment params to urls with existing fragment params already', () => {
-      const url = util.paramsToUrlFragment(unsignedRequest + '#id=idString', {data})
+      const url = util.paramsToUrlFragment(request + '#id=idString', {data})
       expect(url).to.match(/&data=dataString/)
     })
 
     it('Adds url fragment params to urls that already have url query params ', () => {
-      const url = util.paramsToUrlFragment(signedRequest, {data})
-      expect(url).to.match(/requestToken=eyJ0eXAiOiJK#data=dataString/)
+      const url = util.paramsToUrlFragment(request, {data})
+      expect(url).to.match(/#data=dataString/)
     })
   })
 
   describe('paramsToQueryString()', function () {
 
-    it('Supports adding: value, function, bytecode, label, callback_url, redirect_url, client_id, network_id, gas, gasPrice, type', () => {
+    it('Supports adding: value, function, bytecode, label, callback_url, redirect_url, client_id, network_id, gas, gasPrice, callback_type', () => {
       const url = util.paramsToQueryString(
-        unsignedRequest,
+        request,
         { value,
           function: 'functionString',
           bytecode,
@@ -55,7 +58,7 @@ describe('message.util', function () {
           network_id,
           gas,
           gasPrice,
-          type })
+          callback_type})
       expect(url).to.match(/\?value=valueString/)
       expect(url).to.match(/&function=functionString/)
       expect(url).to.match(/&bytecode=bytecodeString/)
@@ -66,22 +69,22 @@ describe('message.util', function () {
       expect(url).to.match(/&network_id=network_idString/)
       expect(url).to.match(/&gas=gasString/)
       expect(url).to.match(/&gasPrice=gasPriceString/)
-      expect(url).to.match(/&type=typeString/)
+      expect(url).to.match(/&callback_type=typeString/)
 
     })
 
     it('Adds query params to urls with existing params already', () => {
-      const url = util.paramsToQueryString(unsignedRequest + '?type=typeString', {callback_url: 'callback_urlString'})
+      const url = util.paramsToQueryString(request + '?callback_type=redirect', {callback_url: 'callback_urlString'})
       expect(url).to.match(/&callback_url=callback_urlString/)
     })
 
     it('Adds query params to urls that already have url fragments ', () => {
-      const url = util.paramsToQueryString(unsignedRequest + '#id=idString', {callback_url: 'callback_urlString'})
+      const url = util.paramsToQueryString(request + '#id=idString', {callback_url: 'callback_urlString'})
       expect(url).to.match(/\?callback_url=callback_urlString#id=idString/)
     })
 
     it('Adds query params to urls that already have url fragments and query params', () => {
-      const url = util.paramsToQueryString(signedRequest + '#id=idString', {callback_url: 'callback_urlString'})
+      const url = util.paramsToQueryString(request + '?callback_type=redirect#id=idString', {callback_url: 'callback_urlString'})
       expect(url).to.match(/&callback_url=callback_urlString#id=idString/)
     })
   })
