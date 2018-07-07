@@ -1,13 +1,13 @@
 // import { expect } from 'chai'
-// import * as chasqui from './../../src/transport/chasqui.js'
+// import * as chasqui from './../../src/transport/messageServer.js'
 const sinon = require('sinon')
 const proxyquire = require('proxyquire')
 var chai = require('chai');
 const expect = chai.expect
 chai.use(require('sinon-chai'))
-let chasqui = require('./../../src/transport/chasqui.js')
+let chasqui = require('./../../src/transport/messageServer.js')
 const CHASQUI_URL = 'https://chasqui.uport.me/api/v1/topic/'
-const ranStr = '4242'
+const ranStr = 'aVKcEd5jznmWslj3'
 
 // TODO stub nets everywhere
 // Cleanup imports and redundancy
@@ -25,26 +25,20 @@ describe('transport.chasqui', function () {
     const uriHandler = sinon.spy()
     const pollGeneral = sinon.stub().resolves('ResponseString')
     const randomString = sinon.stub().returns(ranStr)
-    const uri = 'me.uport:me'
+    const uri = 'https://id.uport.me/req/eyJ0eXAiOiJKV1QiLCJhbGciOiJFUzI1NksifQ.eyJpYXQiOjE1Mjk5NTQxMjcsImV4cCI6MTUyOTk1NDcyNywicmVxdWVzdGVkIjpbIm5hbWUiLCJwaG9uZSIsImNvdW50cnkiXSwicGVybWlzc2lvbnMiOlsibm90aWZpY2F0aW9ucyJdLCJjYWxsYmFjayI6Imh0dHBzOi8vY2hhc3F1aS51cG9ydC5tZS9hcGkvdjEvdG9waWMvYVZLY0VkNWp6bm1Xc2xqMyIsInR5cGUiOiJzaGFyZVJlcSIsImlzcyI6ImRpZDp1cG9ydDoyb2VYdWZIR0RwVTUxYmZLQnNaRGR1N0plOXdlSjNyN3NWRyJ9.ISlUPHoqmGru_MfwjGzq1xxuTKeYIVr4V7g40HeUVsZ-j_gxOkJSzYsTd7AGpth-CwjaPmFLGXnyDG2aiE7NXA'
     let URIHandlerSend
 
     before(() => {
-      chasqui = proxyquire( './../../src/transport/chasqui.js', {
+      chasqui = proxyquire( './../../src/transport/messageServer.js', {
         './poll.js': {default: pollGeneral},
-        './../crypto/index.js': { randomString }
+        '../crypto.js': { randomString }
       })
       URIHandlerSend = chasqui.URIHandlerSend(uriHandler)
     });
 
     it('Uses uPort chasqui as default messaging server', () => {
       return URIHandlerSend(uri).then(res => {
-        expect(uriHandler).to.have.been.calledWithMatch('chasqui.uport.me')
-      })
-    })
-
-    it('Adds messaging server url as callback url param with random string', () => {
-      return URIHandlerSend(uri).then(res => {
-        expect(uriHandler).to.have.been.calledWithMatch(`callback_url=${encodeURIComponent(CHASQUI_URL + ranStr)}`)
+        expect(uriHandler).to.have.been.calledWithMatch(uri)
       })
     })
 
@@ -70,7 +64,7 @@ describe('transport.chasqui', function () {
         expect(messageParse(res)).to.equal('token')
         return Promise.resolve('ResponseString')
       })
-      chasqui = proxyquire( './../../src/transport/chasqui.js', {
+      chasqui = proxyquire( './../../src/transport/messageServer.js', {
         './poll.js': {default: pollGeneral}
       })
       return chasqui.poll(CHASQUI_URL + ranStr)
@@ -81,7 +75,7 @@ describe('transport.chasqui', function () {
         expect(errorParse(resError)).to.equal('error')
         return Promise.resolve('ResponseString')
       })
-      chasqui = proxyquire( './../../src/transport/chasqui.js', {
+      chasqui = proxyquire( './../../src/transport/messageServer.js', {
         './poll.js': {default: pollGeneral}
       })
       return chasqui.poll(CHASQUI_URL + ranStr)
@@ -89,7 +83,7 @@ describe('transport.chasqui', function () {
 
     it('Clears response on chasqui once response received ', () => {
       const pollGeneral = sinon.stub().resolves('ResponseString')
-      chasqui = proxyquire( './../../src/transport/chasqui.js', {
+      chasqui = proxyquire( './../../src/transport/messageServer.js', {
         './poll.js': {default: pollGeneral}
       })
       return chasqui.poll(CHASQUI_URL + ranStr)
@@ -98,7 +92,7 @@ describe('transport.chasqui', function () {
 
     it('It resolves with response from polling if response', () => {
       const pollGeneral = sinon.stub().resolves('ResponseString')
-      chasqui = proxyquire( './../../src/transport/chasqui.js', {
+      chasqui = proxyquire( './../../src/transport/messageServer.js', {
         './poll.js': {default: pollGeneral}
       })
       return chasqui.poll(CHASQUI_URL + ranStr).then(res => {
@@ -108,7 +102,7 @@ describe('transport.chasqui', function () {
 
     it('It rejects with error from polling if error', () => {
       const pollGeneral = sinon.stub().rejects('Error')
-      chasqui = proxyquire( './../../src/transport/chasqui.js', {
+      chasqui = proxyquire( './../../src/transport/messageServer.js', {
         './poll.js': {default: pollGeneral}
       })
       return chasqui.poll(CHASQUI_URL + ranStr).then(res => {
@@ -125,7 +119,7 @@ describe('transport.chasqui', function () {
       const nets = sinon.stub().callsFake((obj, cb) => {
         expect(obj.method).to.equal('DELETE')
       })
-      chasqui = proxyquire( './../../src/transport/chasqui.js', {
+      chasqui = proxyquire( './../../src/transport/messageServer.js', {
         'nets': nets
       })
       return chasqui.clearResponse(CHASQUI_URL + ranStr)

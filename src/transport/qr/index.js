@@ -1,11 +1,9 @@
 import qrImage from 'qr-image'
 import SVG from './assets.js'
 import { paramsToQueryString, paramsToUrlFragment } from './../../message/util.js'
-import { URIHandlerSend } from './../chasqui.js'
-const CHASQUI_URL = 'https://chasqui.uport.me/api/v1/topic/'
+import { URIHandlerSend, CHASQUI_URL } from './../messageServer.js'
 const POLLING_INTERVAL = 2000
 
-// TODO use this func above, maybe offer some configs
 /**
   *  A QR tranpsort which uses our provide QR modal to relay a request to a uport client
   *
@@ -14,10 +12,10 @@ const POLLING_INTERVAL = 2000
   *  @return   {Function}             a function to close the QR modal
   */
 const send = (appName) => (uri, {cancel, introModal} = {}) => {
-  open(paramsToQueryString(uri, {'type': 'post'}), cancel, appName, introModal)
+  uri = /callback_type=/.test(uri) ? uri : paramsToQueryString(uri, {callback_type: 'post'})
+  open(uri, cancel, appName, introModal)
   return close
 }
-
 
 /**
   *  A QR Code and Chasqui Transport. The QR modal is configured for tranporting the request, while the
@@ -30,9 +28,9 @@ const send = (appName) => (uri, {cancel, introModal} = {}) => {
   *  @param    {String}       uri              a uport client request URI
   *  @return   {Promise<Object, Error>}        a function to close the QR modal
   */
-const chasquiSend = ({chasquiUrl = CHASQUI_URL, pollingInterval = POLLING_INTERVAL} = {}) => {
-  const transport = URIHandlerSend(send(), {chasquiUrl, pollingInterval})
-  return (uri) => transport(uri).then(res => {
+const chasquiSend = ({chasquiUrl = CHASQUI_URL, pollingInterval = POLLING_INTERVAL, appName } = {}) => {
+  const transport = URIHandlerSend(send(appName), {chasquiUrl, pollingInterval})
+  return (uri, params) => transport(uri, params).then(res => {
     close()
     return res
   }, err => {
@@ -40,7 +38,6 @@ const chasquiSend = ({chasquiUrl = CHASQUI_URL, pollingInterval = POLLING_INTERV
     throw new Error(err)
   })
 }
-
 
 /**  @module uport-connect/util/qrdisplay
  *  @description
@@ -80,6 +77,7 @@ const open = (data, cancel, appName, introModal) => {
 
   const cancelClick = (event) => {
     document.getElementById('uport-qr-text').innerHTML = 'Cancelling';
+    if (!cancel) close();
     cancel();
   }
 
@@ -102,7 +100,6 @@ const close = () => {
   const uportWrapper = document.getElementById('uport-wrapper')
   document.body.removeChild(uportWrapper)
 }
-
 
 /**
  *  The first content you will see in the modal

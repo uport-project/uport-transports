@@ -1,26 +1,34 @@
-import { encryptMessage } from './../crypto/index.js'
+import { encryptMessage } from '../crypto.js'
+import { paramsToQueryString } from './../message/util.js'
 import nets from 'nets'
-const PUTUTU_URL = 'https://pututu.uport.me/api/v2/sns'
+const PUTUTU_URL = 'https://api.uport.me/pututu/sns'
 
-// TODO still add redirect opt and type
 /**
-  *  Send a push notification to a user, consumes a token which allows you to send push notifications
-  *  and a url/uri request you want to send to the user.
+  *  A push notification transport for pushing requests to the uPort mobile client of a specific user
+  *  for which you have been given a valid push token.
   *
-  *  @param    {String}                  token              a push notification token (get a pn token by requesting push permissions in a request)
-  *  @param    {Object}                  payload            push notification payload
-  *  @param    {String}                  payload.url        a uport request url
-  *  @param    {String}                  payload.message    a message to display to the user
-  *  @param    {String}                  pubEncKey          the public encryption key of the receiver, encoded as a base64 string
-  *  @return   {Promise<Object, Error>}              a promise which resolves with successful status or rejects with an error
+  *  @param    {String}      token              a push notification token (get a pn token by requesting push permissions in a request)
+  *  @param    {String}      pubEncKey          the public encryption key of the receiver, encoded as a base64 string, found in a DID document
+  *  @param    {String}      [pushServiceUrl=PUTUTU_URL] the url of the push service, by default it is PUTUTU at https://api.uport.me/pututu/sns/
+  *  @return   {Function}                       a configured Push transport function
+  *  @param    {String}      url                a uport client request url
+  *  @param    {Object}      [opts={}]          an optional config object
+  *  @param    {String}      opts.message       a message to display to the user
+  *  @param    {String}      opts.type          specifies callback type 'post' or 'redirect' for response
+  *  @param    {String}      opts.callback      specifies url which a uport client will return to control once the request is handled, depending on request type it may or may not be returned with the response as well.
+  *  @return   {Promise<Object, Error>}         a promise which resolves with successful push notification status or rejects with an error
   */
 const send = (token, pubEncKey, pushServiceUrl = PUTUTU_URL) => {
   if (!token) throw new Error('Requires push notification token')
   if (!pubEncKey) throw new Error('Requires public encryption key of the receiver')
 
-  return (uri, {message}={}) => new Promise((resolve, reject) => {
-    if (!uri) return reject(new Error('Requires uri request for sending to users device'))
-    const plaintext = padMessage(JSON.stringify({uri, message}))
+  return (url, {message, type, redirectUrl}={}) => new Promise((resolve, reject) => {
+    if (!url) return reject(new Error('Requires url request for sending to users device'))
+    if (type) url = paramsToQueryString(url, {callback_type: type})
+    if (redirectUrl) url = paramsToQueryString(url, {'redirect_url': redirectUrl})
+    const reqObj = {url}
+    if (message) reqObj.message = message
+    const plaintext = padMessage(JSON.stringify(reqObj))
     const enc = encryptMessage(plaintext, pubEncKey)
     const payload = { message: JSON.stringify(enc) }
     nets({

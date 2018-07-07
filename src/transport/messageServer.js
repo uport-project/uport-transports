@@ -1,8 +1,9 @@
-import { paramsToQueryString } from './../message/util.js'
-import { randomString } from './../crypto/index.js'
+import { paramsToQueryString, getUrlQueryParams, getURLJWT } from './../message/util.js'
+import { randomString } from '../crypto.js'
 import generalPoll from './poll.js'
+import { decodeJWT } from 'did-jwt'
 import nets from 'nets'
-const CHASQUI_URL = 'https://chasqui.uport.me/api/v1/topic/'
+const CHASQUI_URL = 'https://chasqui.uport.me/api/v1/'
 const POLLING_INTERVAL = 2000
 
 // TODO can the name of URIHandler be changed
@@ -21,15 +22,16 @@ const POLLING_INTERVAL = 2000
   *  @param    {String}       uri                     a uport client request URI
   *  @return   {Promise<Object, Error>}               a function to close the QR modal
   */
-const URIHandlerSend = (uriHandler, {chasquiUrl = CHASQUI_URL, pollingInterval = POLLING_INTERVAL} = {}) => {
+const URIHandlerSend = (uriHandler, {messageServerUrl = CHASQUI_URL, pollingInterval = POLLING_INTERVAL} = {}) => {
   if (!uriHandler) throw new Error('uriHandler function required')
-  return (uri) => {
+  return (uri, params = {}) => {
+    const callback = getCallback(uri)
+    if (!isMessageServerCallback(uri, messageServerUrl)) throw new Error('Not a request that can be handled by this configured messaging server transport')
     let isCancelled = false
     const cancel = () => { isCancelled = true }
-    const cb = chasquiUrl + randomString(16)
-    uri = paramsToQueryString(uri, {'callback_url': cb, 'type': 'post'})
-    uriHandler(uri, { cancel })
-    const returnVal = poll(cb, pollingInterval, () => isCancelled)
+    uri = paramsToQueryString(uri, {'callback_type': 'post'})
+    uriHandler(uri, Object.assign(params, {cancel}))
+    const returnVal = poll(callback, pollingInterval, () => isCancelled)
     returnVal.cancel = cancel
     return returnVal
   }
@@ -44,7 +46,7 @@ const URIHandlerSend = (uriHandler, {chasquiUrl = CHASQUI_URL, pollingInterval =
   *  @return   {Promise<Object, Error>}                     a promise which resolves with obj/message or rejects with an error
   */
 const poll = (url, pollingInterval, cancelled ) => {
-  const messageParse = (res) => { if (res.message) return res.message['access_token'] }
+  const messageParse = (res) => { if (res.message) return res.message['access_token'] || res.message['tx'] }
   const errorParse = (res) => { if (res.message) return res.message.error }
   return generalPoll(url, messageParse, errorParse, cancelled, pollingInterval).then(res => {
     clearResponse(url)
@@ -62,6 +64,21 @@ const clearResponse = (url) => {
   }, function (err) { if (err) { throw err } /* Errors without this cb */ })
 }
 
+const formatMessageServerUrl = (url) => {
+  if (url.endsWith('/topic/')) return url
+  if (url.endsWith('/topic'))  return `${url}/`
+  if (url.endsWith('/'))       return `${url}topic/`
+  return `${url}/topic/`
+}
+const genCallback = (messageServerUrl = CHASQUI_URL) => `${formatMessageServerUrl(messageServerUrl)}${randomString(16)}`
+const isMessageServerCallback = (uri, messageServerUrl = CHASQUI_URL) => new RegExp(formatMessageServerUrl(messageServerUrl)).test(getCallback(uri))
+const getCallback = (uri) => decodeJWT(getURLJWT(uri)).payload.callback
+
+
 export { URIHandlerSend,
          poll,
-         clearResponse }
+         clearResponse,
+         genCallback,
+         isMessageServerCallback,
+         CHASQUI_URL
+       }
