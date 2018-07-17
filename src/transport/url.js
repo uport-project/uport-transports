@@ -39,19 +39,9 @@ const send = ({uriHandler}={}) => {
   *  @return   {Object}   A response object if repsonse is available, otherwise null.
   */
 const getResponse = () => {
-  if (!!window.location.hash) { // TODO remove redundant
-    const params = qs.parse(window.location.hash.slice(1))
-    window.location.hash = ''
-    // TODO this params id logic should be elsewhere
-    if (params.id) {
-      const payload = { data: params.data || null,  id: params.id}
-      if (params.error) return Object.assign(payload, {error: params.error, res: null})
-      if (params['access_token']) return Object.assign(payload, {res: params['access_token']})
-      if (params['verification']) return Object.assign(payload, {res: params['verification']})
-      return Object.assign(payload, {res: null})
-    }
-  }
-  return null
+  const res = window.location.hash.slice(1)
+  window.location.hash = ''
+  return parseResponse(res)
 }
 
 // TODO should there be a way to cancel
@@ -76,7 +66,25 @@ const onResponse = () => new Promise((resolve, reject) => {
   listenResponse((err, res) => { err ? reject(res) : resolve(res)})
 })
 
+/**
+  *  Parses response from full response url or hash param string
+  *
+  *  @return   {Object}     a response object
+  */
+const parseResponse = (url) => {
+  const params = qs.parse(url.split('#')[0])
+  if (params.id) {
+    const payload = { data: params.data || null,  id: params.id}
+    if (params.error) return Object.assign(payload, {error: params.error, res: null})
+    if (params['access_token']) return Object.assign(payload, {res: params['access_token']})
+    if (params['verification']) return Object.assign(payload, {res: params['verification']})
+    return Object.assign(payload, {res: null})
+  }
+  return null
+}
+
 export { send,
          getResponse,
          listenResponse,
-         onResponse }
+         onResponse,
+         parseResponse }
