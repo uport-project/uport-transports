@@ -9,11 +9,11 @@ const globalsPlugin = new webpack.DefinePlugin({
   'process.env': { 'NODE_ENV': JSON.stringify('development') }
 })
 
-let libraryName = 'uport-core'
+let libraryName = 'uport-transports'
 
 // Final Config
 module.exports = {
-  entry: {'uport-core': './src/index.js'},
+  entry: {'uport-transports': './src/index.js'},
   output: {
     filename: 'dist/[name].js',
     library: libraryName,

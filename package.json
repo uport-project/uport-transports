@@ -1,5 +1,5 @@
 {
-  "name": "uport-core",
+  "name": "uport-transports",
   "version": "0.0.45",
   "description": "",
   "main": "lib/index.js",

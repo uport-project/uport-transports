@@ -1,8 +1,8 @@
-# uPort Core JS
+# uPort Transports
 
 [![Join the chat at](https://img.shields.io/badge/Riot-Join%20chat-green.svg)](https://chat.uport.me/#/login)
-[![npm](https://img.shields.io/npm/dt/uport-core.svg)](https://www.npmjs.com/package/uport-core)
-[![npm](https://img.shields.io/npm/v/uport-core.svg)](https://www.npmjs.com/package/uport-core)
+[![npm](https://img.shields.io/npm/dt/uport-transports.svg)](https://www.npmjs.com/package/uport-transports)
+[![npm](https://img.shields.io/npm/v/uport-transports.svg)](https://www.npmjs.com/package/uport-transports)
 [![Twitter Follow](https://img.shields.io/twitter/follow/uport_me.svg?style=social&label=Follow)](https://twitter.com/uport_me)
 
 [Introduction](#introduction) | [Quick Start](#quick-start) | [Modules](#modules) | [Development Guide](#development-guide)
@@ -13,21 +13,21 @@
 
 For more information about uPort visit both [uport.me](https://www.uport.me) and the [developer docs site](http://developer.uport.me) for more information on our platform and other libraries.
 
-`uport-core` is a loosely coupled collection of functions and modules to use for building on and interacting with the uPort platform. If you are looking for quick start integration you will likely be better served by using both [uport-connect](https://github.com/uport-project/uport-connect) and [uport-js](https://github.com/uport-project/uport-js). But if you are looking for a deeper understanding or integration, customizing functionality for the other libraries or building your own libraries on the uPort platform, then you may want to use what is provided here. At this time `uport-core-js` mostly consists of `transports`, but may be home to other modules in the future.
+`uport-transports` is a loosely coupled collection of functions and modules to use for building on and interacting with the uPort platform. If you are looking for quick start integration you will likely be better served by using both [uport-connect](https://github.com/uport-project/uport-connect) and [uport-credentials](https://github.com/uport-project/uport-credentials). But if you are looking for a deeper understanding or integration, customizing functionality for the other libraries or building your own libraries on the uPort platform, then you may want to use what is provided here.
 
-For any questions or library support reach out to the [uPort team on Riot](https://chat.uport.me/#/login) or create a [Github issue](https://github.com/uport-project/uport-core-js/issues).
+For any questions or library support reach out to the [uPort team on Riot](https://chat.uport.me/#/login) or create a [Github issue](https://github.com/uport-project/uport-transports/issues).
 
 ### <a name="quick-start"></a> Quick Start
 
 Install through npm:
 
 ```shell
-npm install uport-core
+npm install uport-transports
 ```
 Import specific modules:
 
 ```javascript
-import { transport, message, crypto } from 'uport-core'
+import { transport, message, crypto } from 'uport-transports'
 ```
 
 ## <a name="modules"></a> Modules
@@ -131,7 +131,7 @@ To transpile to ES5. All files are output to `/lib`. The entry of our npm packag
 $ npm run build:es5
 ```
 
-To generate a bundle/distributable. We use webpack for our builds. The output dist is `/dist/uport-core.js` and source map `/dist/uport-core.map.js`
+To generate a bundle/distributable. We use webpack for our builds. The output dist is `/dist/uport-transports.js` and source map `/dist/uport-transports.map.js`
 
 ```shell
 $ npm run build:dist
