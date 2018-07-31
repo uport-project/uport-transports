@@ -1,8 +1,8 @@
 # uPort Transports
 
 [![Join the chat at](https://img.shields.io/badge/Riot-Join%20chat-green.svg)](https://chat.uport.me/#/login)
-[![npm](https://img.shields.io/npm/dt/uport-core.svg)](https://www.npmjs.com/package/uport-transports)
-[![npm](https://img.shields.io/npm/v/uport-core.svg)](https://www.npmjs.com/package/uport-transports)
+[![npm](https://img.shields.io/npm/dt/uport-transports.svg)](https://www.npmjs.com/package/uport-transports)
+[![npm](https://img.shields.io/npm/v/uport-transports.svg)](https://www.npmjs.com/package/uport-transports)
 [![Twitter Follow](https://img.shields.io/twitter/follow/uport_me.svg?style=social&label=Follow)](https://twitter.com/uport_me)
 
 [Introduction](#introduction) | [Quick Start](#quick-start) | [Modules](#modules) | [Development Guide](#development-guide)
