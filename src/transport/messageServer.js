@@ -1,5 +1,5 @@
 import { paramsToQueryString, getUrlQueryParams, getURLJWT } from './../message/util.js'
-import { randomString } from '../crypto.js'
+import { randomString } from './../crypto.js'
 import generalPoll from './poll.js'
 import { decodeJWT } from 'did-jwt'
 import nets from 'nets'
