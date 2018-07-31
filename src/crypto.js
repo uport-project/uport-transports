@@ -1,6 +1,6 @@
 import nacl from 'tweetnacl'
 import naclutil from 'tweetnacl-util'
-import base64url from "base64url"
+import base64url from 'base64url'
 
 export const ASYNC_ENC_ALGORITHM = 'x25519-xsalsa20-poly1305'
 const BLOCK_SIZE = 64
@@ -20,7 +20,6 @@ function unpad (padded) {
   return padded.replace(/\0+$/, '')
 }
 
-// TODO Move to some utils in transport or move out of transport entirely?
 /**
   *  Given a length, returns a random string of that length
   *
@@ -89,11 +88,13 @@ function decryptMessage ({version, ciphertext, nonce, ephemPublicKey}, secretKey
  *  @param      {String} secretKey The secret key as a Uint8Array
  *  @return   {Promise<Object, Error>}                     a promise which resolves with the decrypted message or rejects with an error
  */
-async function decryptResponse (response, secretKey) {
-  if (typeof response === 'object') {
-    return decryptMessage(response, secretKey)
-  }
-  return response
+function decryptResponse (response, secretKey) {
+  return new Promise((resolve, reject) => {
+    if (typeof response === 'object') {
+      resolve(decryptMessage(response, secretKey))
+    }
+    resolve(response)
+  })
 }
 
 export { randomString, encryptMessage, decryptMessage, decryptResponse, pad, unpad }
