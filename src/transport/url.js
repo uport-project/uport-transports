@@ -1,4 +1,4 @@
-import { paramsToQueryString, paramsToUrlFragment } from './../message/util.js'
+import { paramsToQueryString, paramsToUrlFragment, messageToURI } from './../message/util.js'
 import qs from 'qs'
 
 // TODO callback_url and redirect or just one
@@ -8,7 +8,7 @@ import qs from 'qs'
   *  @param    {Object}       [config={}]    an optional config object
   *  @param    {String}       uriHandler     a function called with the requestURI once it is formatted for this transport, default opens URI
   *  @return   {Function}                    a configured MobileTransport Function
-  *  @param    {String}       uri            a uport client request message
+  *  @param    {String}       message        a uport client request message
   *  @param    {Object}       [opts={}]      an optional config object
   *  @param    {String}       opts.id        an id string for a request, used to identify response once returned
   *  @param    {String}       opts.data      additional data specific to your application that you can later receive with the response
@@ -16,7 +16,8 @@ import qs from 'qs'
   *  @param    {String}       opts.callback  specifies url which a uport client will return to control once request is handled, depending on request type it may or may not be returned with the response as well.
   */
 const send = ({uriHandler}={}) => {
-  return (uri, {id, data, type, redirectUrl} = {}) => {
+  return (message, {id, data, type, redirectUrl} = {}) => {
+    let uri = messageToURI(message)
     if (type) uri = paramsToQueryString(uri, {callback_type: type})
     if (redirectUrl) {
       if (data) redirectUrl = paramsToUrlFragment(redirectUrl, {data})

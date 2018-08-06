@@ -65,11 +65,11 @@ const isJWT = (jwt) => /^([a-zA-Z0-9_=]+)\.([a-zA-Z0-9_=]+)\.([a-zA-Z0-9_\-\+\/=
 /**
   * Given token request (JWT), wraps in request URI
   *
-  *  @param    {String}       jwt           A JWT string
+  *  @param    {String}       message       A request message (JWT), or if given URI will just return
   *  @return   {Staring}                    A valid request URI, including the given request token
   */
-const tokenRequest = (jwt) =>  `https://id.uport.me/req/${jwt}`
+const messageToURI = (message) =>  message.match('id.uport.me') ?  message : `https://id.uport.me/req/${message}`
 
 
 
-export { paramsToUrlFragment, paramsToQueryString, getUrlQueryParams, getURLJWT, isJWT, tokenRequest }
+export { paramsToUrlFragment, paramsToQueryString, getUrlQueryParams, getURLJWT, isJWT, messageToURI }

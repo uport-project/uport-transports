@@ -25,6 +25,7 @@ describe('transport.chasqui', function () {
     const uriHandler = sinon.spy()
     const pollGeneral = sinon.stub().resolves('ResponseString')
     const randomString = sinon.stub().returns(ranStr)
+    const requestMessage = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJFUzI1NksifQ.eyJpYXQiOjE1Mjk5NTQxMjcsImV4cCI6MTUyOTk1NDcyNywicmVxdWVzdGVkIjpbIm5hbWUiLCJwaG9uZSIsImNvdW50cnkiXSwicGVybWlzc2lvbnMiOlsibm90aWZpY2F0aW9ucyJdLCJjYWxsYmFjayI6Imh0dHBzOi8vY2hhc3F1aS51cG9ydC5tZS9hcGkvdjEvdG9waWMvYVZLY0VkNWp6bm1Xc2xqMyIsInR5cGUiOiJzaGFyZVJlcSIsImlzcyI6ImRpZDp1cG9ydDoyb2VYdWZIR0RwVTUxYmZLQnNaRGR1N0plOXdlSjNyN3NWRyJ9.ISlUPHoqmGru_MfwjGzq1xxuTKeYIVr4V7g40HeUVsZ-j_gxOkJSzYsTd7AGpth-CwjaPmFLGXnyDG2aiE7NXA'
     const uri = 'https://id.uport.me/req/eyJ0eXAiOiJKV1QiLCJhbGciOiJFUzI1NksifQ.eyJpYXQiOjE1Mjk5NTQxMjcsImV4cCI6MTUyOTk1NDcyNywicmVxdWVzdGVkIjpbIm5hbWUiLCJwaG9uZSIsImNvdW50cnkiXSwicGVybWlzc2lvbnMiOlsibm90aWZpY2F0aW9ucyJdLCJjYWxsYmFjayI6Imh0dHBzOi8vY2hhc3F1aS51cG9ydC5tZS9hcGkvdjEvdG9waWMvYVZLY0VkNWp6bm1Xc2xqMyIsInR5cGUiOiJzaGFyZVJlcSIsImlzcyI6ImRpZDp1cG9ydDoyb2VYdWZIR0RwVTUxYmZLQnNaRGR1N0plOXdlSjNyN3NWRyJ9.ISlUPHoqmGru_MfwjGzq1xxuTKeYIVr4V7g40HeUVsZ-j_gxOkJSzYsTd7AGpth-CwjaPmFLGXnyDG2aiE7NXA'
     let URIHandlerSend
 
@@ -37,19 +38,19 @@ describe('transport.chasqui', function () {
     });
 
     it('Uses uPort chasqui as default messaging server', () => {
-      return URIHandlerSend(uri).then(res => {
+      return URIHandlerSend(requestMessage).then(res => {
         expect(uriHandler).to.have.been.calledWithMatch(uri)
       })
     })
 
     it('Adds "post" as type url param', () => {
-      return URIHandlerSend(uri).then(res => {
+      return URIHandlerSend(requestMessage).then(res => {
         expect(uriHandler).to.have.been.calledWithMatch(`type=post`)
       })
     })
 
     it('Polls messaging server at cb for a response', () => {
-      return URIHandlerSend(uri).then(res => {
+      return URIHandlerSend(requestMessage).then(res => {
         expect(pollGeneral).to.have.been.calledWith(CHASQUI_URL + ranStr)
       })
     })
