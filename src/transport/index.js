@@ -1,7 +1,7 @@
-import * as qr from './qr/index.js'
-import * as messageServer from './messageServer.js'
-import * as push from './push.js'
-import * as url from './url.js'
-import poll from './poll.js'
+import * as qr from './qr'
+import * as messageServer from './messageServer'
+import * as push from './push'
+import * as url from './url'
+import poll from './poll'
 
 export { qr, push, messageServer, poll, url }
