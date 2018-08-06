@@ -1,6 +1,9 @@
-import { encryptMessage } from '../crypto.js'
-import { paramsToQueryString, messageToURI } from './../message/util.js'
 import nets from 'nets'
+
+import { encryptMessage } from '../crypto'
+import { paramsToQueryString } from '../message/util'
+import { notifyPushSent } from './ui'
+
 const PUTUTU_URL = 'https://api.uport.me/pututu/sns'
 
 /**
@@ -17,7 +20,7 @@ const PUTUTU_URL = 'https://api.uport.me/pututu/sns'
   *  @param    {String}      opts.callback      specifies url which a uport client will return to control once the request is handled, depending on request type it may or may not be returned with the response as well.
   *  @return   {Promise<Object, Error>}         a promise which resolves with successful push notification status or rejects with an error
   */
-const send = (token, pubEncKey, pushServiceUrl = PUTUTU_URL) => {
+const sendSilent = (token, pubEncKey, pushServiceUrl = PUTUTU_URL) => {
   if (!token) throw new Error('Requires push notification token')
   if (!pubEncKey) throw new Error('Requires public encryption key of the receiver')
 
@@ -52,6 +55,16 @@ const send = (token, pubEncKey, pushServiceUrl = PUTUTU_URL) => {
 }
 
 /**
+ * The same transport as above, but also display a self-dismissing modal notifying
+ * the user that push notification has been sent to their device
+ * @see sendSilent
+ */
+const send = (token, pubEncKey, pushServiceUrl = PUTUTU_URL) => {
+  notifyPushSent()
+  return sendSilent(token, pubEncKey, pushServiceUrl)
+}
+
+/**
  *  Adds padding to a string
  *
  *  @param      {String}        the message to be padded
@@ -64,4 +77,4 @@ const padMessage = (message) => {
   return message + ' '.repeat(padLength)
 }
 
-export { send }
+export { send, sendSilent }
