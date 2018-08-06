@@ -17,12 +17,6 @@ import qs from 'qs'
   */
 const send = ({uriHandler}={}) => {
   return (uri, {id, data, type, redirectUrl} = {}) => {
-  // what if has no protocol in passed in string, can probably go here
-  // if( md.userAgent() === 'Chrome' && md.os() === 'iOS' ) {
-  //    url = 'googlechrome:' + window.location.href.substring(window.location.protocol.length)
-  //  } else {
-  //    url = window.location.href
-  //  }
     if (type) uri = paramsToQueryString(uri, {callback_type: type})
     if (redirectUrl) {
       if (data) redirectUrl = paramsToUrlFragment(redirectUrl, {data})
@@ -72,7 +66,7 @@ const onResponse = () => new Promise((resolve, reject) => {
   *  @return   {Object}     a response object
   */
 const parseResponse = (url) => {
-  const params = qs.parse(url.split('#')[0])
+  const params = qs.parse(url.split('#').pop())
   if (params.id) {
     const payload = { data: params.data || null,  id: params.id}
     if (params.error) return Object.assign(payload, {error: params.error, res: null})
