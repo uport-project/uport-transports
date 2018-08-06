@@ -1,107 +1,7 @@
-import qrImage from 'qr-image'
-import SVG from './assets.js'
-import { paramsToQueryString, paramsToUrlFragment, messageToURI } from './../../message/util.js'
-import { URIHandlerSend, CHASQUI_URL } from './../messageServer.js'
-const POLLING_INTERVAL = 2000
+import SVG from './assets'
 
-/**
-  *  A QR tranpsort which uses our provide QR modal to relay a request to a uport client
-  *
-  *  @param    {String}       appName  app name used in qr modal display
-  *  @return   {Function}              a configured QRTransport Function
-  *  @param    {String}       message  a uport client request message
-  *  @return   {Function}              a function to close the QR modal
-  */
-const send = (appName) => (message, {cancel, introModal} = {}) => {
-  let uri = messageToURI(message)
-  uri = /callback_type=/.test(uri) ? uri : paramsToQueryString(uri, {callback_type: 'post'})
-  open(uri, cancel, appName, introModal)
-  return close
-}
-
-/**
-  *  A QR Code and Chasqui Transport. The QR modal is configured for tranporting the request, while the
-  *  response will be returned through Chasqui.
-  *
-  *  @param    {Object}       [config={}]      an optional config object
-  *  @param    {String}       chasquiUrl       url of messaging server, defaults to Chasqui instance run by uPort
-  *  @param    {String}       pollingInterval  milisecond interval at which the messaging server will be polled for a response
-  *  @return   {Function}                      a configured QRTransport Function
-  *  @param    {String}       message          a uport client request message
-  *  @return   {Promise<Object, Error>}        a function to close the QR modal
-  */
-const chasquiSend = ({chasquiUrl = CHASQUI_URL, pollingInterval = POLLING_INTERVAL, appName } = {}) => {
-  const transport = URIHandlerSend(send(appName), {chasquiUrl, pollingInterval})
-  return (message, params) => transport(message, params).then(res => {
-    close()
-    return res
-  }, err => {
-    close()
-    throw new Error(err)
-  })
-}
-
-/**  @module uport-connect/util/qrdisplay
- *  @description
- *  A set of QR utility functions and default displays to use with Connect.
- */
-
-/**
- *  Given a string of data it returns a image URI which is a QR code. An image
- *  URI can be displayed in a img html tag by setting the src attrbiute to the
- *  the image URI.
- *
- *  @param    {String}     data      data string, typically a uPort URI
- *  @return   {String}               image URI
- */
-const getImageDataURI = (data) => {
-  let pngBuffer = qrImage.imageSync(data, {type: 'png'})
-  return 'data:image/png;charset=utf-8;base64, ' + pngBuffer.toString('base64')
-}
-
-/**
- *  A default QR pop over display, which injects the neccessary html
- *
- *  @param    {String}     data       data which is displayed in QR code
- *  @param    {Function}   cancel     a function called when the cancel button is clicked
- *  @param    {String}     appName    name of the users app
- *  @param    {Boolean}    introModal a flag for displaying the intro
- */
-const open = (data, cancel, appName, introModal) => {
-
-  let wrapper = document.createElement('div')
-  wrapper.setAttribute('id', 'uport-wrapper')
-
-  wrapper.innerHTML =
-    introModal
-      ? introModalTemplate(appName)
-      : modalTemplate({qrImageUri: getImageDataURI(data), cancel})
-
-  const cancelClick = (event) => {
-    document.getElementById('uport-qr-text').innerHTML = 'Cancelling';
-    if (!cancel) close();
-    cancel();
-  }
-
-  const uportTransition = (event) => {
-    wrapper.innerHTML = modalTemplate({qrImageUri: getImageDataURI(data), cancel})
-    document.getElementById('uport-qr-cancel').addEventListener('click', cancelClick)
-  }
-
-  document.body.appendChild(wrapper)
-  document.getElementById('uport-qr-cancel').addEventListener('click', cancelClick)
-  if (introModal) {
-    document.getElementById('uport-continue-btn').addEventListener('click', uportTransition)
-  }
-}
-
-/**
- *  Closes the default QR pop over
- */
-const close = () => {
-  const uportWrapper = document.getElementById('uport-wrapper')
-  document.body.removeChild(uportWrapper)
-}
+const apppleStoreLink = 'https://itunes.apple.com/us/app/uport-id/id1123434510?mt=8'
+const googleStoreLink = 'https://play.google.com/store/apps/details?id=com.uportMobile'
 
 /**
  *  The first content you will see in the modal
@@ -109,7 +9,7 @@ const close = () => {
  *  @param    {String}     appNamme  Name of users uPort App
  *  @return   {Object}     populated modal
  */
-const introModalTemplate = (appName) => {
+export const introModalTemplate = (appName) => {
   let content = `
     <div style="${uportModalIntroWrapper}">
       <div>
@@ -117,7 +17,7 @@ const introModalTemplate = (appName) => {
 
       if (appName && appName !== 'uport-connect-app')  {
         content +=  `
-              <span>Login Into</span>
+              <span>Login to</span>
               <span> </span>
               <span style="${uportAppName}">${appName}</span>`
       } else {
@@ -153,9 +53,9 @@ const introModalTemplate = (appName) => {
  *  @param    {Object}     args
  *  @param    {String}     args.qrImageUri    a image URI for the QR code
  */
-const modalTemplate = ({qrImageUri}) => uportModal(`
+export const modalTemplate = ({qrImageUri}) => uportModal(`
   <div>
-    <div style="${uportLogoWithBg}">${SVG.logowithBG}</div>
+    <div style="${uportLogoWithBg}">${SVG.logoWithBG}</div>
     <p id="uport-qr-text" style="${uportQRInstructions}">Scan QR code with uPort Mobile App</p>
     <img src="${qrImageUri}" style="${uportQRIMG}" />
   </div>
@@ -166,7 +66,7 @@ const modalTemplate = ({qrImageUri}) => uportModal(`
  *
  *  @param    {String}     innerHTML    content of modal
  */
-const uportModal = (innerHTML) => `
+export const uportModal = (innerHTML) => `
   <div id="uport-qr" style="${uportQRCSS}">
     <div style="${uportModalCSS}" class="animated fadeIn">
       <div style="${uportModalHeaderCSS}">
@@ -179,6 +79,17 @@ const uportModal = (innerHTML) => `
       </div>
     </div>
     ${animateCSS}
+  </div>
+`
+
+/**
+ * Modal content for
+ */
+export const pushNotificationModal = () => `
+  <div>
+    <p style="${uportQRTextWithAppName}">Check Your Device</p>
+    <img src="${SVG.push}" style="${uportQRCSS}"/>
+    <a href="#" id="push-not-received">Not Receiving the Request?</a>
   </div>
 `
 
@@ -385,17 +296,3 @@ const uportModalContinueBtn = `
   -o-transition: border-color 0.1s linear,background 0.1s linear,color 0.1s linear;
   -ms-transition: border-color 0.1s linear,background 0.1s linear,color 0.1s linear;
 `
-
-const apppleStoreLink = 'https://itunes.apple.com/us/app/uport-id/id1123434510?mt=8'
-const googleStoreLink = 'https://play.google.com/store/apps/details?id=com.uportMobile'
-
-/**
- *  export
- */
-
-export { send,
-         chasquiSend,
-         close,
-         open,
-         getImageDataURI,
-         modalTemplate }
