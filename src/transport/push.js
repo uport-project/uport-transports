@@ -13,7 +13,6 @@ const PUTUTU_URL = 'https://api.uport.me/pututu/sns'
   *  @return   {Function}                       a configured Push transport function
   *  @param    {String}      message            a uport client request message
   *  @param    {Object}      [opts={}]          an optional config object
-  *  @param    {String}      opts.message       a message to display to the user
   *  @param    {String}      opts.type          specifies callback type 'post' or 'redirect' for response
   *  @param    {String}      opts.callback      specifies url which a uport client will return to control once the request is handled, depending on request type it may or may not be returned with the response as well.
   *  @return   {Promise<Object, Error>}         a promise which resolves with successful push notification status or rejects with an error
@@ -22,14 +21,13 @@ const send = (token, pubEncKey, pushServiceUrl = PUTUTU_URL) => {
   if (!token) throw new Error('Requires push notification token')
   if (!pubEncKey) throw new Error('Requires public encryption key of the receiver')
 
-  return (reqMessage, {message, type, redirectUrl}={}) => new Promise((resolve, reject) => {
-    let url = messageToURI(reqMessage)
-    if (!url) return reject(new Error('Requires url request for sending to users device'))
-    if (type) url = paramsToQueryString(url, {callback_type: type})
-    if (redirectUrl) url = paramsToQueryString(url, {'redirect_url': redirectUrl})
-    const reqObj = {url}
-    if (message) reqObj.message = message
-    const plaintext = padMessage(JSON.stringify(reqObj))
+  return (message, { type, redirectUrl}={}) => new Promise((resolve, reject) => {
+    if (!message) return reject(new Error('Requires message request to send'))
+    // TODO will need following comments if mobile consumes these url params instead of just request message/token
+    // let url = messageToURI(reqMessage)
+    // if (type) url = paramsToQueryString(url, {callback_type: type})
+    // if (redirectUrl) url = paramsToQueryString(url, {'redirect_url': redirectUrl})
+    const plaintext = padMessage(message)
     const enc = encryptMessage(plaintext, pubEncKey)
     const payload = { message: JSON.stringify(enc) }
     nets({
