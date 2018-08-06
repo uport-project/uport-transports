@@ -4,8 +4,8 @@ var chai = require('chai');
 const expect = chai.expect
 chai.use(require('sinon-chai'))
 
-const unsignedRequest = `https://id.uport.me/me`
-const signedRequest = `https://id.uport.me/me?requestToken=eyJ0eXAiOiJK`
+const requestMessage = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJFUzI1NksifQ.eyJpYXQiOjE1Mjk5NTQxMjcsImV4cCI6MTUyOTk1NDcyNywicmVxdWVzdGVkIjpbIm5hbWUiLCJwaG9uZSIsImNvdW50cnkiXSwicGVybWlzc2lvbnMiOlsibm90aWZpY2F0aW9ucyJdLCJjYWxsYmFjayI6Imh0dHBzOi8vY2hhc3F1aS51cG9ydC5tZS9hcGkvdjEvdG9waWMvYVZLY0VkNWp6bm1Xc2xqMyIsInR5cGUiOiJzaGFyZVJlcSIsImlzcyI6ImRpZDp1cG9ydDoyb2VYdWZIR0RwVTUxYmZLQnNaRGR1N0plOXdlSjNyN3NWRyJ9.ISlUPHoqmGru_MfwjGzq1xxuTKeYIVr4V7g40HeUVsZ-j_gxOkJSzYsTd7AGpth-CwjaPmFLGXnyDG2aiE7NXA'
+
 const windowUrl = 'thiswindow.url'
 const res = 'eyJ0eXAiOiJK'
 
@@ -26,7 +26,7 @@ describe('transport.url', function () {
     it('Adds type to uri if given one', () => {
       const assign = sinon.spy()
       global.window = {location : {href: windowUrl, assign}}
-      send(signedRequest, {type: 'post'})
+      send(requestMessage, {type: 'post'})
       expect(assign).to.be.calledWithMatch('type=post')
     })
 
@@ -34,7 +34,7 @@ describe('transport.url', function () {
       const assign = sinon.spy()
       global.window = {location : {href: windowUrl, assign}}
       const redirectUrl = 'https://myserver.web'
-      send(signedRequest, {redirectUrl})
+      send(requestMessage, {redirectUrl})
       expect(assign).to.be.calledWithMatch(`redirect_url=${encodeURIComponent(redirectUrl)}`)
     })
 
@@ -42,7 +42,7 @@ describe('transport.url', function () {
       const assign = sinon.spy()
       global.window = {location : {href: windowUrl, assign}}
       const redirectUrl = 'https://myserver.web'
-      send(unsignedRequest, {id: 'idString', redirectUrl})
+      send(requestMessage, {id: 'idString', redirectUrl})
       expect(assign).to.be.calledWithMatch(encodeURIComponent('id=idString'))
     })
 
@@ -50,7 +50,7 @@ describe('transport.url', function () {
       const assign = sinon.spy()
       global.window = {location : {href: windowUrl, assign}}
       const redirectUrl = 'https://myserver.web'
-      send(unsignedRequest, {data: 'dataString', redirectUrl})
+      send(requestMessage, {data: 'dataString', redirectUrl})
       expect(assign).to.be.calledWithMatch(encodeURIComponent('data=dataString'))
     })
   })

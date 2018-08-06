@@ -1,4 +1,4 @@
-import { paramsToQueryString, getUrlQueryParams, getURLJWT } from './../message/util.js'
+import { paramsToQueryString, getUrlQueryParams, getURLJWT, messageToURI } from './../message/util.js'
 import { randomString } from './../crypto.js'
 import generalPoll from './poll.js'
 import { decodeJWT } from 'did-jwt'
@@ -19,12 +19,13 @@ const POLLING_INTERVAL = 2000
   *  @param    {String}       config.chasquiUrl       url of messaging server, defaults to Chasqui instance run by uPort
   *  @param    {String}       config.pollingInterval  milisecond interval at which the messaging server will be polled for a response
   *  @return   {Function}                             a configured QRTransport Function
-  *  @param    {String}       uri                     a uport client request URI
+  *  @param    {String}       message                 a uport client request message
   *  @return   {Promise<Object, Error>}               a function to close the QR modal
   */
 const URIHandlerSend = (uriHandler, {messageServerUrl = CHASQUI_URL, pollingInterval = POLLING_INTERVAL} = {}) => {
   if (!uriHandler) throw new Error('uriHandler function required')
-  return (uri, params = {}) => {
+  return (message, params = {}) => {
+    let uri = messageToURI(message)
     const callback = getCallback(uri)
     if (!isMessageServerCallback(uri, messageServerUrl)) throw new Error('Not a request that can be handled by this configured messaging server transport')
     let isCancelled = false

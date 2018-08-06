@@ -1,5 +1,5 @@
 import { encryptMessage } from '../crypto.js'
-import { paramsToQueryString } from './../message/util.js'
+import { paramsToQueryString, messageToURI } from './../message/util.js'
 import nets from 'nets'
 const PUTUTU_URL = 'https://api.uport.me/pututu/sns'
 
@@ -11,7 +11,7 @@ const PUTUTU_URL = 'https://api.uport.me/pututu/sns'
   *  @param    {String}      pubEncKey          the public encryption key of the receiver, encoded as a base64 string, found in a DID document
   *  @param    {String}      [pushServiceUrl=PUTUTU_URL] the url of the push service, by default it is PUTUTU at https://api.uport.me/pututu/sns/
   *  @return   {Function}                       a configured Push transport function
-  *  @param    {String}      url                a uport client request url
+  *  @param    {String}      message            a uport client request message
   *  @param    {Object}      [opts={}]          an optional config object
   *  @param    {String}      opts.message       a message to display to the user
   *  @param    {String}      opts.type          specifies callback type 'post' or 'redirect' for response
@@ -22,7 +22,8 @@ const send = (token, pubEncKey, pushServiceUrl = PUTUTU_URL) => {
   if (!token) throw new Error('Requires push notification token')
   if (!pubEncKey) throw new Error('Requires public encryption key of the receiver')
 
-  return (url, {message, type, redirectUrl}={}) => new Promise((resolve, reject) => {
+  return (reqMessage, {message, type, redirectUrl}={}) => new Promise((resolve, reject) => {
+    let url = messageToURI(reqMessage)
     if (!url) return reject(new Error('Requires url request for sending to users device'))
     if (type) url = paramsToQueryString(url, {callback_type: type})
     if (redirectUrl) url = paramsToQueryString(url, {'redirect_url': redirectUrl})
