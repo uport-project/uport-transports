@@ -24,6 +24,13 @@ module.exports = {
   module: {
     rules: [
       {
+        test: /\.(gif|png|jpe?g|svg)$/i,
+        loader: 'url-loader',
+        query: {
+          limit: 10000,
+        }
+      },
+      {
         test: /\.js$/,
         exclude: /(node_modules)/,
         loader: 'babel-loader',
