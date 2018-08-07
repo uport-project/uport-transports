@@ -27,7 +27,8 @@ const send = (token, pubEncKey, pushServiceUrl = PUTUTU_URL) => {
     // let url = messageToURI(reqMessage)
     // if (type) url = paramsToQueryString(url, {callback_type: type})
     // if (redirectUrl) url = paramsToQueryString(url, {'redirect_url': redirectUrl})
-    const plaintext = padMessage(message)
+    const reqObj = {message}
+    const plaintext = padMessage(JSON.stringify(reqObj))
     const enc = encryptMessage(plaintext, pubEncKey)
     const payload = { message: JSON.stringify(enc) }
     nets({
