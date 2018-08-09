@@ -1,6 +1,6 @@
 import qrImage from 'qr-image'
 
-import { modalTemplate, introModalTemplate, uportModal, pushNotificationModal } from './templates'
+import { loginModal, pushModal, successModal, failureModal } from './templates'
 
 /**  
  * @module uport-transports/transport/ui
@@ -30,15 +30,11 @@ const getImageDataURI = (data) => {
  *  @param    {String}     appName    name of the users app
  *  @param    {Boolean}    introModal a flag for displaying the intro
  */
-const open = (data, cancel, appName, introModal) => {
-
+const open = (data, cancel, appName) => {
   let wrapper = document.createElement('div')
   wrapper.setAttribute('id', 'uport-wrapper')
 
-  wrapper.innerHTML =
-    introModal
-      ? introModalTemplate(appName)
-      : modalTemplate({qrImageUri: getImageDataURI(data), cancel})
+  wrapper.innerHTML = loginModal({qrImageUri: getImageDataURI(data), cancel})
 
   const cancelClick = (event) => {
     document.getElementById('uport-qr-text').innerHTML = 'Cancelling';
@@ -46,16 +42,8 @@ const open = (data, cancel, appName, introModal) => {
     cancel();
   }
 
-  const uportTransition = (event) => {
-    wrapper.innerHTML = modalTemplate({qrImageUri: getImageDataURI(data), cancel})
-    document.getElementById('uport-qr-cancel').addEventListener('click', cancelClick)
-  }
-
   document.body.appendChild(wrapper)
   document.getElementById('uport-qr-cancel').addEventListener('click', cancelClick)
-  if (introModal) {
-    document.getElementById('uport-continue-btn').addEventListener('click', uportTransition)
-  }
 }
 
 /**
@@ -72,11 +60,11 @@ const close = () => {
 const notifyPushSent = () => {
   let wrapper = document.createElement('div')
   wrapper.setAttribute('id', 'uport-wrapper')
-  wrapper.innerHTML = uportModal(pushNotificationModal)
+  wrapper.innerHTML = pushModal
+
+  document.body.appendChild(wrapper)
 
   document.getElementById('uport-qr-cancel').addEventListener('click', close)
-  document.body.appendChild(wrapper)
-  setTimeout(close, 2000)
 }
 
 /**
