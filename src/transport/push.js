@@ -20,7 +20,7 @@ const PUTUTU_URL = 'https://api.uport.me/pututu/sns'
   *  @param    {String}      opts.callback      specifies url which a uport client will return to control once the request is handled, depending on request type it may or may not be returned with the response as well.
   *  @return   {Promise<Object, Error>}         a promise which resolves with successful push notification status or rejects with an error
   */
-const sendSilent = (token, pubEncKey, pushServiceUrl = PUTUTU_URL) => {
+const send = (token, pubEncKey, pushServiceUrl = PUTUTU_URL) => {
   if (!token) throw new Error('Requires push notification token')
   if (!pubEncKey) throw new Error('Requires public encryption key of the receiver')
 
@@ -57,11 +57,11 @@ const sendSilent = (token, pubEncKey, pushServiceUrl = PUTUTU_URL) => {
 /**
  * The same transport as above, but also display a self-dismissing modal notifying
  * the user that push notification has been sent to their device
- * @see sendSilent
+ * @see send
  */
-const send = (token, pubEncKey, pushServiceUrl = PUTUTU_URL) => {
+const sendAndNotify = (token, pubEncKey, pushServiceUrl = PUTUTU_URL) => {
   notifyPushSent()
-  return sendSilent(token, pubEncKey, pushServiceUrl)
+  return send(token, pubEncKey, pushServiceUrl)
 }
 
 /**
@@ -77,4 +77,4 @@ const padMessage = (message) => {
   return message + ' '.repeat(padLength)
 }
 
-export { send, sendSilent }
+export { send, sendAndNotify }
