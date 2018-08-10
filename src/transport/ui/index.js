@@ -69,9 +69,12 @@ const open = (data, cancel, appName) => {
 
 /**
  * Show a notification to the user that a push has been sent to their phone
+ * @param   {Function}    fallback    The fallback handler if the user doesn't receive a push
  */
-const notifyPushSent = () => makeModal(pushModal)
-
+const notifyPushSent = (fallback) => {
+  makeModal(pushModal)
+  document.getElementById('uport__push-not-received').addEventListener('click', () => {close(); fallback()})
+}
 
 /**
  * Show a success screen to the user which automatically dismisses

@@ -1,5 +1,7 @@
 import * as ui from '../src/transport/ui'
 
+const TOKEN = [,,,].join('a bunch of data for a qr')
+
 function createButton(text, clickHandler) {
   let button = document.createElement('button')
   button.innerHTML = text
@@ -8,11 +10,11 @@ function createButton(text, clickHandler) {
 }
 
 createButton('Push Modal', () => {
-  ui.notifyPushSent('abc', 'def')
+  ui.notifyPushSent(() => ui.open(TOKEN, undefined, 'Scan QR Code Instead:'))
 })
 
 createButton('QR modal', () => {
-  ui.open([,,,].join('a bunch of data for a qr'), ui.close, 'APP')
+  ui.open(TOKEN, ui.close, 'APP')
 })
 
 createButton('Success Modal', () => {
