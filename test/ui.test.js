@@ -1,6 +1,5 @@
 import * as ui from '../src/transport/ui'
 
-
 function createButton(text, clickHandler) {
   let button = document.createElement('button')
   button.innerHTML = text
@@ -13,7 +12,7 @@ createButton('Push Modal', () => {
 })
 
 createButton('QR modal', () => {
-  ui.open('a bunch of data for a qr', ui.close, 'APP')
+  ui.open([,,,].join('a bunch of data for a qr'), ui.close, 'APP')
 })
 
 createButton('Success Modal', () => {
@@ -21,5 +20,5 @@ createButton('Success Modal', () => {
 })
 
 createButton('Failure Modal', () => {
-  
+  ui.failure()
 })
