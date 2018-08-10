@@ -1,6 +1,6 @@
 import qrImage from 'qr-image'
 
-import { loginModal, pushModal, successModal, failureModal } from './templates'
+import { qrModal, pushModal, successModal, failureModal } from './templates'
 
 /**  
  * @module uport-transports/transport/ui
@@ -22,29 +22,6 @@ const getImageDataURI = (data) => {
   return 'data:image/png;charset=utf-8;base64, ' + pngBuffer.toString('base64')
 }
 
-/**
- *  A default QR pop over display, which injects the neccessary html
- *
- *  @param    {String}     data       data which is displayed in QR code
- *  @param    {Function}   cancel     a function called when the cancel button is clicked
- *  @param    {String}     appName    name of the users app
- *  @param    {Boolean}    introModal a flag for displaying the intro
- */
-const open = (data, cancel, appName) => {
-  let wrapper = document.createElement('div')
-  wrapper.setAttribute('id', 'uport-wrapper')
-
-  wrapper.innerHTML = loginModal({qrImageUri: getImageDataURI(data), cancel})
-
-  const cancelClick = (event) => {
-    document.getElementById('uport-qr-text').innerHTML = 'Cancelling';
-    if (!cancel) close();
-    cancel();
-  }
-
-  document.body.appendChild(wrapper)
-  document.getElementById('uport-qr-cancel').addEventListener('click', cancelClick)
-}
 
 /**
  *  Closes the default QR pop over
@@ -55,20 +32,68 @@ const close = () => {
 }
 
 /**
- * Show a notification to the user that a push has been sent to their phone
+ * A utility function for rendering a modal with particular content
+ *
+ * @param     {String}    content   html string defining the inside of the modal
+ * @param     {Function}  [close]   the handler to fire when the modal's x button is pressed
  */
-const notifyPushSent = () => {
+const makeModal = (content, closeModal = close) => {
   let wrapper = document.createElement('div')
   wrapper.setAttribute('id', 'uport-wrapper')
-  wrapper.innerHTML = pushModal
+
+  wrapper.innerHTML = content
 
   document.body.appendChild(wrapper)
+  document.getElementById('uport__modal-x').addEventListener('click', closeModal)
+}
 
-  document.getElementById('uport-qr-cancel').addEventListener('click', close)
+/**
+ *  A default QR pop over display, which injects the neccessary html
+ *
+ *  @param    {String}     data       data which is displayed in QR code
+ *  @param    {Function}   cancel     a function called when the cancel button is clicked
+ *  @param    {String}     appName    name of the users app
+ *  @param    {Boolean}    introModal a flag for displaying the intro
+ */
+const open = (data, cancel, appName) => {
+  const content = qrModal(getImageDataURI(data), appName)
+
+  const cancelClick = (event) => {
+    document.getElementById('uport__qr-text').innerHTML = 'Cancelling'
+    if (!cancel) close()
+    cancel()
+  }
+
+  makeModal(content, cancelClick)
+}
+
+/**
+ * Show a notification to the user that a push has been sent to their phone
+ */
+const notifyPushSent = () => makeModal(pushModal)
+
+
+/**
+ * Show a success screen to the user which automatically dismisses
+ * after 2 seconds
+ */
+const success = () => {
+  makeModal(successModal)
+  setTimeout(close, 2000)
+}
+
+/**
+ * Show a failure modal that gives users the option to repeat the failed action
+ * @param {Function}  resend  The function that should fire to allow the user to retry
+ */
+const failure = (retry) => {
+  makeModal(failureModal)
+
+  document.getElementById('uport__failure-retry').addEventListener('click', retry)
 }
 
 /**
  *  export
  */
 
-export { close, open, notifyPushSent }
+export { close, open, success, failure, notifyPushSent }
