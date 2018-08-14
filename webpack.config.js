@@ -25,10 +25,7 @@ module.exports = {
     rules: [
       {
         test: /\.(gif|png|jpe?g|svg)$/i,
-        loader: 'url-loader',
-        query: {
-          limit: 10000,
-        }
+        loader: 'url-loader'
       },
       {
         test: /\.js$/,
