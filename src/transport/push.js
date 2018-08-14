@@ -2,7 +2,7 @@ import nets from 'nets'
 
 import { encryptMessage } from '../crypto'
 import { paramsToQueryString } from '../message/util'
-import { notifyPushSent, open } from './ui'
+import { notifyPushSent, open, close, success } from './ui'
 
 const PUTUTU_URL = 'https://api.uport.me/pututu/sns'
 
@@ -62,7 +62,11 @@ const send = (token, pubEncKey, pushServiceUrl = PUTUTU_URL) => {
 const sendAndNotify = (token, pubEncKey, pushServiceUrl = PUTUTU_URL) => {
   const FALLBACK_MESSAGE = 'Scan QR Code Instead:'
   notifyPushSent(() => open(token, undefined, FALLBACK_MESSAGE))
-  return send(token, pubEncKey, pushServiceUrl)
+  return send(token, pubEncKey, pushServiceUrl).then((body) => {
+    // Close modal on success
+    close()
+    return body
+  }, err => err)
 }
 
 /**
