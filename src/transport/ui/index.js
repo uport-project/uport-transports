@@ -80,9 +80,9 @@ const notifyPushSent = (fallback) => {
  * Show a success screen to the user which automatically dismisses
  * after 2 seconds
  */
-const success = () => {
+const success = (timeout = 500) => {
   makeModal(successModal)
-  setTimeout(close, 2000)
+  setTimeout(close, timeout)
 }
 
 /**
