@@ -5,7 +5,8 @@
   "main": "lib/index.js",
   "scripts": {
     "build:dist": "./node_modules/.bin/webpack --config webpack.config.js",
-    "build:es5": "./node_modules/.bin/babel src -d lib",
+    "build:es5": "./node_modules/.bin/babel src -d lib --ignore assets && npm run build:ui",
+    "build:ui": "./node_modules/.bin/webpack --config webpack.ui.config.js",
     "build": "npm run build:es5 && npm run build:dist",
     "start": "webpack-dev-server --config webpack.config.dev.js --hot",
     "test": "./node_modules/.bin/mocha test/index.js",
