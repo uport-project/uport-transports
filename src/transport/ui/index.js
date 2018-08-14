@@ -56,12 +56,13 @@ const makeModal = (content, closeModal = close) => {
  *  @param    {Boolean}    introModal a flag for displaying the intro
  */
 const open = (data, cancel, appName) => {
+  const closeModal = close // closure over close for use in callbacks etc.
   const content = qrModal(getImageDataURI(data), appName)
 
   const cancelClick = (event) => {
     document.getElementById('uport__qr-text').innerHTML = 'Cancelling'
-    if (!cancel) close()
-    cancel()
+    if (cancel) cancel()
+    closeModal()
   }
 
   makeModal(content, cancelClick)
