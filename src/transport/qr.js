@@ -1,4 +1,4 @@
-import { open } from './ui'
+import { open, success, failure } from './ui'
 import { paramsToQueryString } from '../message/util'
 import { URIHandlerSend, CHASQUI_URL } from './messageServer'
 
@@ -31,7 +31,7 @@ export const send = (appName) => (uri, {cancel, introModal} = {}) => {
 export const chasquiSend = ({chasquiUrl = CHASQUI_URL, pollingInterval = POLLING_INTERVAL, appName } = {}) => {
   const transport = URIHandlerSend(send(appName), {chasquiUrl, pollingInterval})
   return (uri, params) => transport(uri, params).then(res => {
-    close()
+    success()
     return res
   }, err => {
     close()
