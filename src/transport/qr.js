@@ -1,19 +1,21 @@
 import { open, close, success, failure } from './ui'
-import { paramsToQueryString } from '../message/util'
+import { paramsToQueryString, messageToURI } from './../message/util.js'
 import { URIHandlerSend, CHASQUI_URL } from './messageServer'
 
 const POLLING_INTERVAL = 2000
 
 /**
-  *  A QR tranpsort which uses our provide QR modal to relay a request to a uport client
-  *
-  *  @return   {Function}             a configured QRTransport Function
-  *  @param    {String}       uri     a uport client request URI
-  *  @return   {Function}             a function to close the QR modal
-  */
-export const send = (appName) => (uri, {cancel, introModal} = {}) => {
+*  A QR tranpsort which uses our provide QR modal to relay a request to a uport client
+*
+*  @param    {String}       appName  app name used in qr modal display
+*  @return   {Function}              a configured QRTransport Function
+*  @param    {String}       message  a uport client request message
+*  @return   {Function}              a function to close the QR modal
+*/
+const send = (appName) => (message, {cancel} = {}) => {
+  let uri = messageToURI(message)
   uri = /callback_type=/.test(uri) ? uri : paramsToQueryString(uri, {callback_type: 'post'})
-  open(uri, cancel, appName, introModal)
+  open(uri, cancel, appName)
   return close
 }
 
@@ -25,12 +27,12 @@ export const send = (appName) => (uri, {cancel, introModal} = {}) => {
   *  @param    {String}       chasquiUrl       url of messaging server, defaults to Chasqui instance run by uPort
   *  @param    {String}       pollingInterval  milisecond interval at which the messaging server will be polled for a response
   *  @return   {Function}                      a configured QRTransport Function
-  *  @param    {String}       uri              a uport client request URI
+  *  @param    {String}       message          a uport client request message
   *  @return   {Promise<Object, Error>}        a function to close the QR modal
   */
-export const chasquiSend = ({chasquiUrl = CHASQUI_URL, pollingInterval = POLLING_INTERVAL, appName } = {}) => {
+const chasquiSend = ({chasquiUrl = CHASQUI_URL, pollingInterval = POLLING_INTERVAL, appName } = {}) => {
   const transport = URIHandlerSend(send(appName), {chasquiUrl, pollingInterval})
-  return (uri, params) => transport(uri, params).then(res => {
+  return (message, params) => transport(message, params).then(res => {
     close()
     return res
   }, err => {
@@ -38,3 +40,5 @@ export const chasquiSend = ({chasquiUrl = CHASQUI_URL, pollingInterval = POLLING
     throw new Error(err)
   })
 }
+
+export { chasquiSend, send }
