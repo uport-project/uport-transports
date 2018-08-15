@@ -1,6 +1,6 @@
 {
   "name": "uport-transports",
-  "version": "0.0.53",
+  "version": "0.0.58",
   "description": "",
   "main": "lib/index.js",
   "scripts": {
