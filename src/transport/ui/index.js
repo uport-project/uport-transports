@@ -52,12 +52,11 @@ const makeModal = (content, closeModal = close) => {
  *
  *  @param    {String}     data       data which is displayed in QR code
  *  @param    {Function}   cancel     a function called when the cancel button is clicked
- *  @param    {String}     appName    name of the users app
- *  @param    {Boolean}    introModal a flag for displaying the intro
+ *  @param    {String}     modalText  message to be displayed above the QR in the modal
  */
-const open = (data, cancel, appName) => {
+const open = (data, cancel, modalText) => {
   const closeModal = close // closure over close for use in callbacks etc.
-  const content = qrModal(getImageDataURI(data), appName)
+  const content = qrModal(getImageDataURI(data), modalText)
 
   const cancelClick = (event) => {
     document.getElementById('uport__qr-text').innerHTML = 'Cancelling'
