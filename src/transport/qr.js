@@ -7,15 +7,15 @@ const POLLING_INTERVAL = 2000
 /**
 *  A QR tranpsort which uses our provide QR modal to relay a request to a uport client
 *
-*  @param    {String}       appName  app name used in qr modal display
-*  @return   {Function}              a configured QRTransport Function
-*  @param    {String}       message  a uport client request message
-*  @return   {Function}              a function to close the QR modal
+*  @param    {String}       displayText   dialog used in qr modal display
+*  @return   {Function}                   a configured QRTransport Function
+*  @param    {String}       message       a uport client request message
+*  @return   {Function}                   a function to close the QR modal
 */
-const send = (appName) => (message, {cancel} = {}) => {
+const send = (displayText) => (message, {cancel} = {}) => {
   let uri = messageToURI(message)
   uri = /callback_type=/.test(uri) ? uri : paramsToQueryString(uri, {callback_type: 'post'})
-  open(uri, cancel, appName)
+  open(uri, cancel, displayText)
   return close
 }
 
@@ -30,8 +30,8 @@ const send = (appName) => (message, {cancel} = {}) => {
   *  @param    {String}       message          a uport client request message
   *  @return   {Promise<Object, Error>}        a function to close the QR modal
   */
-const chasquiSend = ({chasquiUrl = CHASQUI_URL, pollingInterval = POLLING_INTERVAL, appName } = {}) => {
-  const transport = URIHandlerSend(send(appName), {chasquiUrl, pollingInterval})
+const chasquiSend = ({ chasquiUrl = CHASQUI_URL, pollingInterval = POLLING_INTERVAL, displayText } = {}) => {
+  const transport = URIHandlerSend(send(displayText), {chasquiUrl, pollingInterval})
   return (message, params) => transport(message, params).then(res => {
     close()
     return res
