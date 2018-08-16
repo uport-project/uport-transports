@@ -64,7 +64,7 @@ const sendAndNotify = (token, pubEncKey, pushServiceUrl = PUTUTU_URL) => {
   const FALLBACK_MESSAGE = 'Scan QR Code Instead:'
   const sendPush = send(token, pubEncKey, pushServiceUrl)
   return (message, params) => {
-    notifyPushSent(() => sendQR(FALLBACK_MESSAGE)(token))
+    notifyPushSent(() => sendQR(FALLBACK_MESSAGE)(message))
     return sendPush(message, params)
   }
 }
