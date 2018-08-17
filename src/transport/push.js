@@ -1,7 +1,7 @@
 import nets from 'nets'
 
 import { encryptMessage } from '../crypto'
-import { paramsToQueryString } from '../message/util'
+import { paramsToQueryString, getURLJWT } from '../message/util'
 import { notifyPushSent } from './ui'
 import { send as sendQR } from './qr'
 
@@ -31,6 +31,7 @@ const send = (token, pubEncKey, pushServiceUrl = PUTUTU_URL) => {
     // let url = messageToURI(reqMessage)
     // if (type) url = paramsToQueryString(url, {callback_type: type})
     // if (redirectUrl) url = paramsToQueryString(url, {'redirect_url': redirectUrl})
+    message = getURLJWT(message)
     const reqObj = {message}
     const plaintext = padMessage(JSON.stringify(reqObj))
     const enc = encryptMessage(plaintext, pubEncKey)
