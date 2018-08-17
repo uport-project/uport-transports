@@ -1,6 +1,5 @@
 ---
 title: "Uport Transports"
-index: 5
 category: "guides"
 type: "content"
 ---
