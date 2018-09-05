@@ -16,16 +16,6 @@ a web browser and a uport user&#39;s mobile app</p>
 </dd>
 </dl>
 
-## Classes
-
-<dl>
-<dt><a href="#UportSubprovider">UportSubprovider</a></dt>
-<dd><p>A web3 style provider which can easily be wrapped with uPort functionality.
- Builds on a base provider. Used in Connect to wrap a provider with uPort specific
- functionality.</p>
-</dd>
-</dl>
-
 ## Constants
 
 <dl>
@@ -208,54 +198,6 @@ Show a failure modal that gives users the option to repeat the failed action
 | Param | Type | Description |
 | --- | --- | --- |
 | resend | <code>function</code> | The function that should fire to allow the user to retry |
-
-<a name="UportSubprovider"></a>
-
-## UportSubprovider
-A web3 style provider which can easily be wrapped with uPort functionality.
- Builds on a base provider. Used in Connect to wrap a provider with uPort specific
- functionality.
-
-**Kind**: global class  
-
-* [UportSubprovider](#UportSubprovider)
-    * [new UportSubprovider(args)](#new_UportSubprovider_new)
-    * [.send()](#UportSubprovider+send)
-    * [.sendAsync(payload, callback)](#UportSubprovider+sendAsync)
-
-<a name="new_UportSubprovider_new"></a>
-
-### new UportSubprovider(args)
-Instantiates a new wrapped provider
-
-
-| Param | Type | Description |
-| --- | --- | --- |
-| args | <code>Object</code> | required arguments |
-| args.requestAddress | <code>function</code> | function to get the address of a uPort identity. |
-| args.sendTransaction | <code>function</code> | function to handle passing transaction information to a uPort application |
-| args.provider | <code>Object</code> | a web3 sytle provider |
-
-<a name="UportSubprovider+send"></a>
-
-### uportSubprovider.send()
-Synchronous functionality not supported
-
-**Kind**: instance method of <code>[UportSubprovider](#UportSubprovider)</code>  
-<a name="UportSubprovider+sendAsync"></a>
-
-### uportSubprovider.sendAsync(payload, callback)
-Overrides sendAsync to caputure the following RPC calls eth_coinbase, eth_accounts,
- and eth_sendTransaction. All other calls are passed to the based provider.
- eth_coinbase, eth_accounts will get a uPort identity address with getAddress.
- While eth_sendTransaction with send transactions to a uPort app with sendTransaction
-
-**Kind**: instance method of <code>[UportSubprovider](#UportSubprovider)</code>  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| payload | <code>Any</code> | request payload |
-| callback | <code>function</code> | called with response or error |
 
 <a name="uportModal"></a>
 
