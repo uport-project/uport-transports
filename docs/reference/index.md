@@ -428,7 +428,7 @@ A promise which resolves once a response become available in the hash params (ur
 Parses response from full response url or hash param string
 
 **Kind**: global function  
-**Returns**: <code>Object</code> - a response object  
+**Returns**: <code>Object</code> - a response object of the form {id: ..., payload: ..., data: ...}  
 <a name="paramsToUrlFragment"></a>
 
 ## paramsToUrlFragment(url, [params]) ⇒ <code>String</code>
