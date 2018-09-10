@@ -64,17 +64,17 @@ const onResponse = () => new Promise((resolve, reject) => {
 /**
   *  Parses response from full response url or hash param string
   *
-  *  @return   {Object}     a response object
+  *  @return   {Object}     a response object of the form {id: ..., payload: ..., data: ...}
   */
 const parseResponse = (url) => {
   const params = qs.parse(url.split('#').pop())
   if (params.id) {
-    const payload = { data: params.data || null,  id: params.id}
-    if (params.error) return Object.assign(payload, {error: params.error, res: null})
-    if (params['access_token']) return Object.assign(payload, {res: params['access_token']})
-    if (params['verification']) return Object.assign(payload, {res: params['verification']})
-    if (params['tx'])           return Object.assign(payload, {res: params['tx']})
-    return Object.assign(payload, {res: null})
+    const response = { data: params.data || null,  id: params.id}
+    if (params.error) return Object.assign(response, {error: params.error, payload: null})
+    if (params['access_token']) return Object.assign(response, {payload: params['access_token']})
+    if (params['verification']) return Object.assign(response, {payload: params['verification']})
+    if (params['tx'])           return Object.assign(response, {payload: params['tx']})
+    return Object.assign(response, {payload: null})
   }
   return null
 }

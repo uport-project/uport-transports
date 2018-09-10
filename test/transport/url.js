@@ -74,12 +74,12 @@ describe('transport.url', function () {
 
     it('Returns error, gets error from url, if error', () => {
       global.window = {location : {hash: '?error=error&id=idString'}}
-      expect(url.getResponse()).to.deep.equal({error:'error', id: 'idString', res: null, data: null})
+      expect(url.getResponse()).to.deep.equal({error:'error', id: 'idString', payload: null, data: null})
     })
 
     it('Returns {res, data, id}, gets params from url, if successful response', () => {
       global.window = {location : {hash: `?access_token=${res}&id=idString&data=dataString`}}
-      expect(url.getResponse()).to.deep.equal({res, id: 'idString', data: 'dataString'})
+      expect(url.getResponse()).to.deep.equal({payload: res, id: 'idString', data: 'dataString'})
     })
   })
 
@@ -90,7 +90,7 @@ describe('transport.url', function () {
       const cb = sinon.spy()
       url.listenResponse(cb)
       window.onhashchange()
-      expect(cb).to.be.calledWith(null, { data: null, id: 'idString', res })
+      expect(cb).to.be.calledWith(null, { data: null, id: 'idString', payload: res })
     })
 
     it('Calls callback with error on url hash change with error', () => {
@@ -98,7 +98,7 @@ describe('transport.url', function () {
       const cb = sinon.spy()
       url.listenResponse(cb)
       window.onhashchange()
-      expect(cb).to.be.calledWith('error', {error: 'error', id: 'idString', data: null, res: null})
+      expect(cb).to.be.calledWith('error', {error: 'error', id: 'idString', data: null, payload: null})
     })
 
     it('Does not call callback if url hash change does not include a response', () => {
@@ -114,7 +114,7 @@ describe('transport.url', function () {
     it('Calls listenResponse and returns promise which resolves on successful response', (done) => {
       global.window = {location : {hash: `?access_token=${res}&id=idString`}, onhashchange: () => { throw new Error('expected listenResponse to set this function')}}
       url.onResponse().then(response => {
-        expect(response.res).to.equal(res)
+        expect(response.payload).to.equal(res)
         done()
       })
       window.onhashchange()
@@ -126,7 +126,7 @@ describe('transport.url', function () {
         throw new Error('transport.url.onReponse Promise resolved, expected it to reject')
         done()
       }, err => {
-        expect(err).to.deep.equal({ data: null, id: 'idString', error: 'error', res: null })
+        expect(err).to.deep.equal({ data: null, id: 'idString', error: 'error', payload: null })
         done()
       })
       window.onhashchange()
