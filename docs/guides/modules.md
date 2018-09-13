@@ -6,23 +6,23 @@ type: "content"
 
 ## <a name="transport-guide"></a> uPort Transports Guide
 
-`uport-transports` is a loosely coupled collection of functions called transports and utility functions used to set up communication channels between an application and a uPort client. Transports are simply functions that consume request messages and additional transport params, then they send these strings to a uPort client. Some the tranports will also manage receiving a response to a given request. Many of these function can be combined to create transports specific to your use case and enviroment. You can then use these transports in [uport-connect](https://github.com/uport-project/uport-connect) or use them in combination with message creation in [uport-credentials](https://github.com/uport-project/uport-credentials). If you are looking for quick start integration you will likely be better served by using the default tranports used in [uport-connect](https://github.com/uport-project/uport-connect).
+`uport-transports` is a loosely coupled collection of functions called transports used to set up communication channels between an application and a uPort client. A number of useful utility functions will also be found here. Transports are simply functions that consume request messages and additional transport params, then they send these request strings to a uPort client. Some tranports will also manage receiving a response to a given request. Many of these functions can be combined to create transports specific to your use case and enviroment. You can then use these transports in [uport-connect](https://github.com/uport-project/uport-connect) or use them in combination with message creation in [uport-credentials](https://github.com/uport-project/uport-credentials). If you are looking for a quick start integration you will likely be better served by using the default tranports  through [uport-connect](https://github.com/uport-project/uport-connect).
 
  At this time there are three primary transports for handling requests:
 
-- **QR Codes:** Messages are sent in a QR code to the mobile app client. You can use our default modal and flow here or configure your own QR codes. You can use our messaging server `Chasqui` to receive responses our have response returned to your own server.
+- **QR Codes:** Messages are sent in a QR code to the mobile app client. You can use our default modal and flow here or configure your own QR codes. You can use our messaging server `Chasqui` to receive responses or have responses returned to your own server.
 
-- **URL Passing:** When a uPort client and app are on the same mobile device, requests and responses can be passed through URLs. Messages are sent in a URL and request are returned in a URL which is parsed and returned.
+- **URL Passing:** When a uPort client and app are on the same mobile device, requests and responses can be passed through URLs. Messages are sent in a URL and requests are returned in a URL which is parsed and returned.
 
 - **Push Notifications:** Messages are encrypted and sent to a uPort client through a push notification, using a push notification service provided by uPort.
 
-There are two primary transports for handling response, otherwise you may just receive responses at a callback on your own server:
+There are two primary transports for handling responses, otherwise you may receive responses at a callback on your own server:
 
-- **URL Passing:** Response is passed through a URL and parsed. Helper functions for parsing and change listeners are provided.
+- **URL Passing:** Response is passed through a URL and parsed. Helper functions for parsing are provided, as well as different listeners to receive the response.
 
 - **Message Server:** Response is relayed and fetched through a message server. You can run your own message server or you can use Chasqui by default, a message server service provided by uPort.
 
-Beside the primary transports provided there is a number of smaller composable functions available to build your own transports for different needs. As we (and the community) build more transports for differing communication channels and differing uPort clients they can be added to `uport-transports`.
+Beside the primary transports provided, there is a number of smaller composable functions available to build your own transports for different needs. As we (and the community) build more transports for differing communication channels and differing uPort clients they can be added to `uport-transports`.
 
 ### <a name="quick-start"></a> Quick Start
 
@@ -76,7 +76,9 @@ const response = tranport.url.getResponse()
 
 Or listen for url response:
 ```javascript
-tranport.url.onResponse().then(response => {
+tranport.url.onResponse().then(res => {
+  const payload = res.payload
+  const id = res.id
   ...
 })
 ```

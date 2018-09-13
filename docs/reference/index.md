@@ -23,7 +23,7 @@ a web browser and a uport user&#39;s mobile app</p>
 <dd><p>Skeleton for a modal popup, styled with css imported from &#39;./style.css&#39;</p>
 </dd>
 <dt><a href="#qrModal">qrModal</a> ⇒ <code>Object</code></dt>
-<dd><p>Format a modal with a QR code and a custom message, as well as links to 
+<dd><p>Format a modal with a QR code and a custom message, as well as links to
 the uport mobile app on the app store and play store</p>
 </dd>
 <dt><a href="#pushModal">pushModal</a></dt>
@@ -53,10 +53,10 @@ sent to their phone</p>
  while the response will always be returned through Chasqui. Chasqui is a simple messaging server that
  allows responses to be relayed from a uport client to the original callee.</p>
 </dd>
-<dt><a href="#poll">poll(url, pollingInterval, cancelled)</a> ⇒ <code>Promise.&lt;Object, Error&gt;</code></dt>
+<dt><a href="#poll">poll(url, [pollingInterval], [cancelled])</a> ⇒ <code>Promise.&lt;Object, Error&gt;</code></dt>
 <dd><p>A polling function specifically for polling Chasqui.</p>
 </dd>
-<dt><a href="#poll">poll(url, messageParse, errorParse, pollingInterval, cancelled)</a> ⇒ <code>Promise.&lt;Object, Error&gt;</code></dt>
+<dt><a href="#poll">poll(url, messageParse, errorParse, [pollingInterval], [cancelled])</a> ⇒ <code>Promise.&lt;Object, Error&gt;</code></dt>
 <dd><p>A general polling function. Polls a given url and parse message according to given parsing functions, promise resolves on response or error.</p>
 </dd>
 <dt><a href="#send">send(token, pubEncKey, [pushServiceUrl], message, [opts])</a> ⇒ <code>function</code> | <code>Promise.&lt;Object, Error&gt;</code></dt>
@@ -67,10 +67,10 @@ sent to their phone</p>
 <dd><p>The same transport as above, but also display a self-dismissing modal notifying
 the user that push notification has been sent to their device</p>
 </dd>
-<dt><a href="#send">send(displayText, message)</a> ⇒ <code>function</code> | <code>function</code></dt>
-<dd><p>A QR tranpsort which uses our provide QR modal to relay a request to a uport client</p>
+<dt><a href="#send">send(displayText, message, [opt], [cancel])</a> ⇒ <code>function</code> | <code>function</code></dt>
+<dd><p>A QR tranpsort which uses our provided QR modal to relay a request to a uPort client</p>
 </dd>
-<dt><a href="#chasquiSend">chasquiSend([config], chasquiUrl, pollingInterval, message)</a> ⇒ <code>function</code> | <code>Promise.&lt;Object, Error&gt;</code></dt>
+<dt><a href="#chasquiSend">chasquiSend([config], message)</a> ⇒ <code>function</code> | <code>Promise.&lt;Object, Error&gt;</code></dt>
 <dd><p>A QR Code and Chasqui Transport. The QR modal is configured for tranporting the request, while the
  response will be returned through Chasqui.</p>
 </dd>
@@ -214,7 +214,7 @@ Skeleton for a modal popup, styled with css imported from './style.css'
 <a name="qrModal"></a>
 
 ## qrModal ⇒ <code>Object</code>
-Format a modal with a QR code and a custom message, as well as links to 
+Format a modal with a QR code and a custom message, as well as links to
 the uport mobile app on the app store and play store
 
 **Kind**: global constant  
@@ -223,7 +223,7 @@ the uport mobile app on the app store and play store
 | Param | Type | Description |
 | --- | --- | --- |
 | qrImageUri | <code>String</code> | data uri defining the QR code to be displayed |
-| modalText | <code>String</code> | message to be displayed above the QR code |
+| [modalText] | <code>String</code> | message to be displayed above the QR code |
 
 <a name="pushModal"></a>
 
@@ -288,13 +288,13 @@ A general Chasqui Transport. Allows you to configure the transport with any uriH
 | --- | --- | --- | --- |
 | uriHandler | <code>String</code> |  | a function called with the requestURI once it is formatted for this transport |
 | [config] | <code>Object</code> | <code>{}</code> | an optional config object |
-| config.chasquiUrl | <code>String</code> |  | url of messaging server, defaults to Chasqui instance run by uPort |
-| config.pollingInterval | <code>String</code> |  | milisecond interval at which the messaging server will be polled for a response |
-| message | <code>String</code> |  | a uport client request message |
+| [config.chasquiUrl] | <code>String</code> |  | url of messaging server, defaults to Chasqui instance run by uPort |
+| [config.pollingInterval] | <code>String</code> |  | milisecond interval at which the messaging server will be polled for a response |
+| message | <code>String</code> |  | a uPort client request message |
 
 <a name="poll"></a>
 
-## poll(url, pollingInterval, cancelled) ⇒ <code>Promise.&lt;Object, Error&gt;</code>
+## poll(url, [pollingInterval], [cancelled]) ⇒ <code>Promise.&lt;Object, Error&gt;</code>
 A polling function specifically for polling Chasqui.
 
 **Kind**: global function  
@@ -303,12 +303,12 @@ A polling function specifically for polling Chasqui.
 | Param | Type | Description |
 | --- | --- | --- |
 | url | <code>String</code> | a Chasqui url polled |
-| pollingInterval | <code>Integer</code> | ms interval at which the given url is polled |
-| cancelled | <code>function</code> | function which returns boolean, if returns true, polling stops |
+| [pollingInterval] | <code>Integer</code> | ms interval at which the given url is polled |
+| [cancelled] | <code>function</code> | function which returns boolean, if returns true, polling stops |
 
 <a name="poll"></a>
 
-## poll(url, messageParse, errorParse, pollingInterval, cancelled) ⇒ <code>Promise.&lt;Object, Error&gt;</code>
+## poll(url, messageParse, errorParse, [pollingInterval], [cancelled]) ⇒ <code>Promise.&lt;Object, Error&gt;</code>
 A general polling function. Polls a given url and parse message according to given parsing functions, promise resolves on response or error.
 
 **Kind**: global function  
@@ -319,8 +319,8 @@ A general polling function. Polls a given url and parse message according to giv
 | url | <code>String</code> | url polled |
 | messageParse | <code>function</code> | function that parses response from get request, also determines if response is available to decide to continue polling or not |
 | errorParse | <code>function</code> | function that parses response from get request and determines if error was returned. |
-| pollingInterval | <code>Integer</code> | ms interval at which the given url is polled |
-| cancelled | <code>function</code> | function which returns boolean, if returns true, polling stops |
+| [pollingInterval] | <code>Integer</code> | ms interval at which the given url is polled |
+| [cancelled] | <code>function</code> | function which returns boolean, if returns true, polling stops |
 
 <a name="send"></a>
 
@@ -339,7 +339,7 @@ A push notification transport for pushing requests to the uPort mobile client of
 | message | <code>String</code> |  | a uport client request message |
 | [opts] | <code>Object</code> | <code>{}</code> | an optional config object |
 | opts.type | <code>String</code> |  | specifies callback type 'post' or 'redirect' for response |
-| opts.callback | <code>String</code> |  | specifies url which a uport client will return to control once the request is handled, depending on request type it may or may not be returned with the response as well. |
+| opts.redirectUrl | <code>String</code> |  | specifies url which a uport client will return to control once the request is handled, depending on request type it may or may not be returned with the response as well. |
 
 <a name="sendAndNotify"></a>
 
@@ -351,20 +351,22 @@ the user that push notification has been sent to their device
 **See**: send  
 <a name="send"></a>
 
-## send(displayText, message) ⇒ <code>function</code> &#124; <code>function</code>
-A QR tranpsort which uses our provide QR modal to relay a request to a uport client
+## send(displayText, message, [opt], [cancel]) ⇒ <code>function</code> &#124; <code>function</code>
+A QR tranpsort which uses our provided QR modal to relay a request to a uPort client
 
 **Kind**: global function  
 **Returns**: <code>function</code> - a configured QRTransport Function<code>function</code> - a function to close the QR modal  
 
-| Param | Type | Description |
-| --- | --- | --- |
-| displayText | <code>String</code> | dialog used in qr modal display |
-| message | <code>String</code> | a uport client request message |
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| displayText | <code>String</code> |  | dialog used in qr modal display |
+| message | <code>String</code> |  | a uport client request message |
+| [opt] | <code>Object</code> | <code>{}</code> |  |
+| [cancel] | <code>function</code> |  | cancel callback, called on modal close |
 
 <a name="chasquiSend"></a>
 
-## chasquiSend([config], chasquiUrl, pollingInterval, message) ⇒ <code>function</code> &#124; <code>Promise.&lt;Object, Error&gt;</code>
+## chasquiSend([config], message) ⇒ <code>function</code> &#124; <code>Promise.&lt;Object, Error&gt;</code>
 A QR Code and Chasqui Transport. The QR modal is configured for tranporting the request, while the
  response will be returned through Chasqui.
 
@@ -374,9 +376,9 @@ A QR Code and Chasqui Transport. The QR modal is configured for tranporting the 
 | Param | Type | Default | Description |
 | --- | --- | --- | --- |
 | [config] | <code>Object</code> | <code>{}</code> | an optional config object |
-| chasquiUrl | <code>String</code> |  | url of messaging server, defaults to Chasqui instance run by uPort |
-| pollingInterval | <code>String</code> |  | milisecond interval at which the messaging server will be polled for a response |
-| message | <code>String</code> |  | a uport client request message |
+| [config.chasquiUrl] | <code>String</code> |  | url of messaging server, defaults to Chasqui instance run by uPort |
+| [config.pollingInterval] | <code>String</code> |  | milisecond interval at which the messaging server will be polled for a response |
+| message | <code>String</code> |  | a uPort client request message |
 
 <a name="send"></a>
 
@@ -501,4 +503,3 @@ Given token request (JWT), wraps in request URI
 | Param | Type | Description |
 | --- | --- | --- |
 | message | <code>String</code> | A request message (JWT), or if given URI will just return |
-

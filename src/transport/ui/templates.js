@@ -27,11 +27,11 @@ export const uportModal = (innerHTML) => `
 `
 
 /**
- * Format a modal with a QR code and a custom message, as well as links to 
+ * Format a modal with a QR code and a custom message, as well as links to
  * the uport mobile app on the app store and play store
  *
  *  @param    {String}    qrImageUri    data uri defining the QR code to be displayed
- *  @param    {String}    modalText     message to be displayed above the QR code
+ *  @param    {String}    [modalText]   message to be displayed above the QR code
  *  @return   {Object}    populated modal
  */
 export const qrModal = (qrImageUri, modalText = '') => uportModal(`

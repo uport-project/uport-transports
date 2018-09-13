@@ -7,8 +7,8 @@ const POLLING_INTERVAL = 2000
   *  @param    {String}                  url                url polled
   *  @param    {Function}                messageParse       function that parses response from get request, also determines if response is available to decide to continue polling or not
   *  @param    {Function}                errorParse         function that parses response from get request and determines if error was returned.
-  *  @param    {Integer}                 pollingInterval    ms interval at which the given url is polled
-  *  @param    {Function}                cancelled          function which returns boolean, if returns true, polling stops
+  *  @param    {Integer}                 [pollingInterval]  ms interval at which the given url is polled
+  *  @param    {Function}                [cancelled]        function which returns boolean, if returns true, polling stops
   *  @return   {Promise<Object, Error>}                     a promise which resolves with obj/message or rejects with an error
   */
 const poll = (url, messageParse, errorParse, cancelled = () => false, pollingInterval = POLLING_INTERVAL) => new Promise((resolve, reject) => {

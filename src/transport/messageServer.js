@@ -14,13 +14,13 @@ const POLLING_INTERVAL = 2000
   *  while the response will always be returned through Chasqui. Chasqui is a simple messaging server that
   *  allows responses to be relayed from a uport client to the original callee.
   *
-  *  @param    {String}       uriHandler              a function called with the requestURI once it is formatted for this transport
-  *  @param    {Object}       [config={}]             an optional config object
-  *  @param    {String}       config.chasquiUrl       url of messaging server, defaults to Chasqui instance run by uPort
-  *  @param    {String}       config.pollingInterval  milisecond interval at which the messaging server will be polled for a response
-  *  @return   {Function}                             a configured QRTransport Function
-  *  @param    {String}       message                 a uport client request message
-  *  @return   {Promise<Object, Error>}               a function to close the QR modal
+  *  @param    {String}       uriHandler               a function called with the requestURI once it is formatted for this transport
+  *  @param    {Object}       [config={}]              an optional config object
+  *  @param    {String}       [config.chasquiUrl]      url of messaging server, defaults to Chasqui instance run by uPort
+  *  @param    {String}       [config.pollingInterval] milisecond interval at which the messaging server will be polled for a response
+  *  @return   {Function}                              a configured QRTransport Function
+  *  @param    {String}       message                  a uPort client request message
+  *  @return   {Promise<Object, Error>}                a function to close the QR modal
   */
 const URIHandlerSend = (uriHandler, {messageServerUrl = CHASQUI_URL, pollingInterval = POLLING_INTERVAL} = {}) => {
   if (!uriHandler) throw new Error('uriHandler function required')
@@ -42,8 +42,8 @@ const URIHandlerSend = (uriHandler, {messageServerUrl = CHASQUI_URL, pollingInte
   *  A polling function specifically for polling Chasqui.
   *
   *  @param    {String}                  url                a Chasqui url polled
-  *  @param    {Integer}                 pollingInterval    ms interval at which the given url is polled
-  *  @param    {Function}                cancelled          function which returns boolean, if returns true, polling stops
+  *  @param    {Integer}                 [pollingInterval]  ms interval at which the given url is polled
+  *  @param    {Function}                [cancelled]        function which returns boolean, if returns true, polling stops
   *  @return   {Promise<Object, Error>}                     a promise which resolves with obj/message or rejects with an error
   */
 const poll = (url, pollingInterval, cancelled ) => {

@@ -18,7 +18,7 @@ const PUTUTU_URL = 'https://api.uport.me/pututu/sns'
   *  @param    {String}      message            a uport client request message
   *  @param    {Object}      [opts={}]          an optional config object
   *  @param    {String}      opts.type          specifies callback type 'post' or 'redirect' for response
-  *  @param    {String}      opts.callback      specifies url which a uport client will return to control once the request is handled, depending on request type it may or may not be returned with the response as well.
+  *  @param    {String}      opts.redirectUrl   specifies url which a uport client will return to control once the request is handled, depending on request type it may or may not be returned with the response as well.
   *  @return   {Promise<Object, Error>}         a promise which resolves with successful push notification status or rejects with an error
   */
 const send = (token, pubEncKey, pushServiceUrl = PUTUTU_URL) => {
@@ -73,8 +73,8 @@ const sendAndNotify = (token, pubEncKey, pushServiceUrl = PUTUTU_URL) => {
 /**
  *  Adds padding to a string
  *
- *  @param      {String}        the message to be padded
- *  @return     {String}        the padded message
+ *  @param      {String}   message    the message to be padded
+ *  @return     {String}              the padded message
  *  @private
  */
 const padMessage = (message) => {

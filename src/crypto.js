@@ -33,9 +33,9 @@ function randomString (length) {
 /**
  *  Encrypts a message
  *
- *  @param      {String}        the message to be encrypted
- *  @param      {String}        the public encryption key of the receiver, encoded as base64
- *  @return     {Object}        the encrypted message as an object containing a `version`, `nonce`, `ephemPublicKey` and `ciphertext`
+ *  @param      {String}   message    the message to be encrypted
+ *  @param      {String}   boxPub     the public encryption key of the receiver, encoded as base64
+ *  @return     {Object}              the encrypted message as an object containing a `version`, `nonce`, `ephemPublicKey` and `ciphertext`
  *  @private
  */
 function encryptMessage (message, boxPub) {
@@ -54,13 +54,13 @@ function encryptMessage (message, boxPub) {
 /**
  *  Decrypts a message
  *
- *  @param      {Object} encrypted The encrypted message object
- *  @param      {String} encrypted.version The string `x25519-xsalsa20-poly1305`
- *  @param      {String} encrypted.nonce Base64 encoded nonce
- *  @param      {String} encrypted.ephemPublicKey Base64 encoded ephemeral public key
- *  @param      {String} encrypted.ciphertext Base64 encoded ciphertext
- *  @param      {String} secretKey The secret key as a Uint8Array
- *  @return     {String}        The decrypted message
+ *  @param      {Object} encrypted                   The encrypted message object
+ *  @param      {String} encrypted.version           The string `x25519-xsalsa20-poly1305`
+ *  @param      {String} encrypted.nonce             Base64 encoded nonce
+ *  @param      {String} encrypted.ephemPublicKey    Base64 encoded ephemeral public key
+ *  @param      {String} encrypted.ciphertext        Base64 encoded ciphertext
+ *  @param      {String} secretKey                   The secret key as a Uint8Array
+ *  @return     {String}                             The decrypted message
  *  @private
  */
 
@@ -80,13 +80,13 @@ function decryptMessage ({version, ciphertext, nonce, ephemPublicKey}, secretKey
 /**
  *  Decrypts a response from a promise. This is intended to be used to wrap the response from Chasqui or other transport
  *
- *  @param      {Object} encrypted The encrypted message object
- *  @param      {String} encrypted.version The string `x25519-xsalsa20-poly1305`
- *  @param      {String} encrypted.nonce Base64 encoded nonce
- *  @param      {String} encrypted.ephemPublicKey Base64 encoded ephemeral public key
- *  @param      {String} encrypted.ciphertext Base64 encoded ciphertext
- *  @param      {String} secretKey The secret key as a Uint8Array
- *  @return   {Promise<Object, Error>}                     a promise which resolves with the decrypted message or rejects with an error
+ *  @param      {Object} encrypted                 The encrypted message object
+ *  @param      {String} encrypted.version         The string `x25519-xsalsa20-poly1305`
+ *  @param      {String} encrypted.nonce           Base64 encoded nonce
+ *  @param      {String} encrypted.ephemPublicKey  Base64 encoded ephemeral public key
+ *  @param      {String} encrypted.ciphertext      Base64 encoded ciphertext
+ *  @param      {String} secretKey                 The secret key as a Uint8Array
+ *  @return   {Promise<Object, Error>}             a promise which resolves with the decrypted message or rejects with an error
  */
 function decryptResponse (response, secretKey) {
   return new Promise((resolve, reject) => {
