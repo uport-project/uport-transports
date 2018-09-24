@@ -1,7 +1,9 @@
 ---
 title: "uPort Transports"
-category: "guides"
-type: "content"
+category: "uport-transports"
+type: "guide"
+index: 1
+source: source: "https://github.com/uport-project/uport-transports/new/develop/docs/index.md"
 ---
 
 ## <a name="transport-guide"></a> uPort Transports Guide

@@ -1,8 +1,9 @@
 ---
 title: "Uport Transports"
-index: 5
-category: "reference"
-type: "content"
+index: 10
+category: "uport-transports"
+type: "reference"
+source: "https://github.com/uport-project/uport-transports/blob/develop/docs/reference/index.md"
 ---
 
 
@@ -503,3 +504,4 @@ Given token request (JWT), wraps in request URI
 | Param | Type | Description |
 | --- | --- | --- |
 | message | <code>String</code> | A request message (JWT), or if given URI will just return |
+

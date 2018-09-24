@@ -2,8 +2,8 @@
 title: "uPort Transports Landing page"
 index: 0
 category: "uport-transports"
-type: "landingPage"
-source: "https://github.com/uport-project/uport-transports/new/develop/docs/landingPage.md"
+type: "landing"
+source: "https://github.com/uport-project/uport-transports/blob/develop/docs/index.md"
 ---
 
 
