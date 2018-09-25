@@ -1,14 +1,12 @@
 ---
-title: "uPort Transports Landing page"
+title: "Uport Transports"
 index: 0
 category: "uport-transports"
 type: "landing"
 source: "https://github.com/uport-project/uport-transports/blob/develop/docs/index.md"
 ---
 
-
-uPort Transports
-================
+# uPort Transports
 
 ### Connect Users to a uPort Client
 

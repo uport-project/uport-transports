@@ -1,12 +1,10 @@
 ---
-title: "Uport Transports"
+title: "Library Reference"
 index: 10
 category: "uport-transports"
 type: "reference"
 source: "https://github.com/uport-project/uport-transports/blob/develop/docs/reference/index.md"
 ---
-
-
 
 ## Modules
 
