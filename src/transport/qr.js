@@ -1,6 +1,8 @@
+import nets from 'nets'
+
 import { open, close, success, failure } from './ui'
 import { paramsToQueryString, messageToURI } from './../message/util.js'
-import { URIHandlerSend, CHASQUI_URL } from './messageServer'
+import { URIHandlerSend, CHASQUI_URL, genCallback } from './messageServer'
 
 const POLLING_INTERVAL = 2000
 
@@ -14,11 +16,34 @@ const POLLING_INTERVAL = 2000
 *  @param    {Function}     [cancel]      cancel callback, called on modal close
 *  @return   {Function}                   a function to close the QR modal
 */
-const send = (displayText) => (message, {cancel} = {}) => {
-  let uri = messageToURI(message)
+const send = (displayText) => (message, {cancel, compress} = {}) => {
+  let uri = compress ? messageToURI(compress(message)) : messageToURI(message)
   uri = /callback_type=/.test(uri) ? uri : paramsToQueryString(uri, {callback_type: 'post'})
   open(uri, cancel, displayText)
   return close
+}
+
+/**
+ * A utility function for reducing the size of a QR code by uploading it to chasqui and
+ * replacing the contents with the topic url
+ * @param   {String}  message     the request JWT
+ * @param   {Number}  threshold   the smallest size (in string length) to compress
+ * @returns {String}  the chasqui url of the message, or the original message if less than threshold 
+ */
+const chasquiCompress = (message, threshold) => {
+  if (message.length < threshold) return message
+
+  // TODO: Allow chasqui post to create a topicId
+  const topicURL = genCallback()
+  nets({
+    uri: topicURL,
+    method: 'POST',
+    body: message,
+  }, function (err) { 
+    if (err) { throw err } 
+  })
+
+  return topicURL
 }
 
 /**
@@ -33,7 +58,7 @@ const send = (displayText) => (message, {cancel} = {}) => {
   *  @return   {Promise<Object, Error>}                 a function to close the QR modal
   */
 const chasquiSend = ({ chasquiUrl = CHASQUI_URL, pollingInterval = POLLING_INTERVAL, displayText } = {}) => {
-  const transport = URIHandlerSend(send(displayText), {chasquiUrl, pollingInterval})
+  const transport = URIHandlerSend(send(displayText, {compress: chasquiCompress}), {chasquiUrl, pollingInterval})
   return (message, params) => transport(message, params).then(res => {
     close()
     return res
