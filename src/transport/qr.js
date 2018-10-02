@@ -7,15 +7,15 @@ import { URIHandlerSend, CHASQUI_URL, genCallback } from './messageServer'
 const POLLING_INTERVAL = 2000
 
 /**
-*  A QR tranpsort which uses our provided QR modal to relay a request to a uPort client
-*
-*  @param    {String}       displayText   dialog used in qr modal display
-*  @return   {Function}                   a configured QRTransport Function
-*  @param    {String}       message       a uport client request message
-*  @param    {Object}       [opt={}]
-*  @param    {Function}     [cancel]      cancel callback, called on modal close
-*  @return   {Function}                   a function to close the QR modal
-*/
+ *  A QR tranpsort which uses our provided QR modal to relay a request to a uPort client
+ *
+ *  @param    {String}       displayText   dialog used in qr modal display
+ *  @return   {Function}                   a configured QRTransport Function
+ *  @param    {String}       message       a uport client request message
+ *  @param    {Object}       [opt={}]
+ *  @param    {Function}     [cancel]      cancel callback, called on modal close
+ *  @return   {Function}                   a function to close the QR modal
+ */
 const send = (displayText) => (message, {cancel, compress} = {}) => {
   let uri = compress ? messageToURI(compress(message)) : messageToURI(message)
   uri = /callback_type=/.test(uri) ? uri : paramsToQueryString(uri, {callback_type: 'post'})
@@ -25,12 +25,17 @@ const send = (displayText) => (message, {cancel, compress} = {}) => {
 
 /**
  * A utility function for reducing the size of a QR code by uploading it to chasqui and
- * replacing the contents with the topic url
+ * replacing the contents with the topic url.
+ * 
+ * An empty Verification JWT (i.e. with signature and sub/iss but blank claim) is ~250 characters
+ * The absolute max that can fit in a scanable QR on the screen is ~1500 characters
+ * Below 650 characters the QR modal fits perfectly in the browser on a 13" MBP
+ *
  * @param   {String}  message     the request JWT
  * @param   {Number}  threshold   the smallest size (in string length) to compress
  * @returns {String}  the chasqui url of the message, or the original message if less than threshold 
  */
-const chasquiCompress = (message, threshold) => {
+const chasquiCompress = (message, threshold=650) => {
   if (message.length < threshold) return message
 
   // TODO: Allow chasqui post to create a topicId
@@ -38,12 +43,15 @@ const chasquiCompress = (message, threshold) => {
   nets({
     uri: topicURL,
     method: 'POST',
-    body: message,
+    body: {'access_token': message},
+    headers: {
+      'content-type': 'application/json'
+    }
   }, function (err) { 
     if (err) { throw err } 
   })
 
-  return topicURL
+  return encodeURI(topicURL)
 }
 
 /**
@@ -68,4 +76,4 @@ const chasquiSend = ({ chasquiUrl = CHASQUI_URL, pollingInterval = POLLING_INTER
   })
 }
 
-export { chasquiSend, send }
+export { chasquiSend, chasquiCompress, send }
