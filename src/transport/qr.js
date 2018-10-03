@@ -11,15 +11,29 @@ const POLLING_INTERVAL = 2000
  *
  *  @param    {String}       displayText   dialog used in qr modal display
  *  @return   {Function}                   a configured QRTransport Function
- *  @param    {String}       message       a uport client request message
- *  @param    {Object}       [opt={}]
- *  @param    {Function}     [cancel]      cancel callback, called on modal close
- *  @return   {Function}                   a function to close the QR modal
+ *    @param    {String}       message            a uport client request message
+ *    @param    {Object}       [opts={}]
+ *    @param    {Function}     [opts.cancel]      cancel callback, called on modal close
+ *    @param    {Function}     [opts.compress]    a function to compress a JWT, returning a promise that resolves to a string 
+ *    @return   {Function}                        a function to close the QR modal
  */
 const send = (displayText) => (message, {cancel, compress} = {}) => {
-  let uri = compress ? messageToURI(compress(message)) : messageToURI(message)
-  uri = /callback_type=/.test(uri) ? uri : paramsToQueryString(uri, {callback_type: 'post'})
-  open(uri, cancel, displayText)
+  if (compress) {
+    compress(message).then((msg) => {
+      let uri = messageToURI(msg)
+      uri = /callback_type=/.test(uri) ? uri : paramsToQueryString(uri, {callback_type: 'post'})
+      open(uri, cancel, displayText)
+    }).catch((err) => {
+      // Display failure modal and allow retry
+      failure(() => send(displayText)(message, {cancel, compress}))
+    })
+  } else {
+    let uri = messageToURI(message)
+    uri = /callback_type=/.test(uri) ? uri : paramsToQueryString(uri, {callback_type: 'post'})
+    open(uri, cancel, displayText)   
+  }  
+
+  // Return close function immediately, UI is async anyway
   return close
 }
 
@@ -29,29 +43,31 @@ const send = (displayText) => (message, {cancel, compress} = {}) => {
  * 
  * An empty Verification JWT (i.e. with signature and sub/iss but blank claim) is ~250 characters
  * The absolute max that can fit in a scanable QR on the screen is ~1500 characters
- * Below 650 characters the QR modal fits perfectly in the browser on a 13" MBP
+ * Below 650 characters the QR modal fits perfectly in the browser on a 13" MBP, with some wiggle room
  *
  * @param   {String}  message     the request JWT
  * @param   {Number}  threshold   the smallest size (in string length) to compress
  * @returns {String}  the chasqui url of the message, or the original message if less than threshold 
  */
 const chasquiCompress = (message, threshold=650) => {
-  if (message.length < threshold) return message
-
-  // TODO: Allow chasqui post to create a topicId
-  const topicURL = genCallback()
-  nets({
-    uri: topicURL,
-    method: 'POST',
-    body: {'access_token': message},
-    headers: {
-      'content-type': 'application/json'
+  return new Promise((resolve, reject) => {
+    if (message.length < threshold) {
+      resolve(message)
+      return 
     }
-  }, function (err) { 
-    if (err) { throw err } 
+    nets({
+      uri: `${CHASQUI_URL}topic/`,
+      method: 'POST',
+      body: {'request': message},
+      headers: {
+        'content-type': 'application/json'
+      }
+    }, function (err, response) {
+      if (err) reject(err)
+      if (response.statusCode !== 201) reject('Failed to create topic')
+      resolve(encodeURI(response.headers.Location))      
+    })
   })
-
-  return encodeURI(topicURL)
 }
 
 /**

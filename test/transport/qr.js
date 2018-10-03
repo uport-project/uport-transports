@@ -11,7 +11,7 @@ const fakeJWT = 'eyJhbGciOiJFUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIi
 
 describe('qr send', () => {
   it('uses a compression function if provided', () => {
-    const compress = sinon.stub().callsFake(x => x)
+    const compress = sinon.stub().resolves('fakejwt')
     const nets = sinon.stub()
     const { send } = proxyquire('../../src/transport/qr', {
       'nets': nets, 
@@ -30,18 +30,26 @@ describe('chasquiCompress', () => {
     const { chasquiCompress } = proxyquire('../../src/transport/qr', {
       'nets': nets
     })
-    expect(chasquiCompress(message)).to.equal(message)
-    expect(nets).to.not.be.called
+
+    return chasquiCompress(message).then((msg) => {
+      expect(msg).to.equal(message)
+      expect(nets).to.not.be.called
+    })
   })
 
   it('uploads to chasqui for long messages, and returns an encoded topicUrl', () => {
     const threshold = 650
-    const nets = sinon.spy()
+    const nets = sinon.stub().callsFake((_, cb) => cb(null, {
+      statusCode: 201,
+      headers: {Location: '/topic/deadbeefDEADBEEF'}
+    }))
     const { chasquiCompress } = proxyquire('../../src/transport/qr', {
       'nets': nets
     })
 
-    expect(decodeURI(chasquiCompress(fakeJWT))).to.match(/\/topic\//)
-    expect(nets).to.be.calledOnce
+    return chasquiCompress(fakeJWT).then((msg) => {
+      expect(decodeURI(msg)).to.match(/\/topic\//)
+      expect(nets).to.be.calledOnce
+    })
   })
 })
