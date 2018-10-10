@@ -6,7 +6,7 @@ var chai = require('chai');
 const expect = chai.expect
 chai.use(require('sinon-chai'))
 let chasqui = require('./../../src/transport/messageServer.js')
-const CHASQUI_URL = 'https://chasqui.uport.me/api/v1/topic/'
+const CHASQUI_URL = 'https://api.uport.space/chasqui/topic/'
 const ranStr = 'aVKcEd5jznmWslj3'
 
 // TODO stub nets everywhere
@@ -25,8 +25,8 @@ describe('transport.chasqui', function () {
     const uriHandler = sinon.spy()
     const pollGeneral = sinon.stub().resolves('ResponseString')
     const randomString = sinon.stub().returns(ranStr)
-    const requestMessage = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJFUzI1NksifQ.eyJpYXQiOjE1Mjk5NTQxMjcsImV4cCI6MTUyOTk1NDcyNywicmVxdWVzdGVkIjpbIm5hbWUiLCJwaG9uZSIsImNvdW50cnkiXSwicGVybWlzc2lvbnMiOlsibm90aWZpY2F0aW9ucyJdLCJjYWxsYmFjayI6Imh0dHBzOi8vY2hhc3F1aS51cG9ydC5tZS9hcGkvdjEvdG9waWMvYVZLY0VkNWp6bm1Xc2xqMyIsInR5cGUiOiJzaGFyZVJlcSIsImlzcyI6ImRpZDp1cG9ydDoyb2VYdWZIR0RwVTUxYmZLQnNaRGR1N0plOXdlSjNyN3NWRyJ9.ISlUPHoqmGru_MfwjGzq1xxuTKeYIVr4V7g40HeUVsZ-j_gxOkJSzYsTd7AGpth-CwjaPmFLGXnyDG2aiE7NXA'
-    const uri = 'https://id.uport.me/req/eyJ0eXAiOiJKV1QiLCJhbGciOiJFUzI1NksifQ.eyJpYXQiOjE1Mjk5NTQxMjcsImV4cCI6MTUyOTk1NDcyNywicmVxdWVzdGVkIjpbIm5hbWUiLCJwaG9uZSIsImNvdW50cnkiXSwicGVybWlzc2lvbnMiOlsibm90aWZpY2F0aW9ucyJdLCJjYWxsYmFjayI6Imh0dHBzOi8vY2hhc3F1aS51cG9ydC5tZS9hcGkvdjEvdG9waWMvYVZLY0VkNWp6bm1Xc2xqMyIsInR5cGUiOiJzaGFyZVJlcSIsImlzcyI6ImRpZDp1cG9ydDoyb2VYdWZIR0RwVTUxYmZLQnNaRGR1N0plOXdlSjNyN3NWRyJ9.ISlUPHoqmGru_MfwjGzq1xxuTKeYIVr4V7g40HeUVsZ-j_gxOkJSzYsTd7AGpth-CwjaPmFLGXnyDG2aiE7NXA'
+    const requestMessage = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJFUzI1NkstUiJ9.eyJpYXQiOjE1Mjk5NTQxMjcsImV4cCI6MTUyOTk1NDcyNywicmVxdWVzdGVkIjpbIm5hbWUiLCJwaG9uZSIsImNvdW50cnkiXSwicGVybWlzc2lvbnMiOlsibm90aWZpY2F0aW9ucyJdLCJjYWxsYmFjayI6Imh0dHBzOi8vYXBpLnVwb3J0LnNwYWNlL2NoYXNxdWkvdG9waWMvYVZLY0VkNWp6bm1Xc2xqMyIsInR5cGUiOiJzaGFyZVJlcSIsImlzcyI6ImRpZDpldGhyOjB4NDFjOTkxZjczZjBjN2E3Y2M5NWI5ZGY5MDk0NmUxYTdiMDE3NGVlNiJ9.hjkP5-yoAACebORa29-iO_VXCm3_81KwaHzrD3xHI94PbJzaT50x3uSr9MwQSl9sO1Lmdzkg1VMkuHyHFt9ClAE'
+    const uri = `https://id.uport.me/req/${requestMessage}`
     let URIHandlerSend
 
     before(() => {
