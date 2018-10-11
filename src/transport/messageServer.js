@@ -3,7 +3,7 @@ import { randomString } from './../crypto.js'
 import generalPoll from './poll.js'
 import { decodeJWT } from 'did-jwt'
 import nets from 'nets'
-const CHASQUI_URL = 'https://chasqui.uport.me/api/v1/'
+const CHASQUI_URL = 'https://api.uport.space/chasqui/'
 const POLLING_INTERVAL = 2000
 
 // TODO can the name of URIHandler be changed
