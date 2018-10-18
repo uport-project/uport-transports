@@ -58,14 +58,16 @@ const chasquiCompress = (message, threshold=650) => {
     nets({
       uri: `${CHASQUI_URL}topic/`,
       method: 'POST',
-      body: {'request': message},
+      body: JSON.stringify({message}),
       headers: {
         'content-type': 'application/json'
-      }
+      },
+      withCredentials: false,
+      rejectUnauthorized: false
     }, function (err, response) {
       if (err) reject(err)
-      if (response.statusCode !== 201) reject('Failed to create topic')
-      resolve(encodeURI(response.headers.Location))      
+      else if (response.statusCode !== 201) reject('Failed to create topic')
+      else resolve(response.headers.location || response.headers.Location)      
     })
   })
 }
