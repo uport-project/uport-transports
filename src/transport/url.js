@@ -1,28 +1,24 @@
-import { paramsToQueryString, paramsToUrlFragment } from './../message/util.js'
+import { paramsToQueryString, paramsToUrlFragment, messageToURI as defaultMessageToURI } from './../message/util.js'
 import qs from 'qs'
 
 // TODO callback_url and redirect or just one
 /**
   *  A mobile transport for handling and configuring requests which are sent from a mobile browser to a uport client, in this case the uPort mobile app.
   *
-  *  @param    {Object}       [config={}]    an optional config object
-  *  @param    {String}       uriHandler     a function called with the requestURI once it is formatted for this transport, default opens URI
+  *  @param    {Object}      [config={}]             an optional config object
+  *  @param    {Function}    [config.messageToURI]   a function called with the message/JWT to format into a URI
+  *  @param    {Function}    [config.uriHandler]     a function called with the requestURI once it is formatted for this transport, default opens URI
   *  @return   {Function}                    a configured MobileTransport Function
-  *  @param    {String}       uri            a uport client request message
+  *  @param    {String}       message        a uport client request message
   *  @param    {Object}       [opts={}]      an optional config object
   *  @param    {String}       opts.id        an id string for a request, used to identify response once returned
   *  @param    {String}       opts.data      additional data specific to your application that you can later receive with the response
   *  @param    {String}       opts.type      specifies callback type 'post' or 'redirect' for response
   *  @param    {String}       opts.callback  specifies url which a uport client will return to control once request is handled, depending on request type it may or may not be returned with the response as well.
   */
-const send = ({uriHandler}={}) => {
-  return (uri, {id, data, type, redirectUrl} = {}) => {
-  // what if has no protocol in passed in string, can probably go here
-  // if( md.userAgent() === 'Chrome' && md.os() === 'iOS' ) {
-  //    url = 'googlechrome:' + window.location.href.substring(window.location.protocol.length)
-  //  } else {
-  //    url = window.location.href
-  //  }
+const send = ({uriHandler, messageToURI=defaultMessageToURI}={}) => {
+  return (message, {id, data, type, redirectUrl} = {}) => {
+    let uri = messageToURI(message)
     if (type) uri = paramsToQueryString(uri, {callback_type: type})
     if (redirectUrl) {
       if (data) redirectUrl = paramsToUrlFragment(redirectUrl, {data})
@@ -69,16 +65,17 @@ const onResponse = () => new Promise((resolve, reject) => {
 /**
   *  Parses response from full response url or hash param string
   *
-  *  @return   {Object}     a response object
+  *  @return   {Object}     a response object of the form {id: ..., payload: ..., data: ...}
   */
 const parseResponse = (url) => {
-  const params = qs.parse(url.split('#')[0])
+  const params = qs.parse(url.split('#').pop())
   if (params.id) {
-    const payload = { data: params.data || null,  id: params.id}
-    if (params.error) return Object.assign(payload, {error: params.error, res: null})
-    if (params['access_token']) return Object.assign(payload, {res: params['access_token']})
-    if (params['verification']) return Object.assign(payload, {res: params['verification']})
-    return Object.assign(payload, {res: null})
+    const response = { data: params.data || null,  id: params.id}
+    if (params.error) return Object.assign(response, {error: params.error, payload: null})
+    if (params['access_token']) return Object.assign(response, {payload: params['access_token']})
+    if (params['verification']) return Object.assign(response, {payload: params['verification']})
+    if (params['tx'])           return Object.assign(response, {payload: params['tx']})
+    return Object.assign(response, {payload: null})
   }
   return null
 }

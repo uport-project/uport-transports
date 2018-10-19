@@ -1,0 +1,96 @@
+#uport__modal-bg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  background-color: rgba(0,0,0,0.5);
+  text-align: center;
+  z-index: 100;
+  width: 100%;
+  height: 100%;
+}
+ 
+#uport__modal-content p {
+  margin: 0.5rem auto;
+}
+
+#uport__modal-content a,
+#uport__modal-content a:visited {
+  color: #8986A0;
+}
+
+#uport__modal-content img {
+  padding: 0 0.25rem;
+}
+
+#uport__modal-content h2 {
+  color: #5C50CA;
+  font-size: 20px;
+  font-weight: 500;
+  margin: 0;
+}
+
+#uport__modal-content {
+  position: relative;
+  display: inline-block;
+  z-index: 101;
+  background: #fff;
+  top: 50%;
+  transform: translateY(-50%);
+  margin: 0 auto;
+  min-width: 400px;
+  overflow: hidden;
+  border-radius: 8px;
+  box-shadow: 0 12px 24px 0 rgba(0,0,0,0.1);
+
+  color: #7C828B;
+  font-family: Avenir;
+  font-size: 18px;
+  text-align: center;
+}
+
+#uport__modal-header {
+  width: 100%;
+  height: 45px;
+}
+
+#uport__modal-x {
+  float: right;
+  clear: both;
+  height: 25px;
+  width: 25px;
+  margin: 15px;
+  cursor: pointer;
+}
+
+#uport__modal-main {
+  display: inline-block;
+  width: 100%;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.animated {
+  animation-duration: 1s;
+  animation-fill-mode: both;
+}
+
+.fadeIn {
+  animation-name: fadeIn;
+}
+
+.uport__modal-section {
+  padding: 1rem 0;
+  margin: auto;
+}
+
+.uport__appstore-icon {
+  width: 128px;
+  height: 40px;
+}
+
+.uport__grey {
+  background-color: #F6F7F8;
+}

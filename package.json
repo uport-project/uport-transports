@@ -1,15 +1,17 @@
 {
-  "name": "uport-core",
-  "version": "0.0.45",
-  "description": "",
+  "name": "uport-transports",
+  "version": "0.1.0",
+  "description": "Set up communication channels between your app and a uPort client to handle requests and responses",
   "main": "lib/index.js",
   "scripts": {
     "build:dist": "./node_modules/.bin/webpack --config webpack.config.js",
-    "build:es5": "./node_modules/.bin/babel src -d lib",
+    "build:es5": "./node_modules/.bin/babel src -d lib --ignore assets && npm run build:ui",
+    "build:ui": "./node_modules/.bin/webpack --config webpack.ui.config.js",
     "build": "npm run build:es5 && npm run build:dist",
-    "test": "./node_modules/.bin/mocha test/index.js --require babel-core/register",
+    "start": "webpack-dev-server --config webpack.config.dev.js --hot",
+    "test": "./node_modules/.bin/mocha test/index.js",
     "build:docs:html": "./node_modules/.bin/jsdoc *.js -d docs",
-    "build:docs:md": "./node_modules/jsdoc-to-markdown/bin/cli.js src/* > DOCS.md",
+    "build:docs:md": "./node_modules/jsdoc-to-markdown/bin/cli.js -f src/* src/transport/* src/transport/ui/* src/message/* src/network/* --template 'template.hbs' -c js2doc.conf > docs/reference/index.md; echo",
     "build:docs": "npm run build:docs:html && npm run build:docs:md"
   },
   "author": "Zach Ferland <zach.ferland@consensys.net> (http://consensys.net/)",
@@ -24,7 +26,8 @@
     "qs": "^6.2.1",
     "tweetnacl": "^1.0.0",
     "tweetnacl-util": "^0.15.0",
-    "uport-registry": "^5.1.0"
+    "uport-registry": "^5.1.0",
+    "webpack-cli": "^3.1.0"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",
@@ -41,13 +44,18 @@
     "babel-preset-stage-2": "^6.24.1",
     "chai": "^4.1.2",
     "chai-as-promised": "^7.1.1",
+    "file-loader": "^1.1.11",
+    "html-webpack-plugin": "^3.2.0",
     "jsdoc": "^3.4.3",
     "jsdoc-to-markdown": "^1.3.7",
     "json-loader": "^0.5.4",
     "mocha": "^5.1.1",
     "proxyquire": "^2.0.1",
+    "raw-loader": "^0.5.1",
     "sinon": "^4.5.0",
     "sinon-chai": "^3.0.0",
-    "webpack": "2.3.3"
+    "url-loader": "^1.0.1",
+    "webpack": "2.3.3",
+    "webpack-dev-server": "^2.11.2"
   }
 }

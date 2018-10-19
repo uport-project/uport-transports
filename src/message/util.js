@@ -63,13 +63,24 @@ const getURLJWT = (url) => url.replace(/https:\/\/id.uport.me\/req\//, '').repla
 const isJWT = (jwt) => /^([a-zA-Z0-9_=]+)\.([a-zA-Z0-9_=]+)\.([a-zA-Z0-9_\-\+\/=]*)/.test(jwt)
 
 /**
-  * Given token request (JWT), wraps in request URI
-  *
-  *  @param    {String}       jwt           A JWT string
-  *  @return   {Staring}                    A valid request URI, including the given request token
-  */
-const tokenRequest = (jwt) =>  `https://id.uport.me/req/${jwt}`
+ * Wrap a JWT in a request URI using the Universal Link scheme based at id.uport.me
+ * @param    {String}       message       A request message (JWT), or if given URI will just return
+ * @return   {String}                    A valid request URI, including the given request token
+ */
+const messageToUniversalURI = (message) =>  message.match('id.uport.me') ?  message : `https://id.uport.me/req/${message}`
 
+/**
+ * Wrap a JWT in a request URI using the Deeplink scheme, using me.uport: 
+ * @param {String} message  A request message (JWT)
+ * @param {String} uri      The associated deeplink uri for the given message
+ */
+const messageToDeeplinkURI = (message) => message.match('me.uport:') ? message : `me.uport:req/${message}`
 
+/**
+ * Wrap a JWT in a request URI according to the specified scheme
+ * @param {String} message  The message to be uri encoded
+ * @param {String} type     The URI method of the above two, either 'universal' or 'deeplink'
+ */
+const messageToURI = (message, type='universal') => type === 'universal' ? messageToUniversalURI(message) : messageToDeeplinkURI(message)
 
-export { paramsToUrlFragment, paramsToQueryString, getUrlQueryParams, getURLJWT, isJWT, tokenRequest }
+export { paramsToUrlFragment, paramsToQueryString, getUrlQueryParams, getURLJWT, isJWT, messageToURI, messageToUniversalURI, messageToDeeplinkURI }

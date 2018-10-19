@@ -4,8 +4,8 @@ var chai = require('chai');
 const expect = chai.expect
 chai.use(require('sinon-chai'))
 
-const unsignedRequest = `https://id.uport.me/me`
-const signedRequest = `https://id.uport.me/me?requestToken=eyJ0eXAiOiJK`
+const requestMessage = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJFUzI1NksifQ.eyJpYXQiOjE1Mjk5NTQxMjcsImV4cCI6MTUyOTk1NDcyNywicmVxdWVzdGVkIjpbIm5hbWUiLCJwaG9uZSIsImNvdW50cnkiXSwicGVybWlzc2lvbnMiOlsibm90aWZpY2F0aW9ucyJdLCJjYWxsYmFjayI6Imh0dHBzOi8vY2hhc3F1aS51cG9ydC5tZS9hcGkvdjEvdG9waWMvYVZLY0VkNWp6bm1Xc2xqMyIsInR5cGUiOiJzaGFyZVJlcSIsImlzcyI6ImRpZDp1cG9ydDoyb2VYdWZIR0RwVTUxYmZLQnNaRGR1N0plOXdlSjNyN3NWRyJ9.ISlUPHoqmGru_MfwjGzq1xxuTKeYIVr4V7g40HeUVsZ-j_gxOkJSzYsTd7AGpth-CwjaPmFLGXnyDG2aiE7NXA'
+
 const windowUrl = 'thiswindow.url'
 const res = 'eyJ0eXAiOiJK'
 
@@ -26,7 +26,7 @@ describe('transport.url', function () {
     it('Adds type to uri if given one', () => {
       const assign = sinon.spy()
       global.window = {location : {href: windowUrl, assign}}
-      send(signedRequest, {type: 'post'})
+      send(requestMessage, {type: 'post'})
       expect(assign).to.be.calledWithMatch('type=post')
     })
 
@@ -34,7 +34,7 @@ describe('transport.url', function () {
       const assign = sinon.spy()
       global.window = {location : {href: windowUrl, assign}}
       const redirectUrl = 'https://myserver.web'
-      send(signedRequest, {redirectUrl})
+      send(requestMessage, {redirectUrl})
       expect(assign).to.be.calledWithMatch(`redirect_url=${encodeURIComponent(redirectUrl)}`)
     })
 
@@ -42,7 +42,7 @@ describe('transport.url', function () {
       const assign = sinon.spy()
       global.window = {location : {href: windowUrl, assign}}
       const redirectUrl = 'https://myserver.web'
-      send(unsignedRequest, {id: 'idString', redirectUrl})
+      send(requestMessage, {id: 'idString', redirectUrl})
       expect(assign).to.be.calledWithMatch(encodeURIComponent('id=idString'))
     })
 
@@ -50,7 +50,7 @@ describe('transport.url', function () {
       const assign = sinon.spy()
       global.window = {location : {href: windowUrl, assign}}
       const redirectUrl = 'https://myserver.web'
-      send(unsignedRequest, {data: 'dataString', redirectUrl})
+      send(requestMessage, {data: 'dataString', redirectUrl})
       expect(assign).to.be.calledWithMatch(encodeURIComponent('data=dataString'))
     })
   })
@@ -74,12 +74,12 @@ describe('transport.url', function () {
 
     it('Returns error, gets error from url, if error', () => {
       global.window = {location : {hash: '?error=error&id=idString'}}
-      expect(url.getResponse()).to.deep.equal({error:'error', id: 'idString', res: null, data: null})
+      expect(url.getResponse()).to.deep.equal({error:'error', id: 'idString', payload: null, data: null})
     })
 
     it('Returns {res, data, id}, gets params from url, if successful response', () => {
       global.window = {location : {hash: `?access_token=${res}&id=idString&data=dataString`}}
-      expect(url.getResponse()).to.deep.equal({res, id: 'idString', data: 'dataString'})
+      expect(url.getResponse()).to.deep.equal({payload: res, id: 'idString', data: 'dataString'})
     })
   })
 
@@ -90,7 +90,7 @@ describe('transport.url', function () {
       const cb = sinon.spy()
       url.listenResponse(cb)
       window.onhashchange()
-      expect(cb).to.be.calledWith(null, { data: null, id: 'idString', res })
+      expect(cb).to.be.calledWith(null, { data: null, id: 'idString', payload: res })
     })
 
     it('Calls callback with error on url hash change with error', () => {
@@ -98,7 +98,7 @@ describe('transport.url', function () {
       const cb = sinon.spy()
       url.listenResponse(cb)
       window.onhashchange()
-      expect(cb).to.be.calledWith('error', {error: 'error', id: 'idString', data: null, res: null})
+      expect(cb).to.be.calledWith('error', {error: 'error', id: 'idString', data: null, payload: null})
     })
 
     it('Does not call callback if url hash change does not include a response', () => {
@@ -114,7 +114,7 @@ describe('transport.url', function () {
     it('Calls listenResponse and returns promise which resolves on successful response', (done) => {
       global.window = {location : {hash: `?access_token=${res}&id=idString`}, onhashchange: () => { throw new Error('expected listenResponse to set this function')}}
       url.onResponse().then(response => {
-        expect(response.res).to.equal(res)
+        expect(response.payload).to.equal(res)
         done()
       })
       window.onhashchange()
@@ -126,7 +126,7 @@ describe('transport.url', function () {
         throw new Error('transport.url.onReponse Promise resolved, expected it to reject')
         done()
       }, err => {
-        expect(err).to.deep.equal({ data: null, id: 'idString', error: 'error', res: null })
+        expect(err).to.deep.equal({ data: null, id: 'idString', error: 'error', payload: null })
         done()
       })
       window.onhashchange()

@@ -1,5 +1,5 @@
-import { paramsToQueryString, getUrlQueryParams, getURLJWT } from './../message/util.js'
-import { randomString } from '../crypto.js'
+import { paramsToQueryString, getUrlQueryParams, getURLJWT, messageToURI } from './../message/util.js'
+import { randomString } from './../crypto.js'
 import generalPoll from './poll.js'
 import { decodeJWT } from 'did-jwt'
 import nets from 'nets'
@@ -14,17 +14,18 @@ const POLLING_INTERVAL = 2000
   *  while the response will always be returned through Chasqui. Chasqui is a simple messaging server that
   *  allows responses to be relayed from a uport client to the original callee.
   *
-  *  @param    {String}       uriHandler              a function called with the requestURI once it is formatted for this transport
-  *  @param    {Object}       [config={}]             an optional config object
-  *  @param    {String}       config.chasquiUrl       url of messaging server, defaults to Chasqui instance run by uPort
-  *  @param    {String}       config.pollingInterval  milisecond interval at which the messaging server will be polled for a response
-  *  @return   {Function}                             a configured QRTransport Function
-  *  @param    {String}       uri                     a uport client request URI
-  *  @return   {Promise<Object, Error>}               a function to close the QR modal
+  *  @param    {String}       uriHandler               a function called with the requestURI once it is formatted for this transport
+  *  @param    {Object}       [config={}]              an optional config object
+  *  @param    {String}       [config.chasquiUrl]      url of messaging server, defaults to Chasqui instance run by uPort
+  *  @param    {String}       [config.pollingInterval] milisecond interval at which the messaging server will be polled for a response
+  *  @return   {Function}                              a configured QRTransport Function
+  *  @param    {String}       message                  a uPort client request message
+  *  @return   {Promise<Object, Error>}                a function to close the QR modal
   */
 const URIHandlerSend = (uriHandler, {messageServerUrl = CHASQUI_URL, pollingInterval = POLLING_INTERVAL} = {}) => {
   if (!uriHandler) throw new Error('uriHandler function required')
-  return (uri, params = {}) => {
+  return (message, params = {}) => {
+    let uri = messageToURI(message)
     const callback = getCallback(uri)
     if (!isMessageServerCallback(uri, messageServerUrl)) throw new Error('Not a request that can be handled by this configured messaging server transport')
     let isCancelled = false
@@ -41,8 +42,8 @@ const URIHandlerSend = (uriHandler, {messageServerUrl = CHASQUI_URL, pollingInte
   *  A polling function specifically for polling Chasqui.
   *
   *  @param    {String}                  url                a Chasqui url polled
-  *  @param    {Integer}                 pollingInterval    ms interval at which the given url is polled
-  *  @param    {Function}                cancelled          function which returns boolean, if returns true, polling stops
+  *  @param    {Integer}                 [pollingInterval]  ms interval at which the given url is polled
+  *  @param    {Function}                [cancelled]        function which returns boolean, if returns true, polling stops
   *  @return   {Promise<Object, Error>}                     a promise which resolves with obj/message or rejects with an error
   */
 const poll = (url, pollingInterval, cancelled ) => {
@@ -72,7 +73,12 @@ const formatMessageServerUrl = (url) => {
 }
 const genCallback = (messageServerUrl = CHASQUI_URL) => `${formatMessageServerUrl(messageServerUrl)}${randomString(16)}`
 const isMessageServerCallback = (uri, messageServerUrl = CHASQUI_URL) => new RegExp(formatMessageServerUrl(messageServerUrl)).test(getCallback(uri))
-const getCallback = (uri) => decodeJWT(getURLJWT(uri)).payload.callback
+const getCallback = (uri) => {
+  const tokenCB = decodeJWT(getURLJWT(uri)).payload.callback
+  if (tokenCB) return tokenCB
+  // support attest req, which does not included cb in token, attest req may better align with other requests in the future
+  return getUrlQueryParams(uri).callback_url
+}
 
 
 export { URIHandlerSend,

@@ -1,119 +1,82 @@
-# uPort Core JS
+# uPort Transports
 
 [![Join the chat at](https://img.shields.io/badge/Riot-Join%20chat-green.svg)](https://chat.uport.me/#/login)
-[![npm](https://img.shields.io/npm/dt/uport-core.svg)](https://www.npmjs.com/package/uport-core)
-[![npm](https://img.shields.io/npm/v/uport-core.svg)](https://www.npmjs.com/package/uport-core)
+[![npm](https://img.shields.io/npm/dt/uport-transports.svg)](https://www.npmjs.com/package/uport-transports)
+[![npm](https://img.shields.io/npm/v/uport-transports.svg)](https://www.npmjs.com/package/uport-transports)
 [![Twitter Follow](https://img.shields.io/twitter/follow/uport_me.svg?style=social&label=Follow)](https://twitter.com/uport_me)
 
-[Introduction](#introduction) | [Quick Start](#quick-start) | [Modules](#modules) | [Development Guide](#development-guide)
+[Introduction](#introduction) | [Quick Start](#quick-start) | [Modules](docs/guides/modules.md#modules) | [Development Guide](#development-guide)
 
 :bangbang: :warning: Transport modules rely on a spec change that is yet to be released in the uPort mobile app. Until the new mobile app is released, integrating the transport modules is not fully supported. Once it is fully supported, we will remove this message.
 
 ## <a name="introduction"></a> Introduction
 
-For more information about uPort visit both [uport.me](https://www.uport.me) and the [developer docs site](http://developer.uport.me) for more information on our platform and other libraries.
+**uPort** is a collection of tools and protocols for building decentralized user-centric applications. It is built on open standards and open source libraries. uPort identities can be created and interacted with through uPort clients, including the uPort mobile app. Identities are fully owned and controlled by the creator, and don't rely on centralized third-parties for creation, control or validation.
 
-`uport-core` is a loosely coupled collection of functions and modules to use for building on and interacting with the uPort platform. If you are looking for quick start integration you will likely be better served by using both [uport-connect](https://github.com/uport-project/uport-connect) and [uport-js](https://github.com/uport-project/uport-js). But if you are looking for a deeper understanding or integration, customizing functionality for the other libraries or building your own libraries on the uPort platform, then you may want to use what is provided here. At this time `uport-core-js` mostly consists of `transports`, but may be home to other modules in the future.
+`uport-transports` is a loosely coupled collection of functions called transports and utility functions used to set up communication channels between an application and a uPort client. Transports are simply functions that consume request messages and additional transport params, then they send these strings to a uPort client. Some the transports will also manage receiving a response to a given request. Many of these functions can be combined to create transports specific to your use case and environment. You can then use these transports in [uport-connect](https://github.com/uport-project/uport-connect) or use them in combination with message creation in [uport-credentials](https://github.com/uport-project/uport-credentials). If you are looking for quick start integration you will likely be better served by using the default transports used in [uport-connect](https://github.com/uport-project/uport-connect).
 
-For any questions or library support reach out to the [uPort team on Riot](https://chat.uport.me/#/login) or create a [Github issue](https://github.com/uport-project/uport-core-js/issues).
+For more information about our system and other products visit [uport.me](https://www.uport.me). For more library information and in depth documentation and guides visit the [developer docs site](http://developer.uport.me). View our [protocol specs](https://github.com/uport-project/specs/) if interested in understanding the lower level details.
+
+For any questions or library support reach out to the [uPort team on Riot](https://chat.uport.me/#/login) or create a [Github issue](https://github.com/uport-project/uport-transports/issues).
 
 ### <a name="quick-start"></a> Quick Start
+
+Below is a quick start example, look in the docs for information on functions not shown here, more examples, and all additional configuration details.
 
 Install through npm:
 
 ```shell
-npm install uport-core
+npm install uport-transports
 ```
-Import specific modules:
+Import specific modules. You will primarily use transport. Message and crypto include utility functions for handling, parsing, encrypting, and decrypting messages for transports.
 
 ```javascript
-import { transport, message, crypto } from 'uport-core'
+import { transport, message, crypto } from 'uport-transports'
+```
+To send a request in our default QR code modal:
+
+```javascript
+const request = `eyJ0eXAiOiJKV1QiLCJhbG...`
+const transportQR = transport.qr.send()
+transportQR(request)
 ```
 
-## <a name="modules"></a> Modules
+To send a request in our default QR code modal and use the message server transport and chasqui (the message server service provided by uPort) to get the response. This transport combines the QR send transport along with the message server tranport which handles responses. This assumes that chasqui was set as a callback in the request token. You can get a chasqui callback with utility function `transport.messageServer.genCallback()`
 
-##### Transport
+```javascript
+const request = `eyJ0eXAiOiJKV1QiLCJhbG...`
+const transportQRChasqui = transport.qr.chasquiSend()
+transportQRChasqui(request).then(response => {
+  // response to request returned here
+})
+```
 
-Transports deal with sending messages to and from uPort clients, and generally setting up communication channels. Most often this involves sending messages to and from the uPort mobile app. At this time there are three primary transports:
+To send a request in push notification. You can get a pushToken and pubEncKey for a user by requesting push notification permissions in a selective disclosure request. If the user accepts, these two values can be found in the response returned. You can handle the response as you want and specify or you can combine this with the message server transport to handle the response.
 
-- **QR Codes:** Messages are sent in a QR code to the mobile app client. You can use our default modal and flow here or configure your own QR codes. You can use our messaging server `Chasqui` to receive responses our have response returned to your own server.
+```javascript
+const request = `eyJ0eXAiOiJKV1QiLCJhbG...`
+const pushTransport = transport.push.send(pushToken, pubEncKey)
+pushTransport(request)
+```
+To send the request through a URL when on the same mobile device as uPort app, whether from a mobile browser or a mobile application. Transport adds necessary params for sending and handling response and then opens request URL.
 
-- **URL Passing:** Messages are sent in a QR code to the mobile app client. You can use our default modal and flow here or configure your own QR codes. You can use our messaging server `Chasqui` to receive responses our have response returned to your own server.
+```javascript
+const request = `eyJ0eXAiOiJKV1QiLCJhbG...`
+const urlTransport = transport.url.send()
+urlTransport(request)
+```
+To the get a response from a URL:
 
-- **Push Notifications:** Messages are sent in a QR code to the mobile app client. You can use our default modal and flow here or configure your own QR codes. You can use our messaging server `Chasqui` to receive responses our have response returned to your own server.
+```javascript
+const response = tranport.url.getResponse()
+```
 
-Beside the primary transports provided there is a number of smaller composable functions available to build your own transports for different needs. As we (and the community) build more transports for differing communication channels and differing uPort clients we will add them here.
-
-##### Message
-
-Only contains util functions at this time that help with adding params to request URIs. May contain other functions related to creating and parsing messages on our platform.
-
-##### Crypto
-
-Only contains `encryptMessage()` at this time, which is used for push notifications. May include a collection of other commonly used crypto functions in the future.
-
-### Module Outline
-
-#### `Transport`
-
-- ##### QR
-
-    - `uport.transport.qr.send()`
-    - `uport.transport.qr.chasquiSend()`
-    - `uport.transport.qr.open()`
-    - `uport.transport.qr.close()`
-    - `uport.transport.qr.getImageDataURI()`
-    - `uport.transport.qr.modalTemplate()`
-
-- ##### URL
-
-    - `uport.transport.url.send()`
-    - `uport.transport.url.getResponse()`
-    - `uport.transport.url.listenResponse()`
-    - `uport.transport.url.onResponse()`
-
-- ##### Push Notifications
-
-    - `uport.transport.push.send()`
-
-- ##### Chasqui / Message server
-
-    - `uport.transport.messageServer.URIHandlerSend()`
-    - `uport.transport.messageServer.poll()`
-    - `uport.transport.messageServer.clearResponse()`
-
-- ##### Poll
-
-    - `uport.transport.poll()`
-
-#### `Message`
-
-  - ##### Util
-
-    - `uport.message.util.paramsToUrlFragment()`
-    - `uport.messasge.util.paramsToQueryString()`
-
-#### `Crypto`
-
-  - `uport.crypto.encryptMessage()`
-  - `uport.crypto.randomString()`
-
-#### `Provider`
-
-  - `uport.provider()`
-
-#### `Network`
-
-  - ##### Config
-
-    - `uport.network.config.network()`
-    - `uport.network.config.networkSet()`
-    - `uport.network.config.networkToNetworkSet()`
-
-  - ##### Defaults
-
-    - `uport.network.default.networks`
-    - `uport.network.default.NETWORK`
+Or listen for url response:
+```javascript
+tranport.url.onResponse().then(response => {
+  ...
+})
+```
 
 ## <a name="development-guide"></a> Development Guide
 
@@ -131,7 +94,7 @@ To transpile to ES5. All files are output to `/lib`. The entry of our npm packag
 $ npm run build:es5
 ```
 
-To generate a bundle/distributable. We use webpack for our builds. The output dist is `/dist/uport-core.js` and source map `/dist/uport-core.map.js`
+To generate a bundle/distributable. We use webpack for our builds. The output dist is `/dist/uport-transports.js` and source map `/dist/uport-transports.map.js`
 
 ```shell
 $ npm run build:dist

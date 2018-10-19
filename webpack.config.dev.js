@@ -2,6 +2,7 @@
 
 // Webpack
 const webpack = require('webpack')
+const HtmlWebpackPlugin = require('html-webpack-plugin')
 
 // Plugin Setup
 const globalsPlugin = new webpack.DefinePlugin({
@@ -9,23 +10,21 @@ const globalsPlugin = new webpack.DefinePlugin({
   'process.env': { 'NODE_ENV': JSON.stringify('development') }
 })
 
-let libraryName = 'uport-transports'
-
 // Final Config
 module.exports = {
-  entry: {'uport-transports': './src/index.js'},
+  entry: './test/ui.test.js',
   output: {
-    filename: 'dist/[name].js',
-    library: libraryName,
-    libraryTarget: 'umd',
-    umdNamedDefine: true
+    filename: './test/test-build-[hash].js',
   },
   devtool: 'source-map',
   module: {
     rules: [
       {
         test: /\.(gif|png|jpe?g|svg)$/i,
-        loader: 'url-loader'
+        loader: 'url-loader',
+        query: {
+          limit: 10000,
+        }
       },
       {
         test: /\.js$/,
@@ -56,14 +55,7 @@ module.exports = {
     extensions: ['.js', '.json']
   },
   plugins: [
-    globalsPlugin
-    // new webpack.SourceMapDevToolPlugin({
-    //   filename: outputFile + '.map',
-    //   append: false,
-    //   module: true,
-    //   columns: true,
-    //   lineToLine: true
-    // })
-
+    globalsPlugin,
+    new HtmlWebpackPlugin()
   ]
 }
