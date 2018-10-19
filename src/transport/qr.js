@@ -1,29 +1,29 @@
 import nets from 'nets'
 
 import { open, close, success, failure } from './ui'
-import { paramsToQueryString, messageToURI } from './../message/util.js'
+import { paramsToQueryString, messageToURI, getUrlQueryParams } from './../message/util.js'
 import { URIHandlerSend, CHASQUI_URL, genCallback } from './messageServer'
 
 const POLLING_INTERVAL = 2000
 
 /**
- *  A QR tranpsort which uses our provided QR modal to relay a request to a uPort client
+ * A QR tranpsort which uses our provided QR modal to relay a request to a uPort client,
+ * optionally compressing the provided message if a compress function is provided
  *
- *  @param    {String}       displayText   dialog used in qr modal display
- *  @return   {Function}                   a configured QRTransport Function
- *    @param    {String}       message            a uport client request message
- *    @param    {Object}       [opts={}]
- *    @param    {Function}     [opts.cancel]      cancel callback, called on modal close
- *    @param    {Function}     [opts.compress]    a function to compress a JWT, returning a promise that resolves to a string 
- *    @return   {Function}                        a function to close the QR modal
+ * @param    {String}       displayText   dialog used in qr modal display
+ * @return   {Function}                   a configured QRTransport Function
+ *   @param    {String}       message            a uport client request message
+ *   @param    {Object}       [opts={}]
+ *   @param    {Function}     [opts.cancel]      cancel callback, called on modal close
+ *   @param    {Function}     [opts.compress]    a function to compress a JWT, returning a promise that resolves to a string 
+ *   @return   {Function}                        a function to close the QR modal
  */
 const send = (displayText) => (message, {cancel, compress} = {}) => {
   if (compress) {
     compress(message).then((msg) => {
-      let uri = messageToURI(msg)
-      uri = /callback_type=/.test(uri) ? uri : paramsToQueryString(uri, {callback_type: 'post'})
-      open(uri, cancel, displayText)
+      open(msg, cancel, displayText)
     }).catch((err) => {
+      console.error(err)
       // Display failure modal and allow retry
       failure(() => send(displayText)(message, {cancel, compress}))
     })
@@ -52,20 +52,29 @@ const send = (displayText) => (message, {cancel, compress} = {}) => {
 const chasquiCompress = (message, threshold=650) => {
   return new Promise((resolve, reject) => {
     if (message.length < threshold) {
-      resolve(message)
+      let uri = messageToURI(message)
+      uri = /callback_type=/.test(uri) ? uri : paramsToQueryString(uri, {callback_type: 'post'})
+      resolve(uri)
       return 
+    }
+    // Trim message and extract query params
+    const topic = {
+      message: message.replace(/\?.*/, ''),
+      ...getUrlQueryParams(message) 
     }
     nets({
       uri: `${CHASQUI_URL}topic/`,
       method: 'POST',
-      body: {'request': message},
+      body: JSON.stringify(topic),
       headers: {
         'content-type': 'application/json'
-      }
+      },
+      withCredentials: false,
+      rejectUnauthorized: false
     }, function (err, response) {
       if (err) reject(err)
-      if (response.statusCode !== 201) reject('Failed to create topic')
-      resolve(encodeURI(response.headers.Location))      
+      else if (response.statusCode !== 201) reject('Failed to create topic')
+      else resolve(response.headers.location || response.headers.Location)      
     })
   })
 }
