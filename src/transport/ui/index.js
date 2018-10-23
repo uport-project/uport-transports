@@ -99,4 +99,4 @@ const failure = (retry) => {
  *  export
  */
 
-export { close, open, success, failure, notifyPushSent }
+export { close, open, success, failure, notifyPushSent, getImageDataURI }
