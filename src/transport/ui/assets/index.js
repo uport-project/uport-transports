@@ -8,7 +8,14 @@ import success from './success.svg'
 import failure from './failure.svg'
 
 const SVG = {
-	logo, logoWithBG, appleApp, androidApp, close, push, success, failure
+  logo,
+  logoWithBG,
+  appleApp,
+  androidApp,
+  close,
+  push,
+  success,
+  failure,
 }
 
 export default SVG

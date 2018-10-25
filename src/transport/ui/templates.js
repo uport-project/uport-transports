@@ -10,7 +10,7 @@ const googleStoreLink = 'https://play.google.com/store/apps/details?id=com.uport
  * @param    {String}   innerHTML    html string defining content of modal
  * @returns  {String}   html string for the populated modal
  */
-export const uportModal = (innerHTML) => `
+export const uportModal = innerHTML => `
   <div id="uport__modal-bg">
     <div id="uport__modal-content" class="animated fadeIn">
       <div id="uport__modal-header">
@@ -34,7 +34,8 @@ export const uportModal = (innerHTML) => `
  *  @param    {String}    [modalText]   message to be displayed above the QR code
  *  @return   {Object}    populated modal
  */
-export const qrModal = (qrImageUri, modalText = '') => uportModal(`
+export const qrModal = (qrImageUri, modalText = '') =>
+  uportModal(`
   <div id="uport__modal-main">
     <h2 id="uport__qr-text">${modalText}</h2>
     <div class="uport__modal-section">
