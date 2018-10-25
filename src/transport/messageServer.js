@@ -56,7 +56,9 @@ const poll = (url, pollingInterval, cancelled) => {
     // FIXME: this is not a great method for handling our expected keys in the response.
     //        Very tightly coupled to the message format, and these keys seem to come out
     //        of nowhere.
-    return message['access_token'] || message['tx'] || message['typedDataSig']
+    if (message) {
+      return message['access_token'] || message['tx'] || message['typedDataSig']
+    }
   }
   const errorParse = res => {
     if (res.message) return res.message.error
