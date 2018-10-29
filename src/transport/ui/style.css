@@ -67,6 +67,24 @@
   width: 100%;
 }
 
+#uport__spinner-box {
+  display: flex;
+  align-content: center;
+  justify-content: center;
+  margin: 2em auto 4em auto;
+}
+
+#uport__spinner {
+  animation: spin 1s linear infinite;
+  width: 100px;
+  height: 100px;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
 @keyframes fadeIn {
   from { opacity: 0; }
   to { opacity: 1; }

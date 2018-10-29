@@ -99,3 +99,9 @@ export const failureModal = uportModal(`
     </div>
   </div>
 `)
+
+export const spinnerModal = uportModal(`
+  <div id="uport__spinner-box">
+    <img id="uport__spinner" src="${SVG.spinner}" />
+  </div>
+`)

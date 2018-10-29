@@ -1,6 +1,6 @@
 import qrImage from 'qr-image'
 
-import { qrModal, pushModal, successModal, failureModal } from './templates'
+import { qrModal, pushModal, successModal, failureModal, spinnerModal } from './templates'
 
 /**
  * @module uport-transports/transport/ui
@@ -37,9 +37,13 @@ export const close = () => {
  * @param     {Function}  [close]   the handler to fire when the modal's x button is pressed
  */
 const makeModal = (content, closeModal = close) => {
-  let wrapper = document.createElement('div')
-  wrapper.setAttribute('id', 'uport-wrapper')
-
+  let wrapper
+  // Create new wrapper if not present
+  if (!(wrapper = document.getElementById('uport-wrapper'))) {
+    wrapper = document.createElement('div')
+    wrapper.setAttribute('id', 'uport-wrapper')  
+  }
+  
   wrapper.innerHTML = content
 
   document.body.appendChild(wrapper)
@@ -85,6 +89,10 @@ export const notifyPushSent = fallback => {
 export const success = (timeout = 500) => {
   makeModal(successModal)
   setTimeout(close, timeout)
+}
+
+export const spinner = (cancel = close) => {
+  makeModal(spinnerModal, cancel)
 }
 
 /**

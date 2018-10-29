@@ -24,3 +24,8 @@ createButton('Success Modal', () => {
 createButton('Failure Modal', () => {
   ui.failure()
 })
+
+createButton('Spinner', () => {
+  ui.spinner()
+  setTimeout(ui.failure, 2000)
+})
