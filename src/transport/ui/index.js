@@ -17,7 +17,7 @@ import { qrModal, pushModal, successModal, failureModal } from './templates'
  *  @param    {String}     data      data string, typically a uPort URI
  *  @return   {String}               image URI
  */
-const getImageDataURI = data => {
+export const getImageDataURI = data => {
   let pngBuffer = qrImage.imageSync(data, { type: 'png' })
   return 'data:image/png;charset=utf-8;base64, ' + pngBuffer.toString('base64')
 }
@@ -25,9 +25,9 @@ const getImageDataURI = data => {
 /**
  *  Closes the default QR pop over
  */
-const close = () => {
+export const close = () => {
   const uportWrapper = document.getElementById('uport-wrapper')
-  document.body.removeChild(uportWrapper)
+  if (uportWrapper) document.body.removeChild(uportWrapper)
 }
 
 /**
@@ -53,7 +53,7 @@ const makeModal = (content, closeModal = close) => {
  *  @param    {Function}   cancel     a function called when the cancel button is clicked
  *  @param    {String}     modalText  message to be displayed above the QR in the modal
  */
-const open = (data, cancel, modalText) => {
+export const open = (data, cancel, modalText) => {
   const closeModal = close // closure over close for use in callbacks etc.
   const content = qrModal(getImageDataURI(data), modalText)
 
@@ -70,7 +70,7 @@ const open = (data, cancel, modalText) => {
  * Show a notification to the user that a push has been sent to their phone
  * @param   {Function}    fallback    The fallback handler if the user doesn't receive a push
  */
-const notifyPushSent = fallback => {
+export const notifyPushSent = fallback => {
   makeModal(pushModal)
   document.getElementById('uport__push-not-received').addEventListener('click', () => {
     close()
@@ -82,7 +82,7 @@ const notifyPushSent = fallback => {
  * Show a success screen to the user which automatically dismisses
  * after 2 seconds
  */
-const success = (timeout = 500) => {
+export const success = (timeout = 500) => {
   makeModal(successModal)
   setTimeout(close, timeout)
 }
@@ -91,14 +91,8 @@ const success = (timeout = 500) => {
  * Show a failure modal that gives users the option to repeat the failed action
  * @param {Function}  resend  The function that should fire to allow the user to retry
  */
-const failure = retry => {
+export const failure = retry => {
   makeModal(failureModal)
 
   document.getElementById('uport__failure-retry').addEventListener('click', retry)
 }
-
-/**
- *  export
- */
-
-export { close, open, success, failure, notifyPushSent, getImageDataURI }
