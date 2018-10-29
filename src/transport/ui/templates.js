@@ -84,7 +84,6 @@ export const successModal = uportModal(`
 
 /**
  * Html string for a modal displaying a failure message
- * !! Not used
  */
 export const failureModal = uportModal(`
   <div id="uport__modal-main">
@@ -100,8 +99,34 @@ export const failureModal = uportModal(`
   </div>
 `)
 
+/**
+ * HTML string for a modal displaying a spinner
+ */
 export const spinnerModal = uportModal(`
   <div id="uport__spinner-box">
     <img id="uport__spinner" src="${SVG.spinner}" />
+  </div>
+`)
+
+/**
+ * HTML string for a modal displaying a provider dialog
+ */
+export const providerModal = uportModal(`
+  <div id="uport__modal-main">
+    <h2> Injected Provider Detected </h2>
+    <div class="uport__modal-section">
+      <p>This browser contains an injected Web3 provider which can be used to serve ethereum requests.</p>
+    </div>
+    <div class="uport__modal-section">
+      <img src="${SVG.eth}" height="100" width="100" />
+      <img src="${SVG.metamask}" height="100" width="100" />
+    </div>
+    <div class="uport__modal-section">
+      <p>Would you like to continue with uPort, or use the injected provider?</p>
+    </div>
+    <div class="uport__modal-section">
+      <button id="uport__provider-yes" class="uport__button">Use Injected Provider</button>
+      <button id="uport__provider-no"  class="uport__button">Use uPort</button>
+    </div>
   </div>
 `)

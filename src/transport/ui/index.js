@@ -1,6 +1,6 @@
 import qrImage from 'qr-image'
 
-import { qrModal, pushModal, successModal, failureModal, spinnerModal } from './templates'
+import { qrModal, pushModal, successModal, failureModal, spinnerModal, providerModal } from './templates'
 
 /**
  * @module uport-transports/transport/ui
@@ -84,15 +84,37 @@ export const notifyPushSent = fallback => {
 
 /**
  * Show a success screen to the user which automatically dismisses
- * after 2 seconds
+ * after @param {Number} timeout milliseconds
  */
 export const success = (timeout = 500) => {
   makeModal(successModal)
   setTimeout(close, timeout)
 }
 
+/**
+ * Show a spinner (the Consensys Hurricane)
+ * @param {Function} cancel  Function to fire when the close button is pressed
+ */
 export const spinner = (cancel = close) => {
   makeModal(spinnerModal, cancel)
+}
+
+/**
+ * Present a dialog asking 
+ */
+export const askProvider = () => {
+  return new Promise((resolve, reject) => {
+    const closeAndResolve = status => () => {
+      close()
+      resolve(status)
+    }
+
+    makeModal(providerModal, closeAndResolve(false))
+
+    // Set up event listeners on dialog buttons
+    document.getElementById('uport__provider-yes').addEventListener('click', closeAndResolve(true))
+    document.getElementById('uport__provider-no').addEventListener('click', closeAndResolve(false))
+  })
 }
 
 /**

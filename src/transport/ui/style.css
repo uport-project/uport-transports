@@ -80,6 +80,11 @@
   height: 100px;
 }
 
+#uport__provider-yes {
+  color: #5C50CA;
+  background-color: #F6F7F8;
+}
+
 @keyframes spin {
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
@@ -102,6 +107,21 @@
 .uport__modal-section {
   padding: 1rem 0;
   margin: auto;
+}
+
+.uport__modal-section p {
+  width: 350px;
+}
+
+.uport__button {
+  border: 1px solid #5C50CA;
+  border-radius: 0.25em;
+  background-color: #5C50CA;
+  font-size: 1em;
+  color: #fff;
+  padding: 0.5em 1em;
+  margin: 0 0.5em;
+  cursor: pointer;
 }
 
 .uport__appstore-icon {

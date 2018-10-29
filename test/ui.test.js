@@ -27,5 +27,9 @@ createButton('Failure Modal', () => {
 
 createButton('Spinner', () => {
   ui.spinner()
-  setTimeout(ui.failure, 2000)
+  setTimeout(ui.success, 2000)
+})
+
+createButton('Provider', () => {
+  ui.askProvider().then(console.log)
 })
