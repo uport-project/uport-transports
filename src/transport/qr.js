@@ -21,9 +21,7 @@ const POLLING_INTERVAL = 2000
 const send = displayText => (message, { cancel, compress } = {}) => {
   if (compress) {
     compress(message)
-      .then(msg => {
-        open(msg, cancel, displayText)
-      })
+      .then(msg => open(msg, cancel, displayText))
       .catch(err => {
         console.error(err)
         // Display failure modal and allow retry
@@ -78,7 +76,10 @@ const chasquiCompress = (message, threshold = 650) => {
       function(err, response) {
         if (err) reject(err)
         else if (response.statusCode !== 201) reject(new Error('Failed to create topic'))
-        else resolve(response.headers.location || response.headers.Location)
+        else {
+          const uri = `${CHASQUI_URL}${response.headers.location || response.headers.Location}`
+          resolve(uri)
+        }
       },
     )
   })
