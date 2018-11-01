@@ -52,7 +52,7 @@ const URIHandlerSend = (uriHandler, { messageServerUrl = CHASQUI_URL, pollingInt
 const poll = (url, pollingInterval, cancelled) => {
   const messageParse = res => {
     // Support new and old chasqui format
-    const message = res.message && (res.message.content ? JSON.parse(res.message.content) : res.message)
+    const message = res.message && (('content' in res.message) ? JSON.parse(res.message.content) : res.message)
     // FIXME: this is not a great method for handling our expected keys in the response.
     //        Very tightly coupled to the message format, and these keys seem to come out
     //        of nowhere.
