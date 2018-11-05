@@ -63,18 +63,24 @@ const getURLJWT = (url) => url.replace(/https:\/\/id.uport.me\/req\//, '').repla
 const isJWT = (jwt) => /^([a-zA-Z0-9_=]+)\.([a-zA-Z0-9_=]+)\.([a-zA-Z0-9_\-\+\/=]*)/.test(jwt)
 
 /**
+ * Remove both deeplink and universal link prefixes from a given message
+ * @param {String} message 
+ */
+const trimURI = message => message.replace(/(https:\/\/)?id\.uport\.me\/req\/?/, '').replace('me.uport:req/', '')
+
+/**
  * Wrap a JWT in a request URI using the Universal Link scheme based at id.uport.me
  * @param    {String}       message       A request message (JWT), or if given URI will just return
  * @return   {String}                    A valid request URI, including the given request token
  */
-const messageToUniversalURI = (message) =>  message.match('id.uport.me') ?  message : `https://id.uport.me/req/${message}`
+const messageToUniversalURI = message =>  `https://id.uport.me/req/${trimURI(message)}`
 
 /**
  * Wrap a JWT in a request URI using the Deeplink scheme, using me.uport: 
  * @param {String} message  A request message (JWT)
  * @param {String} uri      The associated deeplink uri for the given message
  */
-const messageToDeeplinkURI = (message) => message.match('me.uport:') ? message : `me.uport:req/${message}`
+const messageToDeeplinkURI = message => `me.uport:req/${trimURI(message)}`
 
 /**
  * Wrap a JWT in a request URI according to the specified scheme
