@@ -1,6 +1,6 @@
 {
   "name": "uport-transports",
-  "version": "0.2.0-alpha.4",
+  "version": "0.2.0-alpha.6",
   "description": "Set up communication channels between your app and a uPort client to handle requests and responses",
   "main": "lib/index.js",
   "scripts": {
@@ -14,7 +14,8 @@
     "build:docs:md": "./node_modules/jsdoc-to-markdown/bin/cli.js -f src/* src/transport/* src/transport/ui/* src/message/* src/network/* --template 'template.hbs' -c js2doc.conf > docs/reference/index.md; echo",
     "build:docs": "npm run build:docs:html && npm run build:docs:md",
     "lint": "eslint ./src",
-    "format": "eslint --fix ./src"
+    "format": "eslint --fix ./src",
+    "prepare": "npm i && npm run build"
   },
   "author": "Zach Ferland <zach.ferland@consensys.net> (http://consensys.net/)",
   "license": "Apache-2.0",
