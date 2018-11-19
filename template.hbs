@@ -6,4 +6,12 @@ type: "reference"
 source: "https://github.com/uport-project/uport-transports/blob/develop/docs/reference/index.md"
 ---
 
-{{>main}}
+{{>main-index~}}
+{{#orphans ~}}
+<a name="{{{anchorName}}}"></a>
+#{{>heading-indent}}{{>sig-name}}
+{{>body}}
+{{>member-index~}}
+{{>separator~}}
+{{>members~}}
+{{/orphans~}}
