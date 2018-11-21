@@ -57,7 +57,7 @@ const poll = (url, pollingInterval, cancelled) => {
     //        Very tightly coupled to the message format, and these keys seem to come out
     //        of nowhere.
     if (message) {
-      return message['access_token'] || message['tx'] || message['typedDataSig']
+      return message['access_token'] || message['tx'] || message['typedDataSig'] || message['personalSig']
     }
   }
   const errorParse = res => {
