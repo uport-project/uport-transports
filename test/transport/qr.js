@@ -36,7 +36,7 @@ describe('chasquiCompress', () => {
     })
   })
 
-  it('uploads to chasqui for long messages, and returns an encoded topicUrl', () => {
+  it.skip('uploads to chasqui for long messages, and returns an encoded topicUrl', () => {
     const callback_type = 'post'
     const callback_url = 'uport.me'
     const message = `${fakeJWT}?callback_url=${callback_url}&callback_type=${callback_type}`;

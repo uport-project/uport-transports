@@ -34,8 +34,7 @@ export const uportModal = innerHTML => `
  *  @param    {String}    [modalText]   message to be displayed above the QR code
  *  @return   {Object}    populated modal
  */
-export const qrModal = (qrImageUri, modalText = '') =>
-  uportModal(`
+export const qrModal = (qrImageUri, modalText = '') => uportModal(`
   <div id="uport__modal-main">
     <h2 id="uport__qr-text">${modalText}</h2>
     <div class="uport__modal-section">

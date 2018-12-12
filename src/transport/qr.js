@@ -49,7 +49,7 @@ const send = displayText => (message, { cancel, compress } = {}) => {
  * @param   {Number}  threshold   the smallest size (in string length) to compress
  * @returns {String}  the chasqui url of the message, or the original message if less than threshold
  */
-const chasquiCompress = (message, threshold = 650) => {
+const chasquiCompress = (message, threshold = Number.MAX_VALUE) => {
   return new Promise((resolve, reject) => {
     if (message.length < threshold) {
       let uri = messageToURI(message)
