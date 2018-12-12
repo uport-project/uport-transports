@@ -78,6 +78,7 @@ const parseResponse = url => {
     if (params['access_token']) return Object.assign(response, { payload: params['access_token'] })
     if (params['verification']) return Object.assign(response, { payload: params['verification'] })
     if (params['typedDataSig']) return Object.assign(response, { payload: params['typedDataSig'] })
+    if (params['personalSig']) return Object.assign(response, { payload: params['personalSig'] })
     if (params['tx']) return Object.assign(response, { payload: params['tx'] })
     return Object.assign(response, { payload: null })
   }
