@@ -74,20 +74,6 @@ const sendAndNotify = (token, pubEncKey, pushServiceUrl = PUTUTU_URL) => {
 }
 
 /**
- * The same transport as above, but also display a self-dismissing modal notifying
- * the user that push notification has been sent to their device
- * @see send
- */
-const sendAndNotify = (token, pubEncKey, pushServiceUrl = PUTUTU_URL) => {
-  const FALLBACK_MESSAGE = 'Scan QR Code Instead:'
-  const sendPush = send(token, pubEncKey, pushServiceUrl)
-  return (message, params) => {
-    notifyPushSent(() => sendQR(FALLBACK_MESSAGE)(message))
-    return sendPush(message, params)
-  }
-}
-
-/**
  *  Adds padding to a string
  *
  *  @param      {String}   message    the message to be padded
