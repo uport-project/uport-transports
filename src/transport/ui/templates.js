@@ -10,7 +10,7 @@ const googleStoreLink = 'https://play.google.com/store/apps/details?id=com.uport
  * @param    {String}   innerHTML    html string defining content of modal
  * @returns  {String}   html string for the populated modal
  */
-export const uportModal = (innerHTML) => `
+export const uportModal = innerHTML => `
   <div id="uport__modal-bg">
     <div id="uport__modal-content" class="animated fadeIn">
       <div id="uport__modal-header">

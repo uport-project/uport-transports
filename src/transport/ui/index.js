@@ -2,7 +2,7 @@ import qrImage from 'qr-image'
 
 import { qrModal, pushModal, successModal, failureModal } from './templates'
 
-/**  
+/**
  * @module uport-transports/transport/ui
  * @description
  * A set of ui utility functions and default displays for bridging between
@@ -17,11 +17,10 @@ import { qrModal, pushModal, successModal, failureModal } from './templates'
  *  @param    {String}     data      data string, typically a uPort URI
  *  @return   {String}               image URI
  */
-const getImageDataURI = (data) => {
-  let pngBuffer = qrImage.imageSync(data, {type: 'png'})
+const getImageDataURI = data => {
+  let pngBuffer = qrImage.imageSync(data, { type: 'png' })
   return 'data:image/png;charset=utf-8;base64, ' + pngBuffer.toString('base64')
 }
-
 
 /**
  *  Closes the default QR pop over
@@ -58,7 +57,7 @@ const open = (data, cancel, modalText) => {
   const closeModal = close // closure over close for use in callbacks etc.
   const content = qrModal(getImageDataURI(data), modalText)
 
-  const cancelClick = (event) => {
+  const cancelClick = event => {
     document.getElementById('uport__qr-text').innerHTML = 'Cancelling'
     if (cancel) cancel()
     closeModal()
@@ -71,9 +70,12 @@ const open = (data, cancel, modalText) => {
  * Show a notification to the user that a push has been sent to their phone
  * @param   {Function}    fallback    The fallback handler if the user doesn't receive a push
  */
-const notifyPushSent = (fallback) => {
+const notifyPushSent = fallback => {
   makeModal(pushModal)
-  document.getElementById('uport__push-not-received').addEventListener('click', () => {close(); fallback()})
+  document.getElementById('uport__push-not-received').addEventListener('click', () => {
+    close()
+    fallback()
+  })
 }
 
 /**
@@ -89,7 +91,7 @@ const success = (timeout = 500) => {
  * Show a failure modal that gives users the option to repeat the failed action
  * @param {Function}  resend  The function that should fire to allow the user to retry
  */
-const failure = (retry) => {
+const failure = retry => {
   makeModal(failureModal)
 
   document.getElementById('uport__failure-retry').addEventListener('click', retry)

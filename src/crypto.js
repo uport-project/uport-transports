@@ -5,7 +5,7 @@ import base64url from 'base64url'
 export const ASYNC_ENC_ALGORITHM = 'x25519-xsalsa20-poly1305'
 const BLOCK_SIZE = 64
 
-function pad (message) {
+function pad(message) {
   const paddedSize = Math.ceil(message.length / BLOCK_SIZE) * BLOCK_SIZE
   // use `String.prototype.padEnd()` if available
   if (typeof message.padEnd === 'function') return message.padEnd(paddedSize, '\0')
@@ -16,17 +16,17 @@ function pad (message) {
   return padded
 }
 
-function unpad (padded) {
+function unpad(padded) {
   return padded.replace(/\0+$/, '')
 }
 
 /**
-  *  Given a length, returns a random string of that length
-  *
-  *  @param    {Integer}                 length    specify length of string returned
-  *  @return   {String}                            random string
-  */
-function randomString (length) {
+ *  Given a length, returns a random string of that length
+ *
+ *  @param    {Integer}                 length    specify length of string returned
+ *  @return   {String}                            random string
+ */
+function randomString(length) {
   return base64url.fromBase64(naclutil.encodeBase64(nacl.randomBytes(length)))
 }
 
@@ -38,7 +38,7 @@ function randomString (length) {
  *  @return     {Object}              the encrypted message as an object containing a `version`, `nonce`, `ephemPublicKey` and `ciphertext`
  *  @private
  */
-function encryptMessage (message, boxPub) {
+function encryptMessage(message, boxPub) {
   const { publicKey, secretKey } = nacl.box.keyPair()
   const nonce = nacl.randomBytes(nacl.box.nonceLength)
   const padded = pad(message)
@@ -47,7 +47,7 @@ function encryptMessage (message, boxPub) {
     version: ASYNC_ENC_ALGORITHM,
     nonce: naclutil.encodeBase64(nonce),
     ephemPublicKey: naclutil.encodeBase64(publicKey),
-    ciphertext: naclutil.encodeBase64(ciphertext)
+    ciphertext: naclutil.encodeBase64(ciphertext),
   }
 }
 
@@ -64,7 +64,7 @@ function encryptMessage (message, boxPub) {
  *  @private
  */
 
-function decryptMessage ({version, ciphertext, nonce, ephemPublicKey}, secretKey) {
+function decryptMessage({ version, ciphertext, nonce, ephemPublicKey }, secretKey) {
   if (!secretKey) throw new Error('Encryption secret key has not been configured')
   if (version !== ASYNC_ENC_ALGORITHM) throw new Error(`Unsupported encryption algorithm: ${version}`)
   if (!(ciphertext && nonce && ephemPublicKey)) throw new Error(`Invalid encrypted message`)
@@ -72,7 +72,8 @@ function decryptMessage ({version, ciphertext, nonce, ephemPublicKey}, secretKey
     naclutil.decodeBase64(ciphertext),
     naclutil.decodeBase64(nonce),
     naclutil.decodeBase64(ephemPublicKey),
-    secretKey)
+    secretKey,
+  )
   if (!decrypted) throw new Error('Could not decrypt message')
   return unpad(naclutil.encodeUTF8(decrypted))
 }
@@ -88,7 +89,7 @@ function decryptMessage ({version, ciphertext, nonce, ephemPublicKey}, secretKey
  *  @param      {String} secretKey                 The secret key as a Uint8Array
  *  @return   {Promise<Object, Error>}             a promise which resolves with the decrypted message or rejects with an error
  */
-function decryptResponse (response, secretKey) {
+function decryptResponse(response, secretKey) {
   return new Promise((resolve, reject) => {
     if (typeof response === 'object') {
       resolve(decryptMessage(response, secretKey))

@@ -64,10 +64,18 @@ sent to their phone</p>
 </dd>
 <dt><a href="#sendAndNotify">sendAndNotify()</a></dt>
 <dd><p>The same transport as above, but also display a self-dismissing modal notifying
-the user that a push notification has been sent to their device</p>
+the user that push notification has been sent to their device</p>
 </dd>
-<dt><a href="#send">send(displayText, message, [opt], [cancel])</a> ⇒ <code>function</code> | <code>function</code></dt>
-<dd><p>A QR tranpsort which uses our provided QR modal to relay a request to a uPort client</p>
+<dt><a href="#send">send(displayText, message, [opts])</a> ⇒ <code>function</code> | <code>function</code></dt>
+<dd><p>A QR tranpsort which uses our provided QR modal to relay a request to a uPort client,
+optionally compressing the provided message if a compress function is provided</p>
+</dd>
+<dt><a href="#chasquiCompress">chasquiCompress(message, threshold)</a> ⇒ <code>String</code></dt>
+<dd><p>A utility function for reducing the size of a QR code by uploading it to chasqui and
+replacing the contents with the topic url.</p>
+<p>An empty Verification JWT (i.e. with signature and sub/iss but blank claim) is ~250 characters
+The absolute max that can fit in a scanable QR on the screen is ~1500 characters
+Below 650 characters the QR modal fits perfectly in the browser on a 13&quot; MBP, with some wiggle room</p>
 </dd>
 <dt><a href="#chasquiSend">chasquiSend([config], message)</a> ⇒ <code>function</code> | <code>Promise.&lt;Object, Error&gt;</code></dt>
 <dd><p>A QR Code and Chasqui Transport. The QR modal is configured for tranporting the request, while the
@@ -101,7 +109,13 @@ the user that a push notification has been sent to their device</p>
 <dd><p>Returns request token (JWT) from a request URI</p>
 </dd>
 <dt><a href="#isJWT">isJWT(jwt)</a> ⇒ <code>Boolean</code></dt>
-<dd><p>Given string, returns Boolean if string is JWT</p>
+<dd><p>Given string, returns boolean if string is JWT</p>
+</dd>
+<dt><a href="#messageToUniversalURI">messageToUniversalURI(message)</a> ⇒ <code>String</code></dt>
+<dd><p>Wrap a JWT in a request URI using the Universal Link scheme based at id.uport.me</p>
+</dd>
+<dt><a href="#messageToDeeplinkURI">messageToDeeplinkURI(message, uri)</a></dt>
+<dd><p>Wrap a JWT in a request URI using the Deeplink scheme, using me.uport:</p>
 </dd>
 <dt><a href="#messageToURI">messageToURI(message)</a> ⇒ <code>Staring</code></dt>
 <dd><p>Given token request (JWT), wraps in request URI</p>
@@ -350,22 +364,42 @@ the user that push notification has been sent to their device.
 **See**: send  
 <a name="send"></a>
 
-## send(displayText, message, [opt], [cancel]) ⇒ <code>function</code> &#124; <code>function</code>
-A QR tranpsort which uses our provided QR modal to relay a request to a uPort client.
+## send(displayText, message, [opts]) ⇒ <code>function</code> \| <code>function</code>
+A QR tranpsort which uses our provided QR modal to relay a request to a uPort client,
+optionally compressing the provided message if a compress function is provided
 
 **Kind**: global function  
 **Returns**: <code>function</code> - a configured QRTransport Function<code>function</code> - a function to close the QR modal  
 
 | Param | Type | Default | Description |
 | --- | --- | --- | --- |
-| displayText | <code>String</code> |  | Dialog used in QR modal display |
-| message | <code>String</code> |  | A uPort client request message |
-| [opt] | <code>Object</code> | <code>{}</code> |  |
-| [cancel] | <code>function</code> |  | Cancel callback, called on modal close |
+| displayText | <code>String</code> |  | dialog used in qr modal display |
+| message | <code>String</code> |  | a uport client request message |
+| [opts] | <code>Object</code> | <code>{}</code> |  |
+| [opts.cancel] | <code>function</code> |  | cancel callback, called on modal close |
+| [opts.compress] | <code>function</code> |  | a function to compress a JWT, returning a promise that resolves to a string |
+
+<a name="chasquiCompress"></a>
+
+## chasquiCompress(message, threshold) ⇒ <code>String</code>
+A utility function for reducing the size of a QR code by uploading it to chasqui and
+replacing the contents with the topic url.
+
+An empty Verification JWT (i.e. with signature and sub/iss but blank claim) is ~250 characters
+The absolute max that can fit in a scanable QR on the screen is ~1500 characters
+Below 650 characters the QR modal fits perfectly in the browser on a 13" MBP, with some wiggle room
+
+**Kind**: global function  
+**Returns**: <code>String</code> - the chasqui url of the message, or the original message if less than threshold  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| message | <code>String</code> |  | the request JWT |
+| threshold | <code>Number</code> | <code>650</code> | the smallest size (in string length) to compress |
 
 <a name="chasquiSend"></a>
 
-## chasquiSend([config], message) ⇒ <code>function</code> &#124; <code>Promise.&lt;Object, Error&gt;</code>
+## chasquiSend([config], message) ⇒ <code>function</code> \| <code>Promise.&lt;Object, Error&gt;</code>
 A QR Code and Chasqui Transport. The QR modal is configured for tranporting the request, while the
  response will be returned through Chasqui.
 
@@ -389,26 +423,27 @@ A mobile transport for handling and configuring requests which are sent from a m
 
 | Param | Type | Default | Description |
 | --- | --- | --- | --- |
-| [config] | <code>Object</code> | <code>{}</code> | An optional config object |
-| uriHandler | <code>String</code> |  | A function called with the requestURI once it is formatted for this transport, default opens URI |
-| message | <code>String</code> |  | A uport client request message |
-| [opts] | <code>Object</code> | <code>{}</code> | An optional config object |
-| opts.id | <code>String</code> |  | An id string for a request, used to identify response once returned |
-| opts.data | <code>String</code> |  | Additional data specific to your application that you can later receive with the response |
-| opts.type | <code>String</code> |  | Specifies callback type 'post' or 'redirect' for response |
-| opts.callback | <code>String</code> |  | Specifies URL which a uport client will return to control once request is handled, depending on request type it may or may not be returned with the response as well. |
+| [config] | <code>Object</code> | <code>{}</code> | an optional config object |
+| [config.messageToURI] | <code>function</code> |  | a function called with the message/JWT to format into a URI |
+| [config.uriHandler] | <code>function</code> |  | a function called with the requestURI once it is formatted for this transport, default opens URI |
+| message | <code>String</code> |  | a uport client request message |
+| [opts] | <code>Object</code> | <code>{}</code> | an optional config object |
+| opts.id | <code>String</code> |  | an id string for a request, used to identify response once returned |
+| opts.data | <code>String</code> |  | additional data specific to your application that you can later receive with the response |
+| opts.type | <code>String</code> |  | specifies callback type 'post' or 'redirect' for response |
+| opts.callback | <code>String</code> |  | specifies url which a uport client will return to control once request is handled, depending on request type it may or may not be returned with the response as well. |
 
 <a name="getResponse"></a>
 
 ## getResponse() ⇒ <code>Object</code>
-A function to fetch a response from hash params appended to callback URL, if available when a function is called.
+A function to fetch a response from hash params appended to callback url, if available when function called.
 
 **Kind**: global function  
-**Returns**: <code>Object</code> - A response object, if repsonse is available, otherwise null.  
+**Returns**: <code>Object</code> - A response object if repsonse is available, otherwise null.  
 <a name="listenResponse"></a>
 
 ## listenResponse(cb)
-A listener which calls given callback when a response becomes avaialble in the hash params (URL fragment)
+A listener which calls given callback when a response becomes avaialble in the hash params (url fragment)
 
 **Kind**: global function  
 
@@ -491,15 +526,39 @@ Given string, returns boolean if string is JWT
 | --- | --- | --- |
 | jwt | <code>String</code> | A JWT string |
 
-<a name="messageToURI"></a>
+<a name="messageToUniversalURI"></a>
 
-## messageToURI(message) ⇒ <code>Staring</code>
-Given token request (JWT), wraps in request URI
+## messageToUniversalURI(message) ⇒ <code>String</code>
+Wrap a JWT in a request URI using the Universal Link scheme based at id.uport.me
 
 **Kind**: global function  
-**Returns**: <code>Staring</code> - A valid request URI, including the given request token  
+**Returns**: <code>String</code> - A valid request URI, including the given request token  
 
 | Param | Type | Description |
 | --- | --- | --- |
 | message | <code>String</code> | A request message (JWT), or if given URI will just return |
+
+<a name="messageToDeeplinkURI"></a>
+
+## messageToDeeplinkURI(message, uri)
+Wrap a JWT in a request URI using the Deeplink scheme, using me.uport:
+
+**Kind**: global function  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| message | <code>String</code> | A request message (JWT) |
+| uri | <code>String</code> | The associated deeplink uri for the given message |
+
+<a name="messageToURI"></a>
+
+## messageToURI(message, type)
+Wrap a JWT in a request URI according to the specified scheme
+
+**Kind**: global function  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| message | <code>String</code> |  | The message to be uri encoded |
+| type | <code>String</code> | <code>universal</code> | The URI method of the above two, either 'universal' or 'deeplink' |
 

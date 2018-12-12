@@ -3,7 +3,7 @@ const proxyquire = require('proxyquire')
 var chai = require('chai');
 const expect = chai.expect
 chai.use(require('sinon-chai'))
-const CHASQUI_URL = 'https://chasqui.uport.me/api/v1/topic/'
+const CHASQUI_URL = 'https://api.uport.space/chasqui/topic/'
 const ranStr = '4242'
 
 describe('transport.poll', function () {
