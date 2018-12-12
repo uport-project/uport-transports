@@ -1,7 +1,7 @@
 import nets from 'nets'
 
 import { encryptMessage } from '../crypto'
-import { getURLJWT } from '../message/util'
+import { messageToURI, paramsToQueryString } from '../message/util'
 import { notifyPushSent } from './ui'
 import { send as sendQR } from './qr'
 
@@ -29,11 +29,12 @@ const send = (token, pubEncKey, pushServiceUrl = PUTUTU_URL) => {
     new Promise((resolve, reject) => {
       if (!message) return reject(new Error('Requires message request to send'))
       // TODO will need following comments if mobile consumes these url params instead of just request message/token
-      // let url = messageToURI(reqMessage)
-      // if (type) url = paramsToQueryString(url, {callback_type: type})
-      // if (redirectUrl) url = paramsToQueryString(url, {'redirect_url': redirectUrl})
-      message = getURLJWT(message)
-      const reqObj = { message }
+      let url = messageToURI(message)
+      if (type) url = paramsToQueryString(url, {callback_type: type})
+      if (redirectUrl) url = paramsToQueryString(url, {'redirect_url': redirectUrl})
+
+      const reqObj = { message: url }
+
       const plaintext = padMessage(JSON.stringify(reqObj))
       const enc = encryptMessage(plaintext, pubEncKey)
       const payload = { message: JSON.stringify(enc) }

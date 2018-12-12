@@ -41,6 +41,24 @@ describe('transport.push', function () {
       })
     })
 
+    it('includes url query params in the message', (done) =>  {
+      const nets = (_, cb) => cb(null, {statusCode: 200}, {message: {}})
+      
+      const encryptMessage = (message) => {
+        expect(message).to.match(/callback_url=/)
+        done()
+      }
+
+      const push = proxyquire( './../../src/transport/push.js', {
+        'nets': nets,
+        '../crypto.js': { encryptMessage }
+      })
+      
+      const send = push.send('token', 'key')
+      const messageWithParams = 'abcd.efgh.ijkl?callback_url=https%3A%2F%2Fapi.uport.me%2Fchasqui%2Ftopic%2F0123456789abcdef'
+      send(messageWithParams)
+    })
+
     it('POST HTTP request to pushServiceUrl', () => {
       const nets = sinon.stub().callsFake((obj, cb) => {
         expect(obj.method).to.equal('POST')
