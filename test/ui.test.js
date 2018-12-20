@@ -30,6 +30,10 @@ createButton('Spinner', () => {
   setTimeout(ui.success, 2000)
 })
 
-createButton('Provider', () => {
+createButton('Provider Sign', () => {
   ui.askProvider().then(console.log)
+})
+
+createButton('Provider Tx', () => {
+  ui.askProvider(true).then(console.log)
 })

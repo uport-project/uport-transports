@@ -7,8 +7,8 @@ import close from './close-x.svg'
 import success from './success.svg'
 import failure from './failure.svg'
 import spinner from './consensys-logo.png'
-import eth from './eth.png'
-import metamask from './metamask.jpg'
+import sign from './sign.png'
+import tx from './tx.png'
 
 const SVG = {
   logo,
@@ -20,8 +20,8 @@ const SVG = {
   success,
   failure,
   spinner,
-  eth,
-  metamask
+  sign,
+  tx,
 }
 
 export default SVG

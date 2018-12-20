@@ -22,11 +22,21 @@
   padding: 0 0.25rem;
 }
 
+#uport__modal-content input[type="checkbox"] {
+  font-size: 1.5em;
+  margin: -0.5em 0.5em 0.5em 0.5em;
+}
+
 #uport__modal-content h2 {
   color: #5C50CA;
   font-size: 20px;
   font-weight: 500;
   margin: 0;
+}
+
+#uport__modal-content h6 {
+  font-weight: normal;
+  margin-top: 0.5em;
 }
 
 #uport__modal-content {
@@ -120,8 +130,13 @@
   font-size: 1em;
   color: #fff;
   padding: 0.5em 1em;
-  margin: 0 0.5em;
+  margin: 0.5em 0.5em 0 0.5em;
   cursor: pointer;
+  width: 75%;
+}
+
+.uport__inline-logo {
+  margin-bottom: -0.15em;
 }
 
 .uport__appstore-icon {

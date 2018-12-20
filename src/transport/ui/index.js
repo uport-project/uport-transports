@@ -102,14 +102,15 @@ export const spinner = (cancel = close) => {
 /**
  * Present a dialog asking 
  */
-export const askProvider = () => {
+export const askProvider = (isTx) => {
   return new Promise((resolve, reject) => {
-    const closeAndResolve = status => () => {
+    const closeAndResolve = useInjectedProvider => () => {
+      const remember = document.getElementById('uport__provider-remember').checked
       close()
-      resolve(status)
+      resolve({remember, useInjectedProvider})
     }
 
-    makeModal(providerModal, closeAndResolve(false))
+    makeModal(providerModal(isTx), closeAndResolve(false))
 
     // Set up event listeners on dialog buttons
     document.getElementById('uport__provider-yes').addEventListener('click', closeAndResolve(true))
