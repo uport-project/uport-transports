@@ -2,7 +2,7 @@ import { NETWORK, networks } from './defaults.js'
 
 const network = (net = NETWORK) => {
   if (typeof net === 'object') {
-    ;['id', 'registry', 'rpcUrl'].forEach(key => {
+    ;['id', 'rpcUrl'].forEach(key => {
       if (!net.hasOwnProperty(key))
         throw new Error(`Malformed network config object, object must have '${key}' key specified.`)
     })
@@ -19,10 +19,8 @@ const networkSet = nets => {
   Object.keys(nets).forEach(key => {
     const net = nets[key]
     if (typeof net === 'object') {
-      ;['registry', 'rpcUrl'].forEach(key => {
-        if (!net.hasOwnProperty(key))
-          throw new Error(`Malformed network config object, object must have '${key}' key specified.`)
-      })
+      if (!net.rpcUrl)
+        throw new Error(`Malformed network config object, object must have 'rpcUrl' key specified.`)
     } else {
       throw new Error(`Network configuration object required`)
     }
