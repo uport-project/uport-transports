@@ -69,7 +69,7 @@ const chasquiCompress = (message, threshold = Number.MAX_VALUE) => {
         body: JSON.stringify(topic),
         headers: {
           'content-type': 'application/json',
-        },
+        }, 
         withCredentials: false,
         rejectUnauthorized: false,
       },

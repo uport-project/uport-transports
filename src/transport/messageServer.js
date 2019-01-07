@@ -1,6 +1,6 @@
 import { paramsToQueryString, getUrlQueryParams, getURLJWT, messageToURI } from './../message/util.js'
 import { randomString } from './../crypto.js'
-import generalPoll from './poll.js'
+import generalPoll from './pubsub.js'
 import { decodeJWT } from 'did-jwt'
 import nets from 'nets'
 const CHASQUI_URL = 'https://api.uport.space/chasqui/'
@@ -70,21 +70,7 @@ const poll = (url, pollingInterval, cancelled) => {
 }
 
 // TODO maybe remove and just have reasonable removal times
-const clearResponse = url => {
-  nets(
-    {
-      uri: url,
-      method: 'DELETE',
-      withCredentials: false,
-      rejectUnauthorized: false,
-    },
-    function(err) {
-      if (err) {
-        throw err
-      } /* Errors without this cb */
-    },
-  )
-}
+
 
 const formatMessageServerUrl = url => {
   if (url.endsWith('/topic/')) return url
