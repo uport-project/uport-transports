@@ -4,19 +4,48 @@ import nets from 'nets'
  * @module pubsub
  * An HTTP pubsub transport, which 
  */
-
 const POLLING_INTERVAL = 2000
+
+/**
+ * 
+ * @param {Object}  options
+ * @param {String}  options.url
+ */
+export function createSession({url, method, ...options}) {
+  return Promise((resolve, reject) => nets({
+    uri: url, 
+    json: true,
+    method, 
+    ...options
+  }, (err, res, body) => {
+    if (err) {
+      reject(err)
+    } else if (res.statusCode === 201) {
+      let location
+      if (location = res.headers.location || res.headers.Location) {
+        resolve(`${url}${location}`)
+      } else {
+        resolve(location)
+      }
+    } else {
+      reject(body)
+    }
+  }))
+}
 
 /**
  * Create a new pubsub topic with an HTTP request
  */
-function createPubSubSender({url, method="POST"}) {
+export function createSender({url, method="POST", ...options}) {
   return message => Promise((resolve, reject) => nets({
     uri: url,
     json: true,
+    body: {message},
     method,
+    ...options
   }, (err, res, body) => {
-
+    if (err || res.statusCode >= 400) reject(err || body)
+    else resolve(body)
   }))
 }
 
@@ -29,7 +58,7 @@ function createPubSubSender({url, method="POST"}) {
  *  @param    {Function}                [cancelled]        function which returns boolean, if returns true, polling stops
  *  @return   {Promise<Object, Error>}                     a promise which resolves with obj/message or rejects with an error
  */
-function createPubSubListener({url, parseResponse=messageParse, cancelled = () => false, pollingInterval = POLLING_INTERVAL}) {
+export function createListener({url, parseResponse=messageParse, cancelled = () => false, pollingInterval = POLLING_INTERVAL}) {
   return () => new Promise((resolve, reject) => {
     let interval
     const die = err => {
@@ -53,7 +82,11 @@ function createPubSubListener({url, parseResponse=messageParse, cancelled = () =
           die(new Error('Request Cancelled'))
         } else {
           const message = parseResponse(body)
-          if (message) return resolve(message)
+          if (message) {
+            clearResponse(url)
+            clearInterval(interval)
+            return resolve(message)
+          }
         }
       })
     }, pollingInterval)
