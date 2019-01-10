@@ -84,11 +84,21 @@ export function decryptWith(secretKey) {
   }
 }
 
+
 /**
- * OLD PARAMS:
- *  @param      {Object} encrypted                   The encrypted message object
+ * Check for each of the 
+ *  @param      {String} encrypted                   The serialized, encrypted message object
  *  @param      {String} encrypted.version           The string `x25519-xsalsa20-poly1305`
  *  @param      {String} encrypted.nonce             Base64 encoded nonce
  *  @param      {String} encrypted.ephemPublicKey    Base64 encoded ephemeral public key
  *  @param      {String} encrypted.ciphertext        Base64 encoded ciphertext
  */
+function isEncryptedPayload(message) {
+  try {
+    const { version, ciphertext, nonce, ephemPublicKey } = JSON.parse(message) 
+    if (!version || !ciphertext || !nonce || !ephemPublicKey) return false
+    return true
+  } catch (e) {
+    return false
+  }
+}
