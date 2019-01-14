@@ -1,50 +1,49 @@
-/**
- *  Add params as url fragment (hash params)
- *
- *  @param    {String}       url           a url
- *  @param    {Object}       [params={}]   params object of valid params to add as url fragment
- *  @return   {String}                     a url with valid params added as url fragment (hash params)
- */
-const paramsToUrlFragment = (url, params = {}) => {
-  const supported = ['data', 'id']
-  return supported
-    .filter(val => params[val])
-    .reduce((uri = url, val) => `${uri}${/#/.test(uri) ? '&' : '#'}${val}=${encodeURIComponent(params[val])}`, url)
-    .toString()
-}
+// /**
+//  *  Add params as url fragment (hash params)
+//  *
+//  *  @param    {String}       url           a url
+//  *  @param    {Object}       [params={}]   params object of valid params to add as url fragment
+//  *  @return   {String}                     a url with valid params added as url fragment (hash params)
+//  */
+// const paramsToUrlFragment = (url, params = {}) => {
+//   const supported = ['data', 'id']
+//   return supported
+//     .filter(val => params[val])
+//     .reduce((uri = url, val) => `${uri}${/#/.test(uri) ? '&' : '#'}${val}=${encodeURIComponent(params[val])}`, url)
+//     .toString()
+// }
 
-// NOTE  still suport data/bytecode param???
-/**
- *  Add params as url query params
- *
- *  @param    {String}       url           a url
- *  @param    {Object}       [params={}]   params object of valid params to add as url query params
- *  @return   {String}                     a url with valid params added as url query framents
- */
-const paramsToQueryString = (url, params = {}) => {
-  const supported = [
-    'value',
-    'function',
-    'bytecode',
-    'label',
-    'callback_url',
-    'redirect_url',
-    'client_id',
-    'network_id',
-    'gas',
-    'gasPrice',
-    'callback_type',
-  ]
-  return supported
-    .filter(val => params[val])
-    .reduce((uri = url, val) => {
-      const split = uri.split('#')
-      return `${split[0]}${
-        /uport.me\/req\/([a-zA-Z0-9_=]+)\.([a-zA-Z0-9_=]+)\.([a-zA-Z0-9_\-\+\/=]*)?\?/.test(split[0]) ? '&' : '?'
-      }${val}=${encodeURIComponent(params[val])}${split[1] ? '#' + split[1] : ''}`
-    }, url)
-    .toString()
-}
+// /**
+//  *  Add params as url query params
+//  *
+//  *  @param    {String}       url           a url
+//  *  @param    {Object}       [params={}]   params object of valid params to add as url query params
+//  *  @return   {String}                     a url with valid params added as url query framents
+//  */
+// const paramsToQueryString = (url, params = {}) => {
+//   const supported = [
+//     'value',
+//     'function',
+//     'bytecode',
+//     'label',
+//     'callback_url',
+//     'redirect_url',
+//     'client_id',
+//     'network_id',
+//     'gas',
+//     'gasPrice',
+//     'callback_type',
+//   ]
+//   return supported
+//     .filter(val => params[val])
+//     .reduce((uri = url, val) => {
+//       const split = uri.split('#')
+//       return `${split[0]}${
+//         /uport.me\/req\/([a-zA-Z0-9_=]+)\.([a-zA-Z0-9_=]+)\.([a-zA-Z0-9_\-\+\/=]*)?\?/.test(split[0]) ? '&' : '?'
+//       }${val}=${encodeURIComponent(params[val])}${split[1] ? '#' + split[1] : ''}`
+//     }, url)
+//     .toString()
+// }
 
 /**
  *  Returns params object of query params in given url

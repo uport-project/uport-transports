@@ -1,6 +1,6 @@
-import * as transport from './transport/index.js'
-import * as message from './message/index.js'
-import * as crypto from './crypto.js'
-import * as network from './network/index.js'
+import * as transport from './transport'
+import * as helpers from './helpers'
+import * as network from './network'
 
-export { transport, message, crypto, network }
+export { helpers, transport, network }
+

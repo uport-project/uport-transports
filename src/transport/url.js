@@ -1,17 +1,16 @@
 import qs from 'qs'
 
 /**
- *  A mobile transport for handling and configuring requests which are sent from a mobile browser to a uport client, in this case the uPort mobile app.
- *
+ * A mobile transport for handling and configuring requests which are sent from a mobile browser to a uport client, 
+ * in this case the uPort mobile app.
  */
 export const createSender = () => {
   return uri => window.location.assign(uri)
 }
 
 /**
- *  A listener which calls given callback when a response becomes avaialble in the hash params (url fragment)
+ * A listener which calls given callback when a response becomes avaialble in the hash params (url fragment)
  *
- *  @param    {Function}     cb     a callback function called as cb(err, res) when a response becomes available
  */
 export const createListener = ({ parse = parseResponse }) => 
   () => new Promise((resolve, reject) => {

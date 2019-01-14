@@ -2,7 +2,7 @@ import nets from 'nets'
 
 /**
  * @module pubsub
- * An HTTP pubsub transport, which 
+ * An HTTP pubsub transport 
  */
 const POLLING_INTERVAL = 2000
 
