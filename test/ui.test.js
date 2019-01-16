@@ -24,3 +24,16 @@ createButton('Success Modal', () => {
 createButton('Failure Modal', () => {
   ui.failure()
 })
+
+createButton('Spinner', () => {
+  ui.spinner()
+  setTimeout(ui.success, 2000)
+})
+
+createButton('Provider Sign', () => {
+  ui.askProvider().then(console.log)
+})
+
+createButton('Provider Tx', () => {
+  ui.askProvider(true).then(console.log)
+})

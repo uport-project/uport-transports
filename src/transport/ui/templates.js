@@ -4,6 +4,17 @@ import modalCSS from './style.css'
 const appleStoreLink = 'https://itunes.apple.com/us/app/uport-id/id1123434510?mt=8'
 const googleStoreLink = 'https://play.google.com/store/apps/details?id=com.uportMobile'
 
+
+const FOOTER = `
+  <div class="uport__modal-section uport__grey">
+    <p>Don't have uPort? Get it here!</p>
+    <div>
+      <a href="${googleStoreLink}" target="_blank"><img src="${SVG.androidApp}"/></a>
+      <a href="${appleStoreLink}" target="_blank"><img src="${SVG.appleApp}"/></a>
+    </div>
+  </div>
+`
+
 /**
  * Skeleton for a modal popup, styled with css imported from './style.css'
  *
@@ -42,14 +53,7 @@ export const qrModal = (qrImageUri, modalText = '') => uportModal(`
       <p>Scan QR code with uPort Mobile App</p>
     </div>
   </div>
-
-  <div class="uport__modal-section uport__grey">
-    <p>Don't have uPort? Get it here!</p>
-    <div>
-      <a href="${googleStoreLink}" target="_blank"><img src="${SVG.androidApp}"/></a>
-      <a href="${appleStoreLink}" target="_blank"><img src="${SVG.appleApp}"/></a>
-    </div>
-  </div>
+  ${FOOTER}
 `)
 
 /**
@@ -84,7 +88,6 @@ export const successModal = uportModal(`
 
 /**
  * Html string for a modal displaying a failure message
- * !! Not used
  */
 export const failureModal = uportModal(`
   <div id="uport__modal-main">
@@ -97,5 +100,35 @@ export const failureModal = uportModal(`
     <div class="uport__modal-section">
       <button id="uport__failure-retry">Try again?</button>
     </div>
+  </div>
+`)
+
+/**
+ * HTML string for a modal displaying a spinner
+ */
+export const spinnerModal = uportModal(`
+  <div id="uport__spinner-box">
+    <img id="uport__spinner" src="${SVG.spinner}" />
+  </div>
+`)
+
+/**
+ * HTML string for a modal displaying a provider dialog
+ */
+export const providerModal = tx => uportModal(`
+  <div id="uport__modal-main">
+    <img src="${tx ? SVG.tx : SVG.sign}" height="100" width="100" />
+    <h3>${tx ? 'Send transaction using' : 'Sign message using'}</h3>
+    <div class="uport__modal-section">
+      <button id="uport__provider-no"  class="uport__button">
+        <img class="uport__inline-logo" src="${SVG.logo}" height="20" width="20"/> uPort Mobile Wallet
+      </button><br/>
+      <button id="uport__provider-yes" class="uport__button">Injected Ethereum Provider</button>
+      <h6>Metamask, Mist, Gnosis Safe, etc.</h6>  
+    </div>
+    <div class="uport__modal-section">
+      <input id="uport__provider-remember" type="checkbox" checked/>Remember this choice
+    </div>
+    ${FOOTER}
   </div>
 `)
