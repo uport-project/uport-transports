@@ -6,7 +6,6 @@ import push from './push-sent.svg'
 import close from './close-x.svg'
 import success from './success.svg'
 import failure from './failure.svg'
-import spinner from './consensys-logo.png'
 import sign from './sign.png'
 import tx from './tx.png'
 
@@ -19,7 +18,6 @@ const SVG = {
   push,
   success,
   failure,
-  spinner,
   sign,
   tx,
 }
