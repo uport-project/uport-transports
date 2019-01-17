@@ -1,5 +1,3 @@
-const registryArtifact = require('uport-registry')
-
 const NETWORK = 'rinkeby'
 
 const networks = {

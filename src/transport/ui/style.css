@@ -22,11 +22,21 @@
   padding: 0 0.25rem;
 }
 
+#uport__modal-content input[type="checkbox"] {
+  font-size: 1.5em;
+  margin: -0.5em 0.5em 0.5em 0.5em;
+}
+
 #uport__modal-content h2 {
   color: #5C50CA;
   font-size: 20px;
   font-weight: 500;
   margin: 0;
+}
+
+#uport__modal-content h6 {
+  font-weight: normal;
+  margin-top: 0.5em;
 }
 
 #uport__modal-content {
@@ -67,6 +77,29 @@
   width: 100%;
 }
 
+#uport__spinner-box {
+  display: flex;
+  align-content: center;
+  justify-content: center;
+  margin: 2em auto 4em auto;
+}
+
+#uport__spinner {
+  animation: spin 1s linear infinite;
+  width: 100px;
+  height: 100px;
+}
+
+#uport__provider-yes {
+  color: #5C50CA;
+  background-color: #F6F7F8;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
 @keyframes fadeIn {
   from { opacity: 0; }
   to { opacity: 1; }
@@ -84,6 +117,26 @@
 .uport__modal-section {
   padding: 1rem 0;
   margin: auto;
+}
+
+.uport__modal-section p {
+  width: 350px;
+}
+
+.uport__button {
+  border: 1px solid #5C50CA;
+  border-radius: 0.25em;
+  background-color: #5C50CA;
+  font-size: 1em;
+  color: #fff;
+  padding: 0.5em 1em;
+  margin: 0.5em 0.5em 0 0.5em;
+  cursor: pointer;
+  width: 75%;
+}
+
+.uport__inline-logo {
+  margin-bottom: -0.15em;
 }
 
 .uport__appstore-icon {

@@ -1,6 +1,6 @@
 import qrImage from 'qr-image'
 
-import { qrModal, pushModal, successModal, failureModal } from './templates'
+import { qrModal, pushModal, successModal, failureModal, spinnerModal, providerModal } from './templates'
 
 /**
  * @module uport-transports/transport/ui
@@ -17,7 +17,7 @@ import { qrModal, pushModal, successModal, failureModal } from './templates'
  *  @param    {String}     data      data string, typically a uPort URI
  *  @return   {String}               image URI
  */
-const getImageDataURI = data => {
+export const getImageDataURI = data => {
   let pngBuffer = qrImage.imageSync(data, { type: 'png' })
   return 'data:image/png;charset=utf-8;base64, ' + pngBuffer.toString('base64')
 }
@@ -25,9 +25,9 @@ const getImageDataURI = data => {
 /**
  *  Closes the default QR pop over
  */
-const close = () => {
+export const close = () => {
   const uportWrapper = document.getElementById('uport-wrapper')
-  document.body.removeChild(uportWrapper)
+  if (uportWrapper) document.body.removeChild(uportWrapper)
 }
 
 /**
@@ -37,9 +37,13 @@ const close = () => {
  * @param     {Function}  [close]   the handler to fire when the modal's x button is pressed
  */
 const makeModal = (content, closeModal = close) => {
-  let wrapper = document.createElement('div')
-  wrapper.setAttribute('id', 'uport-wrapper')
-
+  let wrapper
+  // Create new wrapper if not present
+  if (!(wrapper = document.getElementById('uport-wrapper'))) {
+    wrapper = document.createElement('div')
+    wrapper.setAttribute('id', 'uport-wrapper')  
+  }
+  
   wrapper.innerHTML = content
 
   document.body.appendChild(wrapper)
@@ -53,7 +57,7 @@ const makeModal = (content, closeModal = close) => {
  *  @param    {Function}   cancel     a function called when the cancel button is clicked
  *  @param    {String}     modalText  message to be displayed above the QR in the modal
  */
-const open = (data, cancel, modalText) => {
+export const open = (data, cancel, modalText) => {
   const closeModal = close // closure over close for use in callbacks etc.
   const content = qrModal(getImageDataURI(data), modalText)
 
@@ -70,7 +74,7 @@ const open = (data, cancel, modalText) => {
  * Show a notification to the user that a push has been sent to their phone
  * @param   {Function}    fallback    The fallback handler if the user doesn't receive a push
  */
-const notifyPushSent = fallback => {
+export const notifyPushSent = fallback => {
   makeModal(pushModal)
   document.getElementById('uport__push-not-received').addEventListener('click', () => {
     close()
@@ -80,25 +84,46 @@ const notifyPushSent = fallback => {
 
 /**
  * Show a success screen to the user which automatically dismisses
- * after 2 seconds
+ * after @param {Number} timeout milliseconds
  */
-const success = (timeout = 500) => {
+export const success = (timeout = 500) => {
   makeModal(successModal)
   setTimeout(close, timeout)
+}
+
+/**
+ * Show a spinner (the Consensys Hurricane)
+ * @param {Function} cancel  Function to fire when the close button is pressed
+ */
+export const spinner = (cancel = close) => {
+  makeModal(spinnerModal, cancel)
+}
+
+/**
+ * Present a dialog asking 
+ */
+export const askProvider = (isTx) => {
+  return new Promise((resolve, reject) => {
+    const closeAndResolve = useInjectedProvider => () => {
+      const remember = document.getElementById('uport__provider-remember').checked
+      close()
+      resolve({remember, useInjectedProvider})
+    }
+
+    makeModal(providerModal(isTx), closeAndResolve(false))
+
+    // Set up event listeners on dialog buttons
+    document.getElementById('uport__provider-yes').addEventListener('click', closeAndResolve(true))
+    document.getElementById('uport__provider-no').addEventListener('click', closeAndResolve(false))
+  })
 }
 
 /**
  * Show a failure modal that gives users the option to repeat the failed action
  * @param {Function}  resend  The function that should fire to allow the user to retry
  */
-const failure = retry => {
+export const failure = retry => {
   makeModal(failureModal)
 
   document.getElementById('uport__failure-retry').addEventListener('click', retry)
 }
-
-/**
- *  export
- */
-
-export { close, open, success, failure, notifyPushSent, getImageDataURI }
