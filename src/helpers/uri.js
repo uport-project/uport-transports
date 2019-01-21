@@ -66,7 +66,7 @@ const getUrlQueryParams = url => {
  *  @param    {String}       url           a url
  *  @return   {String}                     a JWT string
  */
-export const getURLJWT = url => url.replace(/https:\/\/id.uport.me\/req\//, '').replace(/(\#|\?)(.*)/, '')
+export const uriToMessage = url => url.replace(/https:\/\/id.uport.me\/req\//, '').replace(/(\#|\?)(.*)/, '')
 
 /**
  * Given string, returns boolean if string is JWT

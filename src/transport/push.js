@@ -19,9 +19,8 @@ const PUTUTU_URL = 'https://api.uport.me/pututu/sns'
  * @param    {String}     [opts.pushServiceUrl]   the url of the push service, by default it is PUTUTU at https://api.uport.me/pututu/sns/
  * @returns  {Function}   a configured Push transport endpoint function
  */
-export function createPushSender({token, pubEncKey, pushServiceUrl = PUTUTU_URL}) {
+export function createSender({token, pushServiceUrl = PUTUTU_URL}) {
   if (!token) throw new Error('Requires push notification token')
-  if (!pubEncKey) throw new Error('Requires public encryption key of the receiver')
 
   return message => new Promise((resolve, reject) => {
     if (!message) return reject(new Error('Requires message request to send'))

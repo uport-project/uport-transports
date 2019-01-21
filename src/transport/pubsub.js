@@ -4,6 +4,8 @@ import nets from 'nets'
  * @module pubsub
  * An HTTP pubsub transport 
  */
+
+const CHASQUI_URL = 'https://api.uport.space/chasqui'
 const POLLING_INTERVAL = 2000
 
 /**
@@ -11,7 +13,7 @@ const POLLING_INTERVAL = 2000
  * @param {Object}  options
  * @param {String}  options.url
  */
-export function createSession({url, method, ...options}) {
+export function createSession({url=CHASQUI_URL, method='POST', ...options}) {
   return Promise((resolve, reject) => nets({
     uri: url, 
     json: true,
@@ -52,14 +54,14 @@ export function createSender({url, method="POST", ...options}) {
 /**
  *  A general polling function. Polls a given url and parse message according to given parsing functions, promise resolves on response or error.
  *
- *  @param    {String}                  url                url polled
- *  @param    {Function}                [messageParse]     function that parses response from GET request, returning the message when available, and null otherwise
- *  @param    {Integer}                 [pollingInterval]  ms interval at which the given url is polled
- *  @param    {Function}                [cancelled]        function which returns boolean, if returns true, polling stops
- *  @return   {Promise<Object, Error>}                     a promise which resolves with obj/message or rejects with an error
+ *  @param    {String}                  opts.url                url polled
+ *  @param    {Function}                [opts.messageParse]     function that parses response from GET request, returning the message when available, and null otherwise
+ *  @param    {Integer}                 [opts.pollingInterval]  ms interval at which the given url is polled
+ *  @param    {Function}                [opts.cancelled]        function which returns boolean, if returns true, polling stops
+ *  @return   {Promise<Object, Error>}                          a promise which resolves with obj/message or rejects with an error
  */
 export function createListener({url, parseResponse=messageParse, cancelled = () => false, pollingInterval = POLLING_INTERVAL}) {
-  return () => new Promise((resolve, reject) => {
+  return ({}) => new Promise((resolve, reject) => {
     let interval
     const die = err => {
       clearInterval(interval)
@@ -91,6 +93,40 @@ export function createListener({url, parseResponse=messageParse, cancelled = () 
       })
     }, pollingInterval)
   })
+}
+
+/**
+ * Create a subscriber to a particular pubsub url, which will fire a callback for every successful response
+ * @param {}  
+ */
+export function createSubscriber({url, parseResponse=messageParse, cancelled = () => false, pollingInterval = POLLING_INTERVAL}) {
+  return cb => {
+    let interval
+    // Poll until result or error
+    interval = setInterval(() => {
+      nets({
+        uri: url,
+        json: true,
+        method: 'GET',
+        withCredentials: false,
+        rejectUnauthorized: false,
+      }, (err, res, body) => {
+        if (err) {
+          cb(err)
+        } else if (res.statusCode >= 400) { 
+          cb(body)
+        } else if (cancelled()) {
+          cb(new Error('Polling Cancelled'))
+          clearInterval(interval)
+          return
+        } else {
+          const message = parseResponse(body)
+          if (message) cb(null, message)
+        }
+      })
+    }, pollingInterval)
+  } 
+  
 }
 
 /**
