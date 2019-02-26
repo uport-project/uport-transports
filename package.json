@@ -27,8 +27,7 @@
     "qr-image": "^3.1.0",
     "qs": "^6.2.1",
     "tweetnacl": "^1.0.0",
-    "tweetnacl-util": "^0.15.0",
-    "uport-registry": "^5.1.0"
+    "tweetnacl-util": "^0.15.0"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",
