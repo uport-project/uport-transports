@@ -1,5 +1,5 @@
 # State of transports refactor
--------------------------------
+
 ## What is this document?
 As I am preparing to leave uPort, it is important that I pass off any unfinished work, and document its goals and approaches, to ensure that information is not lost.  This document in particular describes the work I have been doing to refactor the uport-transports library, why the refactor was necessary, what has been completed, what bugs remain, and how it differs from the previous version.
 
