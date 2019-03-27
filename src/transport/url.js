@@ -35,9 +35,22 @@ const send = ({ uriHandler, messageToURI = defaultMessageToURI } = {}) => {
  *  @return   {Object}   A response object if repsonse is available, otherwise null.
  */
 const getResponse = () => {
-  const res = window.location.hash.slice(1)
-  window.location.hash = ''
-  return parseResponse(res)
+  const hash = window.location.hash.startsWith('?') ? window.location.hash.slice(1) : window.location.hash
+  const response = parseResponse(hash)
+  window.location.hash = removeUportHashParams(hash)
+  return response
+}
+
+const UPORT_PARAMS = ['data', 'id', 'error', 'access_token', 'verification', 'typedDataSig', 'personalSig', 'tx']
+const removeUportHashParams = hash => {
+  const parts = hash.split(/[&;]/g)
+
+  for (let i = parts.length - 1; i >= 0; i--) {
+    const param = parts[i].split('=')[0]
+    if (UPORT_PARAMS.includes(param)) parts.splice(i, 1)
+  }
+
+  return parts.join('&')
 }
 
 // TODO should there be a way to cancel
