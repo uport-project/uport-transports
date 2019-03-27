@@ -53,7 +53,8 @@ const send = (token, pubEncKey, pushServiceUrl = PUTUTU_URL) => {
           if (res.statusCode === 403) {
             return reject(new Error('Error sending push notification to user: Invalid Token'))
           }
-          reject(new Error(`Error sending push notification to user: ${res.statusCode} ${body.toString()}`))
+          const msg = body.message ? body.message : body.toString()
+          reject(new Error(`Error sending push notification to user: ${res.statusCode} ${msg}`))
         },
       )
     })
