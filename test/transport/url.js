@@ -82,6 +82,18 @@ describe('transport.url', function() {
       global.window = { location: { hash: `?access_token=${res}&id=idString&data=dataString` } }
       expect(url.getResponse()).to.deep.equal({ payload: res, id: 'idString', data: 'dataString' })
     })
+
+    it('Removes a uPort response from the hash param', () => {
+      global.window = { location: { hash: `id=SignRequest&access_token=${res}` } }
+      url.getResponse()
+      expect(global.window.location.hash).to.be.equal('')
+    })
+
+    it('Does not remove non-uPort hash params', () => {
+      global.window = { location: { hash: `param=2&access_token=${res}` } }
+      url.getResponse()
+      expect(global.window.location.hash).to.be.equal('param=2')
+    })
   })
 
   describe('listenResponse()', function() {
