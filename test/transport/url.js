@@ -59,12 +59,12 @@ describe('transport.url', function() {
 
   describe('getResponse()', function() {
     it('Returns if access_token response in url', () => {
-      global.window = { location: { hash: `?access_token=${res}&id=idString` } }
+      global.window = { location: { hash: `#access_token=${res}&id=idString` } }
       expect(url.getResponse()).to.not.be.null
     })
 
     it('Returns if verfication response in url', () => {
-      global.window = { location: { hash: `?verification=${res}&id=idString` } }
+      global.window = { location: { hash: `#verification=${res}&id=idString` } }
       expect(url.getResponse()).to.not.be.null
     })
 
@@ -79,27 +79,27 @@ describe('transport.url', function() {
     })
 
     it('Returns {res, data, id}, gets params from url, if successful response', () => {
-      global.window = { location: { hash: `?access_token=${res}&id=idString&data=dataString` } }
+      global.window = { location: { hash: `#access_token=${res}&id=idString&data=dataString` } }
       expect(url.getResponse()).to.deep.equal({ payload: res, id: 'idString', data: 'dataString' })
     })
 
     it('Removes a uPort response from the hash param', () => {
-      global.window = { location: { hash: `id=SignRequest&access_token=${res}` } }
+      global.window = { location: { hash: `#id=SignRequest&access_token=${res}` } }
       url.getResponse()
       expect(global.window.location.hash).to.be.equal('')
     })
 
     it('Does not remove non-uPort hash params', () => {
-      global.window = { location: { hash: `param=2&access_token=${res}` } }
+      global.window = { location: { hash: `#param=2&access_token=${res}` } }
       url.getResponse()
-      expect(global.window.location.hash).to.be.equal('param=2')
+      expect(global.window.location.hash).to.be.equal('#param=2')
     })
   })
 
   describe('listenResponse()', function() {
     it('Calls callback with response on url hash change with response', () => {
       global.window = {
-        location: { hash: `?access_token=${res}&id=idString` },
+        location: { hash: `#access_token=${res}&id=idString` },
         onhashchange: () => {
           throw new Error('expected listenResponse to set this function')
         },
@@ -112,7 +112,7 @@ describe('transport.url', function() {
 
     it('Calls callback with error on url hash change with error', () => {
       global.window = {
-        location: { hash: `?error=error&id=idString` },
+        location: { hash: `#error=error&id=idString` },
         onhashchange: () => {
           throw new Error('expected listenResponse to set this function')
         },
@@ -140,7 +140,7 @@ describe('transport.url', function() {
   describe('onResponse()', function() {
     it('Calls listenResponse and returns promise which resolves on successful response', done => {
       global.window = {
-        location: { hash: `?access_token=${res}&id=idString` },
+        location: { hash: `#access_token=${res}&id=idString` },
         onhashchange: () => {
           throw new Error('expected listenResponse to set this function')
         },
@@ -154,7 +154,7 @@ describe('transport.url', function() {
 
     it('Calls listenResponse and returns promise which rejects on error response', done => {
       global.window = {
-        location: { hash: `?error=error&id=idString` },
+        location: { hash: `#error=error&id=idString` },
         onhashchange: () => {
           throw new Error('expected listenResponse to set this function')
         },
