@@ -37,7 +37,8 @@ const send = ({ uriHandler, messageToURI = defaultMessageToURI } = {}) => {
 const getResponse = () => {
   const hash = window.location.hash.startsWith('?') ? window.location.hash.slice(1) : window.location.hash
   const response = parseResponse(hash)
-  window.location.hash = removeUportHashParams(hash)
+  const { nextHash, hashChanged } = removeUportHashParams(hash)
+  if (hashChanged) window.location.hash = nextHash
   return response
 }
 
