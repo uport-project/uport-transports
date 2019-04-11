@@ -6,7 +6,7 @@ var chai = require('chai');
 const expect = chai.expect
 chai.use(require('sinon-chai'))
 let chasqui = require('./../../src/transport/messageServer.js')
-const CHASQUI_URL = 'https://api.uport.space/chasqui/topic/'
+const CHASQUI_URL = 'https://api.uport.me/chasqui/topic/'
 const ranStr = 'aVKcEd5jznmWslj3'
 
 // TODO stub nets everywhere
