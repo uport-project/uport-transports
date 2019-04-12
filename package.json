@@ -1,6 +1,6 @@
 {
   "name": "uport-transports",
-  "version": "0.2.5",
+  "version": "0.2.6",
   "description": "Set up communication channels between your app and a uPort client to handle requests and responses",
   "main": "lib/index.js",
   "scripts": {
