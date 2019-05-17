@@ -26,6 +26,7 @@
     "mnid": "^0.1.1",
     "mobile-detect": "^1.4.3",
     "nets": "^3.2.0",
+    "pubsub-js": "^1.7.0",
     "qr-image": "^3.1.0",
     "qs": "^6.2.1",
     "tweetnacl": "^1.0.0",
