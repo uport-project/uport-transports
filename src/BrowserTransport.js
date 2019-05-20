@@ -109,7 +109,7 @@ class BrowserTransport {
     if (this.isMobile) {
       if (!redirectUrl && !type) type = 'redirect'
       this.mobileTransport(request, { id, data, redirectUrl, type })
-    } else if (this.pushTransport) {
+    } else if (this.pushSend) {
       this.pushTransport(request, id, { redirectUrl, type })
     } else {
       this.qrTransport(request, id, { cancel })
