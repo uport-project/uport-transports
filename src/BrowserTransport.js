@@ -45,7 +45,7 @@ class BrowserTransport {
    * @param {String} [opts.redirectUrl] url to send the response to
    * @param {String} [opts.type] specifies callback type 'post' or 'redirect' for response
    */
-  mobileTransport(request, id, { data, redirectUrl, type }) {
+  mobileTransport(request, id, { data, redirectUrl, type } = {}) {
     // fire and forget url request, response will never come back to the same page
     url.send({
       messageToURI: messageToUniversalURI,
