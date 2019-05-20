@@ -12,12 +12,12 @@ class BrowserTransport {
   /**
    * Instantiates a new Browser Transport
    *
-   * @param {String} appName The name of your app
+   * @param {String} [appName] The name of your app as it appears in the QR modal
    * @param {String} [opts.pushToken] A user's push token containing an endpoint for sending notifications
    * @param {String} [opts.publicEncKey] A user's public key for encrypting messages pushed to them
    */
-  constructor(appName, opts = {}) {
-    this.appName = appName || 'my-uport-app'
+  constructor(appName = 'my-uport-app', opts = {}) {
+    this.appName = appName
 
     // check if we are on mobile
     this.isMobile = typeof navigator !== 'undefined' && !!new MobileDetect(navigator.userAgent).mobile()
@@ -130,8 +130,8 @@ class BrowserTransport {
   onResponse(id, cb) {
     // if there was a response message in the URL when this was instantiated, resolve it once
     if (this.onLoadUrlResponse && this.onLoadUrlResponse.id === id) {
-      const res = this.onLoadResponse
-      this.onLoadResponse = null
+      const res = this.onLoadUrlResponse
+      this.onLoadUrlResponse = null
       return Promise.resolve(res)
     }
 
