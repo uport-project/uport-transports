@@ -1,11 +1,7 @@
 import MobileDetect from 'mobile-detect'
 import PubSub from 'pubsub-js'
 
-import { ui } from './transport'
-import push from './transport/push'
-import qr from './transport/qr'
-import url from './transport/url'
-import messageServer from './transport/messageServer'
+import { ui, push, qr, url, messageServer } from './transport'
 import { messageToUniversalURI } from './message/util'
 
 class BrowserTransport {
