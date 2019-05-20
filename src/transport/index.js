@@ -3,7 +3,6 @@ import * as ui from './ui/index'
 import * as messageServer from './messageServer'
 import * as push from './push'
 import * as url from './url'
-import * as browser from './browser'
 import poll from './poll'
 
-export { qr, push, messageServer, poll, url, ui, browser }
+export { qr, push, messageServer, poll, url, ui }
