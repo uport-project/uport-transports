@@ -2,7 +2,7 @@ import MobileDetect from 'mobile-detect'
 import PubSub from 'pubsub-js'
 
 import { ui, push, qr, url, messageServer } from './transport'
-import { messageToUniversalURI } from './message/util'
+import { messageToDeeplinkURI } from './message/util'
 
 class BrowserTransport {
   /**
@@ -48,7 +48,7 @@ class BrowserTransport {
   mobileTransport(request, id, { data, redirectUrl, type } = {}) {
     // fire and forget url request, response will never come back to the same page
     url.send({
-      messageToURI: messageToUniversalURI,
+      messageToURI: messageToDeeplinkURI,
     })(request, { id, data, redirectUrl, type })
   }
 
