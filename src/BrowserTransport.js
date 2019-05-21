@@ -46,6 +46,8 @@ class BrowserTransport {
    * @param {String} [opts.type] specifies callback type 'post' or 'redirect' for response
    */
   mobileTransport(request, id, { data, redirectUrl, type } = {}) {
+    // eslint-disable-next-line no-undef
+    if (alert) alert(`mobile id=${id} type=${type}`)
     // fire and forget url request, response will never come back to the same page
     url.send({
       messageToURI: messageToUniversalURI,
@@ -83,10 +85,10 @@ class BrowserTransport {
    * @param {Object} [opts] optional parameters specific to qr transport
    * @param {Function} [cancel] called when user closes the QR modal
    */
-  qrTransport(request, id, { cancel }) {
+  qrTransport(request, id, { cancel } = {}) {
     if (messageServer.isMessageServerCallback(request)) {
       // wrap qr transport in chasqui transport and publish response
-      qr.chasquiSend({ appName: this.appName })(request)
+      qr.chasquiSend({ displayText: this.appName })(request)
         .then(res => {
           PubSub.publish(id, { res })
         })
@@ -114,9 +116,9 @@ class BrowserTransport {
     if (!id) throw new Error('Requires request id')
     if (this.isMobile) {
       if (!redirectUrl && !type) type = 'redirect'
-      this.mobileTransport(request, { id, data, redirectUrl, type })
+      this.mobileTransport(request, id, { data, redirectUrl, type })
     } else if (this.sendPush) {
-      this.pushTransport(request, id, { redirectUrl, type })
+      this.pushTransport(request, id)
     } else {
       this.qrTransport(request, id, { cancel })
     }
