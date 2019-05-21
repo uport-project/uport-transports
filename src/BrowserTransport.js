@@ -46,8 +46,6 @@ class BrowserTransport {
    * @param {String} [opts.type] specifies callback type 'post' or 'redirect' for response
    */
   mobileTransport(request, id, { data, redirectUrl, type } = {}) {
-    // eslint-disable-next-line no-undef
-    if (alert) alert(`mobile id=${id} type=${type}`)
     // fire and forget url request, response will never come back to the same page
     url.send({
       messageToURI: messageToUniversalURI,
