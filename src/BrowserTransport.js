@@ -59,7 +59,7 @@ class BrowserTransport {
    * @param {String} id id of the request that will be used to identify the response
    */
   pushTransport(request, id) {
-    if (!this.pushSend)
+    if (!this.sendPush)
       throw new Error('No push transport configured. Call setPushInfo(pushToken, publicEncKey) first.')
     if (messageServer.isMessageServerCallback(request)) {
       // wrap push transport in chasqui transport and publish response
@@ -67,7 +67,7 @@ class BrowserTransport {
         .URIHandlerSend(this.sendPush)(request)
         .then(res => {
           ui.close()
-          PubSub.publish(id, res)
+          PubSub.publish(id, { res })
         })
     } else {
       // fire and forget push request
@@ -86,7 +86,13 @@ class BrowserTransport {
   qrTransport(request, id, { cancel }) {
     if (messageServer.isMessageServerCallback(request)) {
       // wrap qr transport in chasqui transport and publish response
-      qr.chasquiSend({ appName: this.appName })(request).then(res => PubSub.publish(id, res))
+      qr.chasquiSend({ appName: this.appName })(request)
+        .then(res => {
+          PubSub.publish(id, { res })
+        })
+        .catch(err => {
+          PubSub.publish(id, { err })
+        })
     } else {
       // fire and forget qr request
       qr.send(this.appName)(request, { cancel })
@@ -109,7 +115,7 @@ class BrowserTransport {
     if (this.isMobile) {
       if (!redirectUrl && !type) type = 'redirect'
       this.mobileTransport(request, { id, data, redirectUrl, type })
-    } else if (this.pushSend) {
+    } else if (this.sendPush) {
       this.pushTransport(request, id, { redirectUrl, type })
     } else {
       this.qrTransport(request, id, { cancel })
