@@ -46,15 +46,16 @@ class BrowserTransport {
   onResponse(id, cb) {
     // if there was a response message in the URL when this was instantiated, resolve it once
     if (this.onLoadUrlResponse && this.onLoadUrlResponse.id === id) {
-      const { payload, data } = this.onLoadUrlResponse
+      const { payload, data, error } = this.onLoadUrlResponse
       this.onLoadUrlResponse = null
-      return Promise.resolve({ payload, data })
+      if (error) return Promise.reject(error)
+      else return Promise.resolve({ payload, data })
     }
 
     if (cb) {
       // if a callback is provided, call it whenever the topic specified by id is published
       PubSub.subscribe(id, (_, { payload, data, error }) => {
-        cb(error, { payload, data, error })
+        cb(error, { payload, data })
       })
     } else {
       // if no callback is provided, return a promise that resolves with the first response for that topic
@@ -62,7 +63,7 @@ class BrowserTransport {
         PubSub.subscribe(id, (_, { payload, data, error }) => {
           PubSub.unsubscribe(id)
           if (error) reject(error)
-          resolve({ payload, data, error })
+          resolve({ payload, data })
         })
       })
     }
