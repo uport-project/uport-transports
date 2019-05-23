@@ -18,7 +18,17 @@ class BrowserTransport {
     // check if we are on mobile
     this.isMobile = typeof navigator !== 'undefined' && !!new MobileDetect(navigator.userAgent).mobile()
     // check if there is a response message in the URL
+    // shape of this should be { id: string, payload: string, data: string, error: string }
     this.onLoadUrlResponse = url.getResponse()
+
+    // start listening for responses in the URL in case the mobile app redirects back to this same running page
+    // this has been observed using safari on an iPhone-xs
+    // most of the time a response will not be received this way because the redirect will open a new tab
+    url.listenResponse((err, res) => {
+      if (err) throw err
+      const { id, payload, data } = res
+      PubSub.publish(id, { payload, data })
+    })
 
     // configure transport for sending push requests
     this.sendPush = null
@@ -67,7 +77,10 @@ class BrowserTransport {
         .URIHandlerSend(this.sendPush)(request)
         .then(res => {
           ui.close()
-          PubSub.publish(id, { res })
+          PubSub.publish(id, { payload: res })
+        })
+        .catch(error => {
+          PubSub.publish(id, { error })
         })
     } else {
       // fire and forget push request
@@ -88,10 +101,10 @@ class BrowserTransport {
       // wrap qr transport in chasqui transport and publish response
       qr.chasquiSend({ displayText: this.appName })(request)
         .then(res => {
-          PubSub.publish(id, { res })
+          PubSub.publish(id, { payload: res })
         })
-        .catch(err => {
-          PubSub.publish(id, { err })
+        .catch(error => {
+          PubSub.publish(id, { error })
         })
     } else {
       // fire and forget qr request
@@ -132,23 +145,23 @@ class BrowserTransport {
   onResponse(id, cb) {
     // if there was a response message in the URL when this was instantiated, resolve it once
     if (this.onLoadUrlResponse && this.onLoadUrlResponse.id === id) {
-      const res = this.onLoadUrlResponse
+      const { payload, data } = this.onLoadUrlResponse
       this.onLoadUrlResponse = null
-      return Promise.resolve(res)
+      return Promise.resolve({ payload, data })
     }
 
     if (cb) {
       // if a callback is provided, call it whenever the topic specified by id is published
-      PubSub.subscribe(id, (_, { res, err }) => {
-        cb(err, res)
+      PubSub.subscribe(id, (_, { payload, data, error }) => {
+        cb(error, { payload, data, error })
       })
     } else {
       // if no callback is provided, return a promise that resolves with the first response for that topic
       return new Promise((resolve, reject) => {
-        PubSub.subscribe(id, (_, { res, err }) => {
+        PubSub.subscribe(id, (_, { payload, data, error }) => {
           PubSub.unsubscribe(id)
-          if (err) reject(err)
-          resolve(res)
+          if (error) reject(error)
+          resolve({ payload, data, error })
         })
       })
     }
