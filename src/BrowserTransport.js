@@ -8,15 +8,14 @@ class BrowserTransport {
   /**
    * Instantiates a new Browser Transport
    *
-   * @param {String} [appName] The name of your app as it appears in the QR modal
    * @param {String} [opts.pushToken] A user's push token containing an endpoint for sending notifications
    * @param {String} [opts.publicEncKey] A user's public key for encrypting messages pushed to them
+   * @param {String} [opts.qrTitle] Title text that appears in the QR modal
    */
-  constructor(appName = 'my-uport-app', opts = {}) {
-    this.appName = appName
-
+  constructor(opts = {}) {
     // check if we are on mobile
     this.isMobile = typeof navigator !== 'undefined' && !!new MobileDetect(navigator.userAgent).mobile()
+
     // check if there is a response message in the URL
     // shape of this should be { id: string, payload: string, data: string, error: string }
     this.onLoadUrlResponse = url.getResponse()
@@ -33,16 +32,63 @@ class BrowserTransport {
     // configure transport for sending push requests
     this.sendPush = null
     this.setPushInfo(opts.pushToken, opts.publicEncKey)
+
+    this.qrTitle = opts.qrTitle
   }
 
   /**
-   * Provide a user's push token and public encryption key to enable the configuration of a push transport
+   * Listens for responses to requests made by calling `send`. Returns a promise that resolves once with the resopnse.
+   * If provided with an optional callback, it gets called every time a response with that id is received
    *
-   * @param {String} pushToken A user's push token containing an endpoint for sending notifications
-   * @param {String} publicEncKey A user's public key for encrypting messages pushed to them
+   * @param {String} id id of the request that that we are listening for
+   * @param {Function} [cb] callback to execute whenever a response with this id is received
    */
-  setPushInfo(pushToken, publicEncKey) {
-    this.sendPush = pushToken && publicEncKey ? push.sendAndNotify(pushToken, publicEncKey) : null
+  onResponse(id, cb) {
+    // if there was a response message in the URL when this was instantiated, resolve it once
+    if (this.onLoadUrlResponse && this.onLoadUrlResponse.id === id) {
+      const { payload, data } = this.onLoadUrlResponse
+      this.onLoadUrlResponse = null
+      return Promise.resolve({ payload, data })
+    }
+
+    if (cb) {
+      // if a callback is provided, call it whenever the topic specified by id is published
+      PubSub.subscribe(id, (_, { payload, data, error }) => {
+        cb(error, { payload, data, error })
+      })
+    } else {
+      // if no callback is provided, return a promise that resolves with the first response for that topic
+      return new Promise((resolve, reject) => {
+        PubSub.subscribe(id, (_, { payload, data, error }) => {
+          PubSub.unsubscribe(id)
+          if (error) reject(error)
+          resolve({ payload, data, error })
+        })
+      })
+    }
+  }
+
+  /**
+   * Sends a message by automatically selecting an appropriate transport
+   *
+   * @param {String} request request message to send
+   * @param {String} id id of the request that will be used to identify the response
+   * @param {Object} [opts] optional parameters for each transport
+   * @param {String} [opts.data] additional application data that can be included as part of the response
+   * @param {String} [opts.redirectUrl] url to send the response to
+   * @param {String} [opts.type] specifies callback type 'post' or 'redirect' for response
+   * @param {Function} [cancel] called when user closes the QR modal
+   */
+  send(request, id, { data, redirectUrl, type, cancel } = {}) {
+    if (!id) throw new Error('Requires request id')
+    if (this.isMobile) {
+      if (!redirectUrl && !type) type = 'redirect'
+      this.mobileTransport(request, id, { data, redirectUrl, type })
+    } else if (this.sendPush) {
+      this.pushTransport(request, id)
+    } else {
+      this.qrTransport(request, id, { cancel })
+    }
   }
 
   /**
@@ -60,6 +106,16 @@ class BrowserTransport {
     url.send({
       messageToURI: messageToDeeplinkURI,
     })(request, { id, data, redirectUrl, type })
+  }
+
+  /**
+   * Provide a user's push token and public encryption key to enable the configuration of a push transport
+   *
+   * @param {String} pushToken A user's push token containing an endpoint for sending notifications
+   * @param {String} publicEncKey A user's public key for encrypting messages pushed to them
+   */
+  setPushInfo(pushToken, publicEncKey) {
+    this.sendPush = pushToken && publicEncKey ? push.sendAndNotify(pushToken, publicEncKey) : null
   }
 
   /**
@@ -99,7 +155,7 @@ class BrowserTransport {
   qrTransport(request, id, { cancel } = {}) {
     if (messageServer.isMessageServerCallback(request)) {
       // wrap qr transport in chasqui transport and publish response
-      qr.chasquiSend({ displayText: this.appName })(request)
+      qr.chasquiSend({ displayText: this.qrTitle })(request)
         .then(res => {
           PubSub.publish(id, { payload: res })
         })
@@ -108,62 +164,7 @@ class BrowserTransport {
         })
     } else {
       // fire and forget qr request
-      qr.send(this.appName)(request, { cancel })
-    }
-  }
-
-  /**
-   * Sends a message by automatically selecting an appropriate transport
-   *
-   * @param {String} request request message to send
-   * @param {String} id id of the request that will be used to identify the response
-   * @param {Object} [opts] optional parameters for each transport
-   * @param {String} [opts.data] additional application data that can be included as part of the response
-   * @param {String} [opts.redirectUrl] url to send the response to
-   * @param {String} [opts.type] specifies callback type 'post' or 'redirect' for response
-   * @param {Function} [cancel] called when user closes the QR modal
-   */
-  send(request, id, { data, redirectUrl, type, cancel } = {}) {
-    if (!id) throw new Error('Requires request id')
-    if (this.isMobile) {
-      if (!redirectUrl && !type) type = 'redirect'
-      this.mobileTransport(request, id, { data, redirectUrl, type })
-    } else if (this.sendPush) {
-      this.pushTransport(request, id)
-    } else {
-      this.qrTransport(request, id, { cancel })
-    }
-  }
-
-  /**
-   * Listens for responses to requests made by calling `send`. Returns a promise that resolves once with the resopnse.
-   * If provided with an optional callback, it gets called every time a response with that id is received
-   *
-   * @param {String} id id of the request that that we are listening for
-   * @param {Function} [cb] callback to execute whenever a response with this id is received
-   */
-  onResponse(id, cb) {
-    // if there was a response message in the URL when this was instantiated, resolve it once
-    if (this.onLoadUrlResponse && this.onLoadUrlResponse.id === id) {
-      const { payload, data } = this.onLoadUrlResponse
-      this.onLoadUrlResponse = null
-      return Promise.resolve({ payload, data })
-    }
-
-    if (cb) {
-      // if a callback is provided, call it whenever the topic specified by id is published
-      PubSub.subscribe(id, (_, { payload, data, error }) => {
-        cb(error, { payload, data, error })
-      })
-    } else {
-      // if no callback is provided, return a promise that resolves with the first response for that topic
-      return new Promise((resolve, reject) => {
-        PubSub.subscribe(id, (_, { payload, data, error }) => {
-          PubSub.unsubscribe(id)
-          if (error) reject(error)
-          resolve({ payload, data, error })
-        })
-      })
+      qr.send(this.qrTitle)(request, { cancel })
     }
   }
 }
