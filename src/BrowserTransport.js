@@ -5,9 +5,6 @@ import { ui, push, qr, url, messageServer } from './transport'
 import { messageToDeeplinkURI, paramsToUrlFragment } from './message/util'
 
 // declare symbols as identifiers for private methods
-const mobileTransport = Symbol('mobileTransport')
-const pushTransport = Symbol('pushTransport')
-const qrTransport = Symbol('qrTransport')
 const sendPush = Symbol('sendPush')
 const pushToken = Symbol('pushToken')
 const publicEncKey = Symbol('publicEncKey')
@@ -105,11 +102,11 @@ class BrowserTransport {
     if (!id) throw new Error('Requires request id')
     if (this.isMobile) {
       if (!redirectUrl && !type) type = 'redirect'
-      this[mobileTransport](request, id, { data, redirectUrl, type })
+      this.mobileTransport(request, id, { data, redirectUrl, type })
     } else if (this.sendPush) {
-      this[pushTransport](request, id)
+      this.pushTransport(request, id)
     } else {
-      this[qrTransport](request, id, { cancel })
+      this.qrTransport(request, id, { cancel })
     }
   }
 
@@ -123,7 +120,7 @@ class BrowserTransport {
    * @param {String} [opts.redirectUrl] url to send the response to
    * @param {String} [opts.type] specifies callback type 'post' or 'redirect' for response
    */
-  [mobileTransport](request, id, { data, redirectUrl, type } = {}) {
+  mobileSend(request, id, { data, redirectUrl, type } = {}) {
     // fire and forget url request, response will never come back to the same page
     url.send({
       messageToURI: messageToDeeplinkURI,
@@ -155,7 +152,7 @@ class BrowserTransport {
    * @param {String} request request message to send
    * @param {String} id id of the request that will be used to identify the response
    */
-  [pushTransport](request, id) {
+  pushSend(request, id) {
     if (!this[sendPush])
       throw new Error('No push transport configured. Call setPushInfo(pushToken, publicEncKey) first.')
     if (messageServer.isMessageServerCallback(request)) {
@@ -183,7 +180,7 @@ class BrowserTransport {
    * @param {Object} [opts] optional parameters specific to qr transport
    * @param {Function} [cancel] called when user closes the QR modal
    */
-  [qrTransport](request, id, { cancel } = {}) {
+  qrSend(request, id, { cancel } = {}) {
     if (messageServer.isMessageServerCallback(request)) {
       // wrap qr transport in chasqui transport and publish response
       qr.chasquiSend({ displayText: this.qrTitle })(request)
