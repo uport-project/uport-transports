@@ -2,7 +2,15 @@ import MobileDetect from 'mobile-detect'
 import PubSub from 'pubsub-js'
 
 import { ui, push, qr, url, messageServer } from './transport'
-import { messageToDeeplinkURI } from './message/util'
+import { messageToDeeplinkURI, paramsToUrlFragment } from './message/util'
+
+// declare symbols as identifiers for private methods
+const mobileTransport = Symbol('mobileTransport')
+const pushTransport = Symbol('pushTransport')
+const qrTransport = Symbol('qrTransport')
+const sendPush = Symbol('sendPush')
+const pushToken = Symbol('pushToken')
+const publicEncKey = Symbol('publicEncKey')
 
 class BrowserTransport {
   /**
@@ -20,9 +28,9 @@ class BrowserTransport {
     // shape of this should be { id: string, payload: string, data: string, error: string }
     this.onLoadUrlResponse = url.getResponse()
 
-    // start listening for responses in the URL in case the mobile app redirects back to this same running page
-    // this has been observed using safari on an iPhone-xs
-    // most of the time a response will not be received this way because the redirect will open a new tab
+    // Start listening for responses in the URL in case the mobile app redirects back to this same running page
+    // this has been observed using safari on an iPhone-xs. However, most of the time a response will not be received
+    // this way because the redirect will open a new tab
     url.listenResponse((err, res) => {
       if (err) throw err
       const { id, payload, data } = res
@@ -30,11 +38,24 @@ class BrowserTransport {
     })
 
     // configure transport for sending push requests
-    this.sendPush = null
+    this[sendPush] = null
     this.setPushInfo(opts.pushToken, opts.publicEncKey)
 
     this.qrTitle = opts.qrTitle
   }
+
+  /**
+   * Generates a callbackUrl that can be used to create a request which will return its response to this application
+   *
+   * @param {String} id id that will be used when sending the request that will contain this callback url
+   * @returns {String} a url that can be used as the callbackUrl option when creating a request with uport-credentials
+   */
+  getCallbackUrl(id) {
+    return this.isMobile ? paramsToUrlFragment(window.location.href, { id }) : messageServer.genCallback()
+  }
+  // NOTE: This is necessary due to leaky abstractions between the current transports and messages specs. Ideally
+  //       you should be able to create a request message independently of where the response will get sent. Moving
+  //       towards a edge-server-based transport architecture will help alleviate this.
 
   /**
    * Listens for responses to requests made by calling `send`. Returns a promise that resolves once with the resopnse.
@@ -84,11 +105,11 @@ class BrowserTransport {
     if (!id) throw new Error('Requires request id')
     if (this.isMobile) {
       if (!redirectUrl && !type) type = 'redirect'
-      this.mobileTransport(request, id, { data, redirectUrl, type })
+      this[mobileTransport](request, id, { data, redirectUrl, type })
     } else if (this.sendPush) {
-      this.pushTransport(request, id)
+      this[pushTransport](request, id)
     } else {
-      this.qrTransport(request, id, { cancel })
+      this[qrTransport](request, id, { cancel })
     }
   }
 
@@ -102,7 +123,7 @@ class BrowserTransport {
    * @param {String} [opts.redirectUrl] url to send the response to
    * @param {String} [opts.type] specifies callback type 'post' or 'redirect' for response
    */
-  mobileTransport(request, id, { data, redirectUrl, type } = {}) {
+  [mobileTransport](request, id, { data, redirectUrl, type } = {}) {
     // fire and forget url request, response will never come back to the same page
     url.send({
       messageToURI: messageToDeeplinkURI,
@@ -116,7 +137,16 @@ class BrowserTransport {
    * @param {String} publicEncKey A user's public key for encrypting messages pushed to them
    */
   setPushInfo(pushToken, publicEncKey) {
-    this.sendPush = pushToken && publicEncKey ? push.sendAndNotify(pushToken, publicEncKey) : null
+    this[pushToken] = pushToken
+    this[publicEncKey] = publicEncKey
+    this[sendPush] = pushToken && publicEncKey ? push.sendAndNotify(pushToken, publicEncKey) : null
+  }
+
+  /**
+   * @returns {Object} object containing the currently configured pushToken and publicEncKey
+   */
+  getPushInfo() {
+    return { pushToken: this[pushToken], publicEncKey: this[publicEncKey] }
   }
 
   /**
@@ -125,13 +155,13 @@ class BrowserTransport {
    * @param {String} request request message to send
    * @param {String} id id of the request that will be used to identify the response
    */
-  pushTransport(request, id) {
-    if (!this.sendPush)
+  [pushTransport](request, id) {
+    if (!this[sendPush])
       throw new Error('No push transport configured. Call setPushInfo(pushToken, publicEncKey) first.')
     if (messageServer.isMessageServerCallback(request)) {
       // wrap push transport in chasqui transport and publish response
       messageServer
-        .URIHandlerSend(this.sendPush)(request)
+        .URIHandlerSend(this[sendPush])(request)
         .then(res => {
           ui.close()
           PubSub.publish(id, { payload: res })
@@ -141,7 +171,7 @@ class BrowserTransport {
         })
     } else {
       // fire and forget push request
-      this.sendPush(request)
+      this[sendPush](request)
     }
   }
 
@@ -153,7 +183,7 @@ class BrowserTransport {
    * @param {Object} [opts] optional parameters specific to qr transport
    * @param {Function} [cancel] called when user closes the QR modal
    */
-  qrTransport(request, id, { cancel } = {}) {
+  [qrTransport](request, id, { cancel } = {}) {
     if (messageServer.isMessageServerCallback(request)) {
       // wrap qr transport in chasqui transport and publish response
       qr.chasquiSend({ displayText: this.qrTitle })(request)
