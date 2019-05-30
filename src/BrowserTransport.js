@@ -2,14 +2,14 @@ import MobileDetect from 'mobile-detect'
 import PubSub from 'pubsub-js'
 
 import { ui, push, qr, url, messageServer } from './transport'
-import { messageToDeeplinkURI, paramsToUrlFragment } from './message/util'
+import { messageToUniversalURI, paramsToUrlFragment } from './message/util'
 
 // declare symbols as identifiers for private attributes and methods
-const sendPush = Symbol('sendPush')
-const pushToken = Symbol('pushToken')
-const publicEncKey = Symbol('publicEncKey')
-const isMobile = Symbol('isMobile')
-const onLoadUrlResponse = Symbol('onLoadUrlResponse')
+const _sendPush = Symbol('sendPush')
+const _pushToken = Symbol('pushToken')
+const _publicEncKey = Symbol('publicEncKey')
+const _isMobile = Symbol('isMobile')
+const _onLoadUrlResponse = Symbol('onLoadUrlResponse')
 
 class BrowserTransport {
   /**
@@ -21,11 +21,11 @@ class BrowserTransport {
    */
   constructor(opts = {}) {
     // check if we are on mobile
-    this[isMobile] = typeof navigator !== 'undefined' && !!new MobileDetect(navigator.userAgent).mobile()
+    this[_isMobile] = typeof navigator !== 'undefined' && !!new MobileDetect(navigator.userAgent).mobile()
 
     // check if there is a response message in the URL
     // shape of this should be { id: string, payload: string, data: string, error: string }
-    this[onLoadUrlResponse] = url.getResponse()
+    this[_onLoadUrlResponse] = url.getResponse()
 
     // Start listening for responses in the URL in case the mobile app redirects back to this same running page
     // this has been observed using safari on an iPhone-xs. However, most of the time a response will not be received
@@ -37,7 +37,7 @@ class BrowserTransport {
     })
 
     // configure transport for sending push requests
-    this[sendPush] = null
+    this[_sendPush] = null
     this.setPushInfo(opts.pushToken, opts.publicEncKey)
 
     this.qrTitle = opts.qrTitle
@@ -47,7 +47,7 @@ class BrowserTransport {
    * @returns {Boolean} true if detected as running on a mobile device
    */
   getIsMobile() {
-    return this[isMobile]
+    return this[_isMobile]
   }
 
   /**
@@ -57,7 +57,7 @@ class BrowserTransport {
    * @returns {String} a url that can be used as the callbackUrl option when creating a request with uport-credentials
    */
   getCallbackUrl(id) {
-    return this[isMobile] ? paramsToUrlFragment(window.location.href, { id }) : messageServer.genCallback()
+    return this[_isMobile] ? paramsToUrlFragment(window.location.href, { id }) : messageServer.genCallback()
   }
   // NOTE: This is necessary due to leaky abstractions between the current transports and messages specs. Ideally
   //       you should be able to create a request message independently of where the response will get sent. Moving
@@ -67,7 +67,7 @@ class BrowserTransport {
    * @returns {Object} object containing the currently configured pushToken and publicEncKey
    */
   getPushInfo() {
-    return { pushToken: this[pushToken], publicEncKey: this[publicEncKey] }
+    return { pushToken: this[_pushToken], publicEncKey: this[_publicEncKey] }
   }
 
   /**
@@ -77,9 +77,9 @@ class BrowserTransport {
    * @param {String} publicEncKey A user's public key for encrypting messages pushed to them
    */
   setPushInfo(pushToken, publicEncKey) {
-    this[pushToken] = pushToken
-    this[publicEncKey] = publicEncKey
-    this[sendPush] = pushToken && publicEncKey ? push.sendAndNotify(pushToken, publicEncKey) : null
+    this[_pushToken] = pushToken
+    this[_publicEncKey] = publicEncKey
+    this[_sendPush] = pushToken && publicEncKey ? push.sendAndNotify(pushToken, publicEncKey) : null
   }
 
   /**
@@ -91,9 +91,9 @@ class BrowserTransport {
    */
   onResponse(id, cb) {
     // if there was a response message in the URL when this was instantiated, resolve it once
-    if (this[onLoadUrlResponse] && this[onLoadUrlResponse].id === id) {
-      const { payload, data, error } = this[onLoadUrlResponse]
-      this[onLoadUrlResponse] = null
+    if (this[_onLoadUrlResponse] && this[_onLoadUrlResponse].id === id) {
+      const { payload, data, error } = this[_onLoadUrlResponse]
+      this[_onLoadUrlResponse] = null
       if (error) return Promise.reject(error)
       else return Promise.resolve({ payload, data })
     }
@@ -128,10 +128,10 @@ class BrowserTransport {
    */
   send(request, id, { data, redirectUrl, type, cancel } = {}) {
     if (!id) throw new Error('Requires request id')
-    if (this[isMobile]) {
+    if (this[_isMobile]) {
       if (!redirectUrl && !type) type = 'redirect'
       this.mobileSend(request, id, { data, redirectUrl, type })
-    } else if (this.sendPush) {
+    } else if (this[_sendPush]) {
       this.pushSend(request, id)
     } else {
       this.qrSend(request, id, { cancel })
@@ -151,7 +151,7 @@ class BrowserTransport {
   mobileSend(request, id, { data, redirectUrl, type } = {}) {
     // fire and forget url request, response will never come back to the same page
     url.send({
-      messageToURI: messageToDeeplinkURI,
+      messageToURI: messageToUniversalURI,
     })(request, { id, data, redirectUrl, type })
   }
 
@@ -162,12 +162,12 @@ class BrowserTransport {
    * @param {String} id id of the request that will be used to identify the response
    */
   pushSend(request, id) {
-    if (!this[sendPush])
+    if (!this[_sendPush])
       throw new Error('No push transport configured. Call setPushInfo(pushToken, publicEncKey) first.')
     if (messageServer.isMessageServerCallback(request)) {
       // wrap push transport in chasqui transport and publish response
       messageServer
-        .URIHandlerSend(this[sendPush])(request)
+        .URIHandlerSend(this[_sendPush])(request)
         .then(res => {
           ui.close()
           PubSub.publish(id, { payload: res })
@@ -177,7 +177,7 @@ class BrowserTransport {
         })
     } else {
       // fire and forget push request
-      this[sendPush](request)
+      this[_sendPush](request)
     }
   }
 
