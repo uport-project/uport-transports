@@ -297,7 +297,7 @@ describe('BrowserTransport', () => {
       })
 
       it('uses the qr request and chasqui response transport', () => {
-        const stub = sinon.stub().returns(new Promise(resolve => resolve(RESPONSE_OBJ)))
+        const stub = sinon.stub().returns(new Promise(resolve => resolve(RESPONSE_JWT)))
         qrChasquiSend.returns(stub)
         const transport = new BrowserTransport()
         transport.qrSend(REQUEST_JWT, REQUEST_ID)
@@ -308,7 +308,7 @@ describe('BrowserTransport', () => {
       })
 
       it('publishes the data after receiving a response', done => {
-        qrChasquiSend.returns(() => new Promise(resolve => resolve(RESPONSE_OBJ)))
+        qrChasquiSend.returns(() => new Promise(resolve => resolve(RESPONSE_JWT)))
         const publish = sinon.spy(PubSub, 'publish')
         const transport = new BrowserTransport()
         transport.qrSend(REQUEST_JWT, REQUEST_ID)

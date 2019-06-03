@@ -194,7 +194,7 @@ class BrowserTransport {
       // wrap qr transport in chasqui transport and publish response
       qr.chasquiSend({ displayText: this.qrTitle })(request)
         .then(res => {
-          PubSub.publish(id, { payload: res.payload })
+          PubSub.publish(id, { payload: res })
         })
         .catch(error => {
           PubSub.publish(id, { error })
