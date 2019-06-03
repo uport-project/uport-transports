@@ -3,33 +3,41 @@ import { expect } from 'chai'
 
 import BrowserTransport from '../src/BrowserTransport'
 
-describe('Constructor', () => {
-  it.only('sets defaults', () => {
+describe.only('Constructor', () => {
+  beforeEach(() => {
     global.window = {
       location: {
         hash: '',
       },
     }
-    const t = new BrowserTransport()
-    const pushInfo = t.getPushInfo()
-    expect(pushInfo).to.have.property('pushToken', null)
-    expect(pushInfo).to.have.property('publicEncKey', null)
-    expect(t.qrTitle).to.be.equal('')
   })
 
-  it('can be configured with an app name', () => {
-    // instantiate with custom app name
-    // check appName = custom app name
+  it('sets defaults', () => {
+    const transport = new BrowserTransport()
+    const pushInfo = transport.getPushInfo()
+    expect(pushInfo).to.have.property('pushToken', null)
+    expect(pushInfo).to.have.property('publicEncKey', null)
+    expect(transport.qrTitle).to.be.equal('')
+  })
+
+  it('can be configured with a custom qr title', () => {
+    const TITLE = 'test'
+    const transport = new BrowserTransport({ qrTitle: TITLE })
+    expect(transport.qrTitle).to.be.equal(TITLE)
   })
 
   it('can be configured with data to set up a push transport', () => {
-    // instantiate with pushToken and publicEncKey options
-    // check sendPush is a function
-  })
-
-  it('checks the current url for a response message', () => {
-    // intantiate with no args
-    // check url.getResponse called
+    const PUSH_TOKEN =
+      'eyJ0eXAiOiJKV1QiLCJhbGciOiJFUzI1NkstUiJ9.eyJpYXQiOjE1NTg0NjMwNDMsImV4cCI6MTU4OTk5OTA0MywiYXVk' +
+      'IjoiZGlkOmV0aHI6MHhjYmE5NmQ5NjQ2ZjAyMjI2NDM0MjY2YjlmYjg1OWI5YzViNmYzYTNjIiwidHlwZSI6Im5vdGlmaWNhdGlvbnMiLCJ2YW' +
+      'x1ZSI6ImFybjphd3M6c25zOnVzLXdlc3QtMjoxMTMxOTYyMTY1NTg6ZW5kcG9pbnQvQVBOUy91UG9ydC8zMjA0MmVlYi1lMzg5LTNjZGQtOTQ0' +
+      'Yi1jODk5NzFlYjViOTUiLCJpc3MiOiJkaWQ6ZXRocjoweGVmNDdhNDhkYzczMDdmNTc0Nzc1ZTc0NWNkM2I4ZGJlY2ZiZDA3NmIifQ.waMwhBJ' +
+      '-S_934bi1BsI3nqEenANkikrRn6sEi4z-_1BpqTDXAXjrUkEn5O_QrU2j5yy_ag2bR6j4W32Ek070TwA'
+    const PUB_ENC_KEY = 'oJTV/XBfg5S3odQTomlgg0WyaNAvB7fHlxfYads1wTA='
+    const transport = new BrowserTransport({ pushToken: PUSH_TOKEN, publicEncKey: PUB_ENC_KEY })
+    const pushInfo = transport.getPushInfo()
+    expect(pushInfo).to.have.property('pushToken', PUSH_TOKEN)
+    expect(pushInfo).to.have.property('publicEncKey', PUB_ENC_KEY)
   })
 })
 
