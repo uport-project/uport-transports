@@ -1,10 +1,20 @@
 /* global describe, it, beforeEach */
+import { expect } from 'chai'
+
+import BrowserTransport from '../src/BrowserTransport'
 
 describe('Constructor', () => {
-  it('sets defaults', () => {
-    // instantiate with no args
-    // check appName = 'my-uport-app'
-    // check sendPush = null
+  it.only('sets defaults', () => {
+    global.window = {
+      location: {
+        hash: '',
+      },
+    }
+    const t = new BrowserTransport()
+    const pushInfo = t.getPushInfo()
+    expect(pushInfo).to.have.property('pushToken', null)
+    expect(pushInfo).to.have.property('publicEncKey', null)
+    expect(t.qrTitle).to.be.equal('')
   })
 
   it('can be configured with an app name', () => {

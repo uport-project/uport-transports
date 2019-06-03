@@ -19,7 +19,13 @@ class BrowserTransport {
    * @param {String} [opts.publicEncKey] A user's public key for encrypting messages pushed to them
    * @param {String} [opts.qrTitle] Title text that appears in the QR modal
    */
-  constructor(opts = {}) {
+  constructor(
+    opts = {
+      pushToken: null,
+      publicEncKey: null,
+      qrTitle: '',
+    },
+  ) {
     // check if we are on mobile
     this[_isMobile] = typeof navigator !== 'undefined' && !!new MobileDetect(navigator.userAgent).mobile()
 
