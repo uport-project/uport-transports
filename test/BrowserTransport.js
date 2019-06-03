@@ -23,6 +23,22 @@ describe('Constructor', () => {
   })
 })
 
+describe('getCallbackUrl', () => {
+  it('calls paramsToUrlFragment if on mobile', () => {
+    // instantiate with no args
+    // mock navigator so mobile is true
+    // spy paramsToUrlFragment
+    // check called once
+  })
+
+  it('calls messageServer.genCallback if not on mobile', () => {
+    // instantiate with no args
+    // mock navigator so mobile is false
+    // spy messageServer.genCallback
+    // check called once
+  })
+})
+
 describe('setPushInfo', () => {
   it('sets up a push transport if pushToken and publicEncKey are provided', () => {
     // instantiate with no args
@@ -50,7 +66,66 @@ describe('setPushInfo', () => {
   })
 })
 
-describe('mobileTransport', () => {
+describe('onResponse', () => {
+  it('resolves a response that was encoded in the url on instantiation', () => {
+    // instantiate with no args
+    // set onLoadUrlResponse
+    // call onResponse
+    // check promise resolves to onLoadUrlResponse object
+    // check onLoadUrlResponse set to null
+  })
+
+  it('resolves a response once if no callback is provided', () => {
+    // instantiate with no args
+    // call onResponse with id
+    // publish to id
+    // check promise returned by onResponse resolves
+    // check PubSub.unsubscribe called with id
+  })
+
+  it('executes multiple times if a callback is provided', () => {
+    // instantiate with no args
+    // call onResponse with id and cb
+    // publish to id
+    // check cb called
+    // publish to id
+    // check cb called again
+  })
+})
+
+describe('send', () => {
+  it('throws an error if called without an id', () => {
+    // instantiate with no args
+    // call send with no args
+    // check error is thrown
+  })
+
+  it('uses mobileTransport if on mobile', () => {
+    // instantiate with no args
+    // set isMobile = true
+    // mock mobileTransport
+    // call send
+    // check mobileTransport called
+  })
+
+  it('uses pushTransport if not on mobile and push is configured', () => {
+    // instantiate with pushToken and publicEncKey options
+    // set isMobile = false
+    // mock pushTransport
+    // call send
+    // check pushTransport called
+  })
+
+  it('uses qrTransport if not on mobile and push is not configured', () => {
+    // instantiate with no args
+    // set isMobile = false
+    // mock qrTransport
+    // call send
+    // check qrTransport called
+  })
+})
+
+describe('mobileSend', () => {
   it('calls a transport function created by url.send', () => {
     // instantiate with no args
     // call mobileTransport
@@ -59,7 +134,7 @@ describe('mobileTransport', () => {
   })
 })
 
-describe('pushTransport', () => {
+describe('pushSend', () => {
   it('throws an error if push is not configured', () => {
     // instantiate with no args
     // call pushTransport
@@ -100,7 +175,7 @@ describe('pushTransport', () => {
   })
 })
 
-describe('qrTransport', () => {
+describe('qrSend', () => {
   describe('called with request that does not have a chasqui callback', () => {
     it('uses the qr request transport', () => {
       // instantiate with no args
@@ -127,64 +202,5 @@ describe('qrTransport', () => {
       // resolve the promise
       // check PubSub.publish is called with response and original id
     })
-  })
-})
-
-describe('send', () => {
-  it('throws an error if called without an id', () => {
-    // instantiate with no args
-    // call send with no args
-    // check error is thrown
-  })
-
-  it('uses mobileTransport if on mobile', () => {
-    // instantiate with no args
-    // set isMobile = true
-    // mock mobileTransport
-    // call send
-    // check mobileTransport called
-  })
-
-  it('uses pushTransport if not on mobile and push is configured', () => {
-    // instantiate with pushToken and publicEncKey options
-    // set isMobile = false
-    // mock pushTransport
-    // call send
-    // check pushTransport called
-  })
-
-  it('uses qrTransport if not on mobile and push is not configured', () => {
-    // instantiate with no args
-    // set isMobile = false
-    // mock qrTransport
-    // call send
-    // check qrTransport called
-  })
-})
-
-describe('onResponse', () => {
-  it('resolves a response that was encoded in the url on instantiation', () => {
-    // instantiate with no args
-    // set onLoadUrlResponse
-    // call onResponse
-    // check promise resolves to onLoadUrlResponse object
-    // check onLoadUrlResponse set to null
-  })
-
-  it('resolves a response once if no callback is provided', () => {
-    // instantiate with no args
-    // call onResponse with id
-    // publish to id
-    // check promise returned by onResponse resolves
-    // check PubSub.unsubscribe called with id
-  })
-
-  it('executes multiple times if a callback is provided', () => {
-    // instantiate with no args
-    // call onResponse with id and cb
-    // publish to id
-    // check cb called
-    // publish to id
-    // check cb called again
   })
 })
