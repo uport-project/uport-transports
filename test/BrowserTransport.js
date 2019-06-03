@@ -2,10 +2,11 @@
 /* global describe, it, beforeEach */
 import { expect } from 'chai'
 import sinon from 'sinon'
+import PubSub from 'pubsub-js'
 
 import BrowserTransport from '../src/BrowserTransport'
 import * as messageUtil from '../src/message/util'
-import { messageServer, push } from '../src/transport'
+import { messageServer, push, url } from '../src/transport'
 
 const MOBILE_USER_AGENT =
   'Mozilla/5.0 (iPhone; CPU iPhone OS 12_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/12.1 Mobile/15E148 Safari/604.1'
@@ -14,6 +15,12 @@ const REQUEST_ID = 'testRequest'
 const PUSH_TOKEN =
   'eyJ0eXAiOiJKV1QiLCJhbGciOiJFUzI1NkstUiJ9.eyJpYXQiOjE1NTg0NjMwNDMsImV4cCI6MTU4OTk5OTA0MywiYXVkIjoiZGlkOmV0aHI6MHhjYmE5NmQ5NjQ2ZjAyMjI2NDM0MjY2YjlmYjg1OWI5YzViNmYzYTNjIiwidHlwZSI6Im5vdGlmaWNhdGlvbnMiLCJ2YWx1ZSI6ImFybjphd3M6c25zOnVzLXdlc3QtMjoxMTMxOTYyMTY1NTg6ZW5kcG9pbnQvQVBOUy91UG9ydC8zMjA0MmVlYi1lMzg5LTNjZGQtOTQ0Yi1jODk5NzFlYjViOTUiLCJpc3MiOiJkaWQ6ZXRocjoweGVmNDdhNDhkYzczMDdmNTc0Nzc1ZTc0NWNkM2I4ZGJlY2ZiZDA3NmIifQ.waMwhBJ-S_934bi1BsI3nqEenANkikrRn6sEi4z-_1BpqTDXAXjrUkEn5O_QrU2j5yy_ag2bR6j4W32Ek070TwA'
 const PUB_ENC_KEY = 'oJTV/XBfg5S3odQTomlgg0WyaNAvB7fHlxfYads1wTA='
+const RESPONSE_JWT =
+  'eyJ0eXAiOiJKV1QiLCJhbGciOiJFUzI1NkstUiJ9.eyJpYXQiOjE1NTk1OTE0MDAsImV4cCI6MTU1OTY3NzgwMCwiYXVkIjoiZGlkOmV0aHI6MHgxY2M1YTI5MDk2ODI3MTViYjc3YzkyNWJhNjE0YjFhNzk1MTNmMTQ4IiwidHlwZSI6InNoYXJlUmVzcCIsIm93biI6e30sInJlcSI6ImV5SjBlWEFpT2lKS1YxUWlMQ0poYkdjaU9pSkZVekkxTmtzdFVpSjkuZXlKcFlYUWlPakUxTlRrMU9URXlNemtzSW1WNGNDSTZNVFUxT1RVNU1UZ3pPU3dpY0dWeWJXbHpjMmx2Ym5NaU9sc2libTkwYVdacFkyRjBhVzl1Y3lKZExDSmpZV3hzWW1GamF5STZJbWgwZEhCek9pOHZZWEJwTG5Wd2IzSjBMbTFsTDJOb1lYTnhkV2t2ZEc5d2FXTXZRVWRDUldjM2EyZ3hPV3ROU1dsUFNqa3hTbTFPVVNJc0luUjVjR1VpT2lKemFHRnlaVkpsY1NJc0ltbHpjeUk2SW1ScFpEcGxkR2h5T2pCNE1XTmpOV0V5T1RBNU5qZ3lOekUxWW1JM04yTTVNalZpWVRZeE5HSXhZVGM1TlRFelpqRTBPQ0o5Lk9vQ3ZmUDJJUkdMbkpKX0JPdzV3bGhyUnhDa2VTZnMzV1F0VXJfVGx0OGc5Q1ROMnNwOGdNN2pwM0hUNmRMRFY3NzhON01qX3pOUDBVUE9Xa0NRYnlRRSIsImNhcGFiaWxpdGllcyI6WyJleUowZVhBaU9pSktWMVFpTENKaGJHY2lPaUpGVXpJMU5rc3RVaUo5LmV5SnBZWFFpT2pFMU5UazFPVEUwTURBc0ltVjRjQ0k2TVRVNU1URXlOelF3TUN3aVlYVmtJam9pWkdsa09tVjBhSEk2TUhneFkyTTFZVEk1TURrMk9ESTNNVFZpWWpjM1l6a3lOV0poTmpFMFlqRmhOemsxTVRObU1UUTRJaXdpZEhsd1pTSTZJbTV2ZEdsbWFXTmhkR2x2Ym5NaUxDSjJZV3gxWlNJNkltRnlianBoZDNNNmMyNXpPblZ6TFhkbGMzUXRNam94TVRNeE9UWXlNVFkxTlRnNlpXNWtjRzlwYm5RdlFWQk9VeTkxVUc5eWRDOHdNRGN3TnpKbU9TMHhZMkUzTFRNMk1qTXRZalJrTlMwd05qSXlNR1EyWkRNd01ETWlMQ0pwYzNNaU9pSmthV1E2WlhSb2Nqb3dlRGswTXpnME1EazNNRGcyTkRaaU1UQmpaamhpTVRreU9XTm1OMk5rWVROaFltTmlPREV5TVRFaWZRLnhSdHRWR1puXzhYNUVqWDZOa21DZVRXMmthSndqdE9OczEzVUNTc1hqOHhBZkQycVNvSFkwM2dYaWlsM1JhQ3hXR3dtREJvYWFMTXRveHhvR1pZemxnRSJdLCJib3hQdWIiOiJQY0FVRkVPRlBvYWFwLzhRRDE3LzJDUVlIN2htQmg4Ty9vSTZqYndSN3hJPSIsImlzcyI6ImRpZDpldGhyOjB4OTQzODQwOTcwODY0NmIxMGNmOGIxOTI5Y2Y3Y2RhM2FiY2I4MTIxMSJ9'
+const RESPONSE_OBJ = {
+  id: REQUEST_ID,
+  payload: RESPONSE_JWT,
+}
 
 beforeEach(() => {
   global.window = {
@@ -93,29 +100,20 @@ describe('setPushInfo', () => {
 })
 
 describe('onResponse', () => {
-  it('resolves a response that was encoded in the url on instantiation', () => {
-    // instantiate with no args
-    // set onLoadUrlResponse
-    // call onResponse
-    // check promise resolves to onLoadUrlResponse object
-    // check onLoadUrlResponse set to null
+  it('resolves a response that was encoded in the url on instantiation', async () => {
+    const getResponse = sinon.stub(url, 'getResponse').returns(RESPONSE_OBJ)
+    const transport = new BrowserTransport()
+    const response = await transport.onResponse(REQUEST_ID)
+    getResponse.reset()
+    expect(response.payload).to.be.equal(RESPONSE_JWT)
   })
 
-  it('resolves a response once if no callback is provided', () => {
-    // instantiate with no args
-    // call onResponse with id
-    // publish to id
-    // check promise returned by onResponse resolves
-    // check PubSub.unsubscribe called with id
-  })
-
-  it('executes multiple times if a callback is provided', () => {
-    // instantiate with no args
-    // call onResponse with id and cb
-    // publish to id
-    // check cb called
-    // publish to id
-    // check cb called again
+  it('resolves a response once if no callback is provided', async () => {
+    const transport = new BrowserTransport()
+    const responsePromise = transport.onResponse(REQUEST_ID)
+    PubSub.publish(REQUEST_ID, RESPONSE_OBJ)
+    const response = await responsePromise
+    expect(response.payload).to.be.equal(RESPONSE_JWT)
   })
 })
 

@@ -90,12 +90,11 @@ class BrowserTransport {
 
   /**
    * Listens for responses to requests made by calling `send`. Returns a promise that resolves once with the resopnse.
-   * If provided with an optional callback, it gets called every time a response with that id is received
    *
    * @param {String} id id of the request that that we are listening for
-   * @param {Function} [cb] callback to execute whenever a response with this id is received
+   * @returns {Promise} resolves a response object with { payload, data } containing the jwt and extra optional data
    */
-  onResponse(id, cb) {
+  onResponse(id) {
     // if there was a response message in the URL when this was instantiated, resolve it once
     if (this[_onLoadUrlResponse] && this[_onLoadUrlResponse].id === id) {
       const { payload, data, error } = this[_onLoadUrlResponse]
@@ -104,21 +103,14 @@ class BrowserTransport {
       else return Promise.resolve({ payload, data })
     }
 
-    if (cb) {
-      // if a callback is provided, call it whenever the topic specified by id is published
+    // if no callback is provided, return a promise that resolves with the first response for that topic
+    return new Promise((resolve, reject) => {
       PubSub.subscribe(id, (_, { payload, data, error }) => {
-        cb(error, { payload, data })
+        PubSub.unsubscribe(id)
+        if (error) reject(error)
+        resolve({ payload, data })
       })
-    } else {
-      // if no callback is provided, return a promise that resolves with the first response for that topic
-      return new Promise((resolve, reject) => {
-        PubSub.subscribe(id, (_, { payload, data, error }) => {
-          PubSub.unsubscribe(id)
-          if (error) reject(error)
-          resolve({ payload, data })
-        })
-      })
-    }
+    })
   }
 
   /**
