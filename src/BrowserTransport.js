@@ -167,11 +167,13 @@ class BrowserTransport {
       messageServer
         .URIHandlerSend(this[_sendPush])(request)
         .then(res => {
-          ui.close()
           PubSub.publish(id, { payload: res })
         })
         .catch(error => {
           PubSub.publish(id, { error })
+        })
+        .finally(_ => {
+          ui.close()
         })
     } else {
       // fire and forget push request
@@ -192,7 +194,7 @@ class BrowserTransport {
       // wrap qr transport in chasqui transport and publish response
       qr.chasquiSend({ displayText: this.qrTitle })(request)
         .then(res => {
-          PubSub.publish(id, { payload: res })
+          PubSub.publish(id, { payload: res.payload })
         })
         .catch(error => {
           PubSub.publish(id, { error })

@@ -6,7 +6,7 @@ import PubSub from 'pubsub-js'
 
 import BrowserTransport from '../src/BrowserTransport'
 import * as messageUtil from '../src/message/util'
-import { messageServer, push, url } from '../src/transport'
+import { messageServer, push, url, ui, qr } from '../src/transport'
 
 const MOBILE_USER_AGENT =
   'Mozilla/5.0 (iPhone; CPU iPhone OS 12_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/12.1 Mobile/15E148 Safari/604.1'
@@ -21,6 +21,16 @@ const RESPONSE_OBJ = {
   id: REQUEST_ID,
   payload: RESPONSE_JWT,
 }
+const REQUEST_JWT =
+  'eyJ0eXAiOiJKV1QiLCJhbGciOiJFUzI1NkstUiJ9.eyJpYXQiOjE1NTk1OTU3NDQsImV4cCI6MTU1OTU5NjM0NCwicGVybWlzc2lvbnMiOlsibm90aWZpY2F0aW9ucyJdLCJjYWxsYmFjayI6Imh0dHBzOi8vYXBpLnVwb3J0Lm1lL2NoYXNxdWkvdG9waWMvTEFaLWVMU2JQTGdDNzlXc2F2RXpEQSIsInR5cGUiOiJzaGFyZVJlcSIsImlzcyI6ImRpZDpldGhyOjB4OTU4ZTZlODQ1ZDMxMTFiZTUwNDY1NzFlM2M4NDBiMWQ0MTY4MGMzMyJ9'
+
+const sendAndNotify = sinon.stub(push, 'sendAndNotify')
+const isMessageServerCallback = sinon.stub(messageServer, 'isMessageServerCallback')
+const URIHandlerSend = sinon.stub(messageServer, 'URIHandlerSend')
+const getResponse = sinon.stub(url, 'getResponse')
+const close = sinon.stub(ui, 'close')
+const qrSend = sinon.stub(qr, 'send')
+const qrChasquiSend = sinon.stub(qr, 'chasquiSend')
 
 beforeEach(() => {
   global.window = {
@@ -30,6 +40,14 @@ beforeEach(() => {
   }
 
   global.navigator = undefined
+
+  sendAndNotify.reset()
+  isMessageServerCallback.reset()
+  URIHandlerSend.reset()
+  getResponse.reset()
+  close.reset()
+  qrSend.reset()
+  qrChasquiSend.reset()
 })
 
 const setMobile = _ => {
@@ -78,12 +96,6 @@ describe('getCallbackUrl', () => {
 })
 
 describe('setPushInfo', () => {
-  const sendAndNotify = sinon.stub(push, 'sendAndNotify')
-
-  beforeEach(() => {
-    sendAndNotify.reset()
-  })
-
   it('sets up a push transport if pushToken and publicEncKey are provided', () => {
     const transport = new BrowserTransport()
     transport.setPushInfo(PUSH_TOKEN, PUB_ENC_KEY)
@@ -101,10 +113,9 @@ describe('setPushInfo', () => {
 
 describe('onResponse', () => {
   it('resolves a response that was encoded in the url on instantiation', async () => {
-    const getResponse = sinon.stub(url, 'getResponse').returns(RESPONSE_OBJ)
+    getResponse.returns(RESPONSE_OBJ)
     const transport = new BrowserTransport()
     const response = await transport.onResponse(REQUEST_ID)
-    getResponse.reset()
     expect(response.payload).to.be.equal(RESPONSE_JWT)
   })
 
@@ -119,82 +130,132 @@ describe('onResponse', () => {
 
 describe('send', () => {
   it('throws an error if called without an id', () => {
-    // instantiate with no args
-    // call send with no args
-    // check error is thrown
+    const transport = new BrowserTransport()
+    expect(_ => {
+      transport.send(REQUEST_JWT, null)
+    }).to.throw()
   })
 
   it('uses mobileTransport if on mobile', () => {
-    // instantiate with no args
-    // set isMobile = true
-    // mock mobileTransport
-    // call send
-    // check mobileTransport called
+    setMobile()
+    const transport = new BrowserTransport()
+    const mobileSend = sinon.stub(transport, 'mobileSend')
+    transport.send(REQUEST_JWT, REQUEST_ID)
+    expect(mobileSend.called).to.be.true
   })
 
   it('uses pushTransport if not on mobile and push is configured', () => {
-    // instantiate with pushToken and publicEncKey options
-    // set isMobile = false
-    // mock pushTransport
-    // call send
-    // check pushTransport called
+    sendAndNotify.returns(_ => {})
+    const transport = new BrowserTransport({
+      pushToken: PUSH_TOKEN,
+      publicEncKey: PUB_ENC_KEY,
+    })
+    const pushSend = sinon.stub(transport, 'pushSend')
+    transport.send(REQUEST_JWT, REQUEST_ID)
+    expect(pushSend.called).to.be.true
   })
 
   it('uses qrTransport if not on mobile and push is not configured', () => {
-    // instantiate with no args
-    // set isMobile = false
-    // mock qrTransport
-    // call send
-    // check qrTransport called
+    const transport = new BrowserTransport()
+    const qrSend = sinon.stub(transport, 'qrSend')
+    transport.send(REQUEST_JWT, REQUEST_ID)
+    expect(qrSend.called).to.be.true
   })
 })
 
 describe('mobileSend', () => {
   it('calls a transport function created by url.send', () => {
-    // instantiate with no args
-    // call mobileTransport
-    // check url.send is called
-    // check function returned by url.send is called with the request
+    const spy = sinon.spy()
+    const send = sinon.stub(url, 'send').returns(spy)
+    const transport = new BrowserTransport()
+    transport.mobileSend(REQUEST_JWT, REQUEST_ID)
+    expect(send.called).to.be.true
+    expect(spy.called).to.be.true
   })
 })
 
 describe('pushSend', () => {
   it('throws an error if push is not configured', () => {
-    // instantiate with no args
-    // call pushTransport
-    // check error is thrown
+    const transport = new BrowserTransport()
+    expect(_ => {
+      transport.pushSend(REQUEST_JWT, REQUEST_ID)
+    }).to.throw()
   })
 
   describe('called with request that does not have a chasqui callback', () => {
-    it('uses the push request transport', () => {
-      // instantiate with pushToken and publicEncKey options
-      // mock sendPush
-      // mock messageServer.isMessageServerCallback to return false
-      // call pushTransport
-      // check sendPush called with request
+    it('uses the push request transport without chasqui response', () => {
+      const spy = sinon.spy()
+      isMessageServerCallback.returns(false)
+      sendAndNotify.returns(spy)
+      const transport = new BrowserTransport({
+        pushToken: PUSH_TOKEN,
+        publicEncKey: PUB_ENC_KEY,
+      })
+      transport.pushSend(REQUEST_JWT, REQUEST_ID)
+      expect(URIHandlerSend.called).to.be.false
+      expect(spy.called).to.be.true
     })
   })
 
   describe('called with request that has a chasqui callback', () => {
     beforeEach(() => {
-      // instantiate with pushToken and publicEncKey options
-      // mock sendPush
-      // mock PubSub
-      // mock messageServer.isMessageServerCallback to return true
-      // mock messageServer.URIHandlerSend to return function that takes a request and returns a promise
-      // mock ui.close
-      // call pushTransport
+      isMessageServerCallback.returns(true)
+      sendAndNotify.returns(_ => {})
+      URIHandlerSend.returns(
+        _ =>
+          new Promise(resolve => {
+            resolve(RESPONSE_JWT)
+          }),
+      )
     })
 
     it('wraps the push request transport in a chasqui response transport', () => {
-      // check messageServer.URIHandlerSend call with this.sendPush
-      // check function returned by messageServer.URIHandlerSend is called with the request
+      const transport = new BrowserTransport({
+        pushToken: PUSH_TOKEN,
+        publicEncKey: PUB_ENC_KEY,
+      })
+      transport.pushSend(REQUEST_JWT, REQUEST_ID)
+      expect(URIHandlerSend.called).to.be.true
     })
 
-    it('publishes the data and closes the modal after receiving a response', () => {
-      // resolve the promise returned by the response transport
-      // check ui.close called
-      // check PubSub.publish called with response and original id
+    it('publishes the data and closes the modal after receiving a response', done => {
+      const publish = sinon.spy(PubSub, 'publish')
+      const transport = new BrowserTransport({
+        pushToken: PUSH_TOKEN,
+        publicEncKey: PUB_ENC_KEY,
+      })
+      transport.pushSend(REQUEST_JWT, REQUEST_ID)
+      setTimeout(_ => {
+        expect(close.called).to.be.true
+        expect(publish.called).to.be.true
+        expect(publish.getCall(0).args[0]).to.be.equal(REQUEST_ID)
+        expect(publish.getCall(0).args[1].payload).to.be.equal(RESPONSE_JWT)
+        publish.restore()
+        done()
+      })
+    })
+
+    it('publishes an error', done => {
+      URIHandlerSend.returns(
+        _ =>
+          new Promise((resolve, reject) => {
+            reject(new Error())
+          }),
+      )
+      const publish = sinon.spy(PubSub, 'publish')
+      const transport = new BrowserTransport({
+        pushToken: PUSH_TOKEN,
+        publicEncKey: PUB_ENC_KEY,
+      })
+      transport.pushSend(REQUEST_JWT, REQUEST_ID)
+      setTimeout(_ => {
+        expect(close.called).to.be.true
+        expect(publish.called).to.be.true
+        expect(publish.getCall(0).args[0]).to.be.equal(REQUEST_ID)
+        expect(publish.getCall(0).args[1].error).to.be.not.null
+        publish.restore()
+        done()
+      })
     })
   })
 })
@@ -202,29 +263,58 @@ describe('pushSend', () => {
 describe('qrSend', () => {
   describe('called with request that does not have a chasqui callback', () => {
     it('uses the qr request transport', () => {
-      // instantiate with no args
-      // mock messageServer.isMessageServerCallback to return false
-      // call qrTransport
-      // check qr.send called with appName
-      // check function returned by ap.send called with request
+      const spy = sinon.spy()
+      qrSend.returns(spy)
+      isMessageServerCallback.returns(false)
+      const transport = new BrowserTransport()
+      transport.qrSend(REQUEST_JWT, REQUEST_ID)
+      expect(qrSend.called).to.be.true
+      expect(spy.called).to.be.true
     })
   })
 
   describe('called with request that has chasqui callback', () => {
     beforeEach(() => {
-      // instantiate with no args
-      // mock qr.chasquiSend to return function that takes a request and returns a promise
-      // call qrTransport
+      isMessageServerCallback.returns(true)
     })
 
     it('uses the qr request and chasqui response transport', () => {
-      // check qr.chasquiSend called with appName
-      // check function returned by qr.chasquiSend called with request
+      const stub = sinon.stub().returns(new Promise(resolve => resolve(RESPONSE_OBJ)))
+      qrChasquiSend.returns(stub)
+      const transport = new BrowserTransport()
+      transport.qrSend(REQUEST_JWT, REQUEST_ID)
+      expect(qrChasquiSend.called).to.be.true
+      expect(qrChasquiSend.getCall(0).args[0].displayText).to.be.equal(transport.qrTitle)
+      expect(stub.called).to.be.true
+      expect(stub.getCall(0).args[0]).to.be.equal(REQUEST_JWT)
     })
 
-    it('publishes the data after receiving a response', () => {
-      // resolve the promise
-      // check PubSub.publish is called with response and original id
+    it('publishes the data after receiving a response', done => {
+      qrChasquiSend.returns(_ => new Promise(resolve => resolve(RESPONSE_OBJ)))
+      const publish = sinon.spy(PubSub, 'publish')
+      const transport = new BrowserTransport()
+      transport.qrSend(REQUEST_JWT, REQUEST_ID)
+      setTimeout(_ => {
+        expect(publish.called).to.be.true
+        expect(publish.getCall(0).args[0]).to.be.equal(REQUEST_ID)
+        expect(publish.getCall(0).args[1].payload).to.be.equal(RESPONSE_JWT)
+        publish.restore()
+        done()
+      })
+    })
+
+    it('publishes an error', done => {
+      qrChasquiSend.returns(_ => new Promise((resolve, reject) => reject(new Error())))
+      const publish = sinon.spy(PubSub, 'publish')
+      const transport = new BrowserTransport()
+      transport.qrSend(REQUEST_JWT, REQUEST_ID)
+      setTimeout(_ => {
+        expect(publish.called).to.be.true
+        expect(publish.getCall(0).args[0]).to.be.equal(REQUEST_ID)
+        expect(publish.getCall(0).args[1].error).to.be.not.null
+        publish.restore()
+        done()
+      })
     })
   })
 })
