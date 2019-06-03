@@ -5,7 +5,7 @@ import sinon from 'sinon'
 
 import BrowserTransport from '../src/BrowserTransport'
 import * as messageUtil from '../src/message/util'
-import { messageServer } from '../src/transport'
+import { messageServer, push } from '../src/transport'
 
 const MOBILE_USER_AGENT =
   'Mozilla/5.0 (iPhone; CPU iPhone OS 12_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/12.1 Mobile/15E148 Safari/604.1'
@@ -71,29 +71,24 @@ describe('getCallbackUrl', () => {
 })
 
 describe('setPushInfo', () => {
+  const sendAndNotify = sinon.stub(push, 'sendAndNotify')
+
+  beforeEach(() => {
+    sendAndNotify.reset()
+  })
+
   it('sets up a push transport if pushToken and publicEncKey are provided', () => {
-    // instantiate with no args
-    // call setPushInfo with args
-    // check push.sendAndNotify is called with pushToken and publicEncKey
-    // check sendPush is a function
+    const transport = new BrowserTransport()
+    transport.setPushInfo(PUSH_TOKEN, PUB_ENC_KEY)
+    expect(sendAndNotify.called).to.be.true
   })
 
-  it('removes the push transport if only pushToken is provided', () => {
-    // instantiate with pushToken and publicEncKey options
-    // call setPushInfo with pushToken
-    // check sendPush is null
-  })
-
-  it('removes the push transport if only publicEncKey is provided', () => {
-    // instantiate with pushToken and publicEncKey options
-    // call setPushInfo with publicEncKey
-    // check sendPush is null
-  })
-
-  it('removes the push transport if no args are provided', () => {
-    // instantiate with pushToken and publicEncKey options
-    // call setPushInfo with no args
-    // check sendPush is null
+  it('does not set up a push transport if pushToken or publicEncKey are missing', () => {
+    const transport = new BrowserTransport()
+    transport.setPushInfo(PUSH_TOKEN, null)
+    expect(sendAndNotify.called).to.be.false
+    transport.setPushInfo(null, PUB_ENC_KEY)
+    expect(sendAndNotify.called).to.be.false
   })
 })
 
