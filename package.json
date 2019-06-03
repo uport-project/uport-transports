@@ -10,6 +10,7 @@
     "build": "npm run build:es5 && npm run build:dist",
     "start": "webpack-dev-server --config webpack.config.dev.js --hot",
     "test": "./node_modules/.bin/mocha test/index.js",
+    "test:watch": "./node_modules/.bin/mocha --watch test/index.js",
     "build:docs:html": "./node_modules/.bin/jsdoc *.js -d docs",
     "build:docs:md": "jsdoc2md -f src/* src/transport/* src/transport/ui/* src/message/* src/network/* --template template.hbs -c js2doc.conf  > docs/reference/index.md; echo",
     "build:docs": "npm run build:docs:html && npm run build:docs:md",

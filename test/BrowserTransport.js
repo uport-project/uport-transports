@@ -1,17 +1,37 @@
+/* eslint-disable no-unused-expressions */
 /* global describe, it, beforeEach */
 import { expect } from 'chai'
+import sinon from 'sinon'
 
 import BrowserTransport from '../src/BrowserTransport'
+import * as messageUtil from '../src/message/util'
+import { messageServer } from '../src/transport'
 
-describe.only('Constructor', () => {
-  beforeEach(() => {
-    global.window = {
-      location: {
-        hash: '',
-      },
-    }
-  })
+const MOBILE_USER_AGENT =
+  'Mozilla/5.0 (iPhone; CPU iPhone OS 12_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/12.1 Mobile/15E148 Safari/604.1'
+const QR_TITLE = 'qr title'
+const REQUEST_ID = 'testRequest'
+const PUSH_TOKEN =
+  'eyJ0eXAiOiJKV1QiLCJhbGciOiJFUzI1NkstUiJ9.eyJpYXQiOjE1NTg0NjMwNDMsImV4cCI6MTU4OTk5OTA0MywiYXVkIjoiZGlkOmV0aHI6MHhjYmE5NmQ5NjQ2ZjAyMjI2NDM0MjY2YjlmYjg1OWI5YzViNmYzYTNjIiwidHlwZSI6Im5vdGlmaWNhdGlvbnMiLCJ2YWx1ZSI6ImFybjphd3M6c25zOnVzLXdlc3QtMjoxMTMxOTYyMTY1NTg6ZW5kcG9pbnQvQVBOUy91UG9ydC8zMjA0MmVlYi1lMzg5LTNjZGQtOTQ0Yi1jODk5NzFlYjViOTUiLCJpc3MiOiJkaWQ6ZXRocjoweGVmNDdhNDhkYzczMDdmNTc0Nzc1ZTc0NWNkM2I4ZGJlY2ZiZDA3NmIifQ.waMwhBJ-S_934bi1BsI3nqEenANkikrRn6sEi4z-_1BpqTDXAXjrUkEn5O_QrU2j5yy_ag2bR6j4W32Ek070TwA'
+const PUB_ENC_KEY = 'oJTV/XBfg5S3odQTomlgg0WyaNAvB7fHlxfYads1wTA='
 
+beforeEach(() => {
+  global.window = {
+    location: {
+      hash: '',
+    },
+  }
+
+  global.navigator = undefined
+})
+
+const setMobile = _ => {
+  global.navigator = {
+    userAgent: MOBILE_USER_AGENT,
+  }
+}
+
+describe('Constructor', () => {
   it('sets defaults', () => {
     const transport = new BrowserTransport()
     const pushInfo = transport.getPushInfo()
@@ -21,19 +41,11 @@ describe.only('Constructor', () => {
   })
 
   it('can be configured with a custom qr title', () => {
-    const TITLE = 'test'
-    const transport = new BrowserTransport({ qrTitle: TITLE })
-    expect(transport.qrTitle).to.be.equal(TITLE)
+    const transport = new BrowserTransport({ qrTitle: QR_TITLE })
+    expect(transport.qrTitle).to.be.equal(QR_TITLE)
   })
 
   it('can be configured with data to set up a push transport', () => {
-    const PUSH_TOKEN =
-      'eyJ0eXAiOiJKV1QiLCJhbGciOiJFUzI1NkstUiJ9.eyJpYXQiOjE1NTg0NjMwNDMsImV4cCI6MTU4OTk5OTA0MywiYXVk' +
-      'IjoiZGlkOmV0aHI6MHhjYmE5NmQ5NjQ2ZjAyMjI2NDM0MjY2YjlmYjg1OWI5YzViNmYzYTNjIiwidHlwZSI6Im5vdGlmaWNhdGlvbnMiLCJ2YW' +
-      'x1ZSI6ImFybjphd3M6c25zOnVzLXdlc3QtMjoxMTMxOTYyMTY1NTg6ZW5kcG9pbnQvQVBOUy91UG9ydC8zMjA0MmVlYi1lMzg5LTNjZGQtOTQ0' +
-      'Yi1jODk5NzFlYjViOTUiLCJpc3MiOiJkaWQ6ZXRocjoweGVmNDdhNDhkYzczMDdmNTc0Nzc1ZTc0NWNkM2I4ZGJlY2ZiZDA3NmIifQ.waMwhBJ' +
-      '-S_934bi1BsI3nqEenANkikrRn6sEi4z-_1BpqTDXAXjrUkEn5O_QrU2j5yy_ag2bR6j4W32Ek070TwA'
-    const PUB_ENC_KEY = 'oJTV/XBfg5S3odQTomlgg0WyaNAvB7fHlxfYads1wTA='
     const transport = new BrowserTransport({ pushToken: PUSH_TOKEN, publicEncKey: PUB_ENC_KEY })
     const pushInfo = transport.getPushInfo()
     expect(pushInfo).to.have.property('pushToken', PUSH_TOKEN)
@@ -43,17 +55,18 @@ describe.only('Constructor', () => {
 
 describe('getCallbackUrl', () => {
   it('calls paramsToUrlFragment if on mobile', () => {
-    // instantiate with no args
-    // mock navigator so mobile is true
-    // spy paramsToUrlFragment
-    // check called once
+    setMobile()
+    const paramsToUrlFragment = sinon.stub(messageUtil, 'paramsToUrlFragment')
+    const transport = new BrowserTransport()
+    transport.getCallbackUrl(REQUEST_ID)
+    expect(paramsToUrlFragment.called).to.be.true
   })
 
   it('calls messageServer.genCallback if not on mobile', () => {
-    // instantiate with no args
-    // mock navigator so mobile is false
-    // spy messageServer.genCallback
-    // check called once
+    const genCallback = sinon.stub(messageServer, 'genCallback')
+    const transport = new BrowserTransport()
+    transport.getCallbackUrl(REQUEST_ID)
+    expect(genCallback.called).to.be.true
   })
 })
 
