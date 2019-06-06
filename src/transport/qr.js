@@ -99,16 +99,9 @@ const chasquiCompress = (message, threshold = Number.MAX_VALUE) => {
 const chasquiSend = ({ chasquiUrl = CHASQUI_URL, pollingInterval = POLLING_INTERVAL, displayText } = {}) => {
   const transport = URIHandlerSend(send(displayText, { compress: chasquiCompress }), { chasquiUrl, pollingInterval })
   return (message, params) =>
-    transport(message, params).then(
-      res => {
-        close()
-        return res
-      },
-      err => {
-        close()
-        throw new Error(err)
-      },
-    )
+    transport(message, params).finally(_ => {
+      close()
+    })
 }
 
 export { chasquiSend, chasquiCompress, send }
