@@ -10,31 +10,43 @@ source: "https://github.com/uport-project/uport-transports/blob/develop/docs/ref
 
 <dl>
 <dt><a href="#module_uport-transports/transport/ui">uport-transports/transport/ui</a></dt>
-<dd><p>A set of UI utility functions and default displays for bridging between
-a web browser and a uPort user&#39;s mobile app</p>
+<dd><p>A set of ui utility functions and default displays for bridging between
+a web browser and a uport user&#39;s mobile app</p>
 </dd>
+</dl>
+
+## Classes
+
+<dl>
+<dt><a href="#BrowserTransport">BrowserTransport</a></dt>
+<dd></dd>
 </dl>
 
 ## Constants
 
 <dl>
 <dt><a href="#uportModal">uportModal</a> ⇒ <code>String</code></dt>
-<dd><p>Skeleton for a modal popup, styled with CSS imported from &#39;./style.css&#39;</p>
+<dd><p>Skeleton for a modal popup, styled with css imported from &#39;./style.css&#39;</p>
 </dd>
 <dt><a href="#qrModal">qrModal</a> ⇒ <code>Object</code></dt>
 <dd><p>Format a modal with a QR code and a custom message, as well as links to
-the uport mobile app on the App Store and Play Store</p>
+the uport mobile app on the app store and play store</p>
 </dd>
 <dt><a href="#pushModal">pushModal</a></dt>
-<dd><p>HTML string for a modal notifying a user that a push notification has been
+<dd><p>Html string for a modal notifying a user that a push notification has been
 sent to their phone</p>
 </dd>
 <dt><a href="#successModal">successModal</a></dt>
-<dd><p>HTML string for a modal displaying a success message</p>
+<dd><p>Html string for a modal displaying a success message</p>
 </dd>
 <dt><a href="#failureModal">failureModal</a></dt>
-<dd><p>HTML string for a modal displaying a failure message
-!! Not used</p>
+<dd><p>Html string for a modal displaying a failure message</p>
+</dd>
+<dt><a href="#spinnerModal">spinnerModal</a></dt>
+<dd><p>HTML string for a modal displaying a spinner</p>
+</dd>
+<dt><a href="#providerModal">providerModal</a></dt>
+<dd><p>HTML string for a modal displaying a provider dialog</p>
 </dd>
 </dl>
 
@@ -45,18 +57,18 @@ sent to their phone</p>
 <dd><p>Given a length, returns a random string of that length</p>
 </dd>
 <dt><a href="#decryptResponse">decryptResponse(encrypted, secretKey)</a> ⇒ <code>Promise.&lt;Object, Error&gt;</code></dt>
-<dd><p>Decrypts a response from a promise. This is meant to be used to wrap the response from Chasqui or other transport</p>
+<dd><p>Decrypts a response from a promise. This is intended to be used to wrap the response from Chasqui or other transport</p>
 </dd>
 <dt><a href="#URIHandlerSend">URIHandlerSend(uriHandler, [config], message)</a> ⇒ <code>function</code> | <code>Promise.&lt;Object, Error&gt;</code></dt>
 <dd><p>A general Chasqui Transport. Allows you to configure the transport with any uriHandler for the request,
  while the response will always be returned through Chasqui. Chasqui is a simple messaging server that
- allows responses to be relayed from a uPort client to the original callee.</p>
+ allows responses to be relayed from a uport client to the original callee.</p>
 </dd>
 <dt><a href="#poll">poll(url, [pollingInterval], [cancelled])</a> ⇒ <code>Promise.&lt;Object, Error&gt;</code></dt>
 <dd><p>A polling function specifically for polling Chasqui.</p>
 </dd>
 <dt><a href="#poll">poll(url, messageParse, errorParse, [pollingInterval], [cancelled])</a> ⇒ <code>Promise.&lt;Object, Error&gt;</code></dt>
-<dd><p>A general polling function. Polls a given URL and parse message according to given parsing functions, promise resolves on response or error.</p>
+<dd><p>A general polling function. Polls a given url and parse message according to given parsing functions, promise resolves on response or error.</p>
 </dd>
 <dt><a href="#send">send(token, pubEncKey, [pushServiceUrl], message, [opts])</a> ⇒ <code>function</code> | <code>Promise.&lt;Object, Error&gt;</code></dt>
 <dd><p>A push notification transport for pushing requests to the uPort mobile client of a specific user
@@ -81,29 +93,29 @@ Below 650 characters the QR modal fits perfectly in the browser on a 13&quot; MB
 <dd><p>A QR Code and Chasqui Transport. The QR modal is configured for tranporting the request, while the
  response will be returned through Chasqui.</p>
 </dd>
-<dt><a href="#send">send([config], uriHandler, message, [opts])</a> ⇒ <code>function</code></dt>
+<dt><a href="#send">send([config], message, [opts])</a> ⇒ <code>function</code></dt>
 <dd><p>A mobile transport for handling and configuring requests which are sent from a mobile browser to a uport client, in this case the uPort mobile app.</p>
 </dd>
 <dt><a href="#getResponse">getResponse()</a> ⇒ <code>Object</code></dt>
-<dd><p>A function to fetch a response from hash params appended to callback URL, if available when the function is called.</p>
+<dd><p>A function to fetch a response from hash params appended to callback url, if available when function called.</p>
 </dd>
 <dt><a href="#listenResponse">listenResponse(cb)</a></dt>
-<dd><p>A listener which calls given callback when a response becomes avaialble in the hash params (URL fragment)</p>
+<dd><p>A listener which calls given callback when a response becomes avaialble in the hash params (url fragment)</p>
 </dd>
 <dt><a href="#onResponse">onResponse()</a> ⇒ <code>Promise.&lt;Object, Error&gt;</code></dt>
-<dd><p>A promise which resolves once a response become available in the hash params (URL fragment)</p>
+<dd><p>A promise which resolves once a response become available in the hash params (url fragment)</p>
 </dd>
 <dt><a href="#parseResponse">parseResponse()</a> ⇒ <code>Object</code></dt>
-<dd><p>Parses response from full response URL or hash param string</p>
+<dd><p>Parses response from full response url or hash param string</p>
 </dd>
 <dt><a href="#paramsToUrlFragment">paramsToUrlFragment(url, [params])</a> ⇒ <code>String</code></dt>
-<dd><p>Add params as URL fragment (hash params)</p>
+<dd><p>Add params as url fragment (hash params)</p>
 </dd>
 <dt><a href="#paramsToQueryString">paramsToQueryString(url, [params])</a> ⇒ <code>String</code></dt>
-<dd><p>Add params as URL query params</p>
+<dd><p>Add params as url query params</p>
 </dd>
 <dt><a href="#getUrlQueryParams">getUrlQueryParams(url)</a> ⇒ <code>Object</code></dt>
-<dd><p>Returns params object of query params in a given URL</p>
+<dd><p>Returns params object of query params in given url</p>
 </dd>
 <dt><a href="#getURLJWT">getURLJWT(url)</a> ⇒ <code>String</code></dt>
 <dd><p>Returns request token (JWT) from a request URI</p>
@@ -111,156 +123,315 @@ Below 650 characters the QR modal fits perfectly in the browser on a 13&quot; MB
 <dt><a href="#isJWT">isJWT(jwt)</a> ⇒ <code>Boolean</code></dt>
 <dd><p>Given string, returns boolean if string is JWT</p>
 </dd>
+<dt><a href="#trimURI">trimURI(message)</a></dt>
+<dd><p>Remove both deeplink and universal link prefixes from a given message</p>
+</dd>
 <dt><a href="#messageToUniversalURI">messageToUniversalURI(message)</a> ⇒ <code>String</code></dt>
 <dd><p>Wrap a JWT in a request URI using the Universal Link scheme based at id.uport.me</p>
 </dd>
 <dt><a href="#messageToDeeplinkURI">messageToDeeplinkURI(message, uri)</a></dt>
 <dd><p>Wrap a JWT in a request URI using the Deeplink scheme, using me.uport:</p>
 </dd>
-<dt><a href="#messageToURI">messageToURI(message)</a> ⇒ <code>Staring</code></dt>
-<dd><p>Given token request (JWT), wraps in request URI</p>
+<dt><a href="#messageToURI">messageToURI(message, type)</a></dt>
+<dd><p>Wrap a JWT in a request URI according to the specified scheme</p>
 </dd>
 </dl>
 
 <a name="module_uport-transports/transport/ui"></a>
-
-## uport-transports/transport/ui
-A set of UI utility functions and default displays for bridging between
-a web browser and a uPort user's mobile app
+### uport-transports/transport/ui
+A set of ui utility functions and default displays for bridging between
+a web browser and a uport user's mobile app
 
 
 * [uport-transports/transport/ui](#module_uport-transports/transport/ui)
-    * [~getImageDataURI(data)](#module_uport-transports/transport/ui..getImageDataURI) ⇒ <code>String</code>
-    * [~close()](#module_uport-transports/transport/ui..close)
-    * [~makeModal(content, [close])](#module_uport-transports/transport/ui..makeModal)
-    * [~open(data, cancel, modalText)](#module_uport-transports/transport/ui..open)
-    * [~notifyPushSent(fallback)](#module_uport-transports/transport/ui..notifyPushSent)
-    * [~success()](#module_uport-transports/transport/ui..success)
-    * [~failure(resend)](#module_uport-transports/transport/ui..failure)
+    * _static_
+        * [.getImageDataURI](#module_uport-transports/transport/ui.getImageDataURI) ⇒ <code>String</code>
+        * [.close](#module_uport-transports/transport/ui.close)
+        * [.open](#module_uport-transports/transport/ui.open)
+        * [.notifyPushSent](#module_uport-transports/transport/ui.notifyPushSent)
+        * [.success](#module_uport-transports/transport/ui.success)
+        * [.spinner](#module_uport-transports/transport/ui.spinner)
+        * [.askProvider](#module_uport-transports/transport/ui.askProvider)
+        * [.failure](#module_uport-transports/transport/ui.failure)
+    * _inner_
+        * [~makeModal(content, [close])](#module_uport-transports/transport/ui..makeModal)
 
-<a name="module_uport-transports/transport/ui..getImageDataURI"></a>
+<a name="module_uport-transports/transport/ui.getImageDataURI"></a>
 
-### uport-transports/transport/ui~getImageDataURI(data) ⇒ <code>String</code>
-Given a string of data, it returns a image URI which is a QR code. An image
- URI can be displayed in an img HTML tag by setting the src attrbiute to the
+### uport-transports/transport/ui.getImageDataURI ⇒ <code>String</code>
+Given a string of data it returns a image URI which is a QR code. An image
+ URI can be displayed in a img html tag by setting the src attrbiute to the
  the image URI.
 
-**Kind**: inner method of <code>[uport-transports/transport/ui](#module_uport-transports/transport/ui)</code>  
+**Kind**: static constant of [<code>uport-transports/transport/ui</code>](#module_uport-transports/transport/ui)  
 **Returns**: <code>String</code> - image URI  
 
 | Param | Type | Description |
 | --- | --- | --- |
-| data | <code>String</code> | Data string, typically a uPort URI |
+| data | <code>String</code> | data string, typically a uPort URI |
 
-<a name="module_uport-transports/transport/ui..close"></a>
+<a name="module_uport-transports/transport/ui.close"></a>
 
-### uport-transports/transport/ui~close()
+### uport-transports/transport/ui.close
 Closes the default QR pop over
 
-**Kind**: inner method of <code>[uport-transports/transport/ui](#module_uport-transports/transport/ui)</code>  
-<a name="module_uport-transports/transport/ui..makeModal"></a>
+**Kind**: static constant of [<code>uport-transports/transport/ui</code>](#module_uport-transports/transport/ui)  
+<a name="module_uport-transports/transport/ui.open"></a>
 
-### uport-transports/transport/ui~makeModal(content, [close])
-A utility function for rendering a modal with particular content
+### uport-transports/transport/ui.open
+A default QR pop over display, which injects the neccessary html
 
-**Kind**: inner method of <code>[uport-transports/transport/ui](#module_uport-transports/transport/ui)</code>  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| content | <code>String</code> | HTML string defining the inside of the modal |
-| [close] | <code>function</code> | The handler to fire when the modal's x button is pressed |
-
-<a name="module_uport-transports/transport/ui..open"></a>
-
-### uport-transports/transport/ui~open(data, cancel, modalText)
-A default QR pop over display, which injects the neccessary HTML
-
-**Kind**: inner method of <code>[uport-transports/transport/ui](#module_uport-transports/transport/ui)</code>  
+**Kind**: static constant of [<code>uport-transports/transport/ui</code>](#module_uport-transports/transport/ui)  
 
 | Param | Type | Description |
 | --- | --- | --- |
-| data | <code>String</code> | Data which is displayed in QR code |
-| cancel | <code>function</code> | A function called when the cancel button is clicked |
-| modalText | <code>String</code> | Message to be displayed above the QR in the modal |
+| data | <code>String</code> | data which is displayed in QR code |
+| cancel | <code>function</code> | a function called when the cancel button is clicked |
+| modalText | <code>String</code> | message to be displayed above the QR in the modal |
 
-<a name="module_uport-transports/transport/ui..notifyPushSent"></a>
+<a name="module_uport-transports/transport/ui.notifyPushSent"></a>
 
-### uport-transports/transport/ui~notifyPushSent(fallback)
+### uport-transports/transport/ui.notifyPushSent
 Show a notification to the user that a push has been sent to their phone
 
-**Kind**: inner method of <code>[uport-transports/transport/ui](#module_uport-transports/transport/ui)</code>  
+**Kind**: static constant of [<code>uport-transports/transport/ui</code>](#module_uport-transports/transport/ui)  
 
 | Param | Type | Description |
 | --- | --- | --- |
 | fallback | <code>function</code> | The fallback handler if the user doesn't receive a push |
 
-<a name="module_uport-transports/transport/ui..success"></a>
+<a name="module_uport-transports/transport/ui.success"></a>
 
-### uport-transports/transport/ui~success()
+### uport-transports/transport/ui.success
 Show a success screen to the user which automatically dismisses
-after 2 seconds
+after @param {Number} timeout milliseconds
 
-**Kind**: inner method of <code>[uport-transports/transport/ui](#module_uport-transports/transport/ui)</code>  
-<a name="module_uport-transports/transport/ui..failure"></a>
+**Kind**: static constant of [<code>uport-transports/transport/ui</code>](#module_uport-transports/transport/ui)  
+<a name="module_uport-transports/transport/ui.spinner"></a>
 
-### uport-transports/transport/ui~failure(resend)
-Show a failure modal that gives users the option to repeat the failed action
+### uport-transports/transport/ui.spinner
+Show a spinner (the Consensys Hurricane)
 
-**Kind**: inner method of <code>[uport-transports/transport/ui](#module_uport-transports/transport/ui)</code>  
+**Kind**: static constant of [<code>uport-transports/transport/ui</code>](#module_uport-transports/transport/ui)  
 
 | Param | Type | Description |
 | --- | --- | --- |
-| resend | <code>function</code> | The function that should fire to allow a user to retry |
+| cancel | <code>function</code> | Function to fire when the close button is pressed |
+
+<a name="module_uport-transports/transport/ui.askProvider"></a>
+
+### uport-transports/transport/ui.askProvider
+Present a dialog asking
+
+**Kind**: static constant of [<code>uport-transports/transport/ui</code>](#module_uport-transports/transport/ui)  
+<a name="module_uport-transports/transport/ui.failure"></a>
+
+### uport-transports/transport/ui.failure
+Show a failure modal that gives users the option to repeat the failed action
+
+**Kind**: static constant of [<code>uport-transports/transport/ui</code>](#module_uport-transports/transport/ui)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| resend | <code>function</code> | The function that should fire to allow the user to retry |
+
+<a name="module_uport-transports/transport/ui..makeModal"></a>
+
+### uport-transports/transport/ui~makeModal(content, [close])
+A utility function for rendering a modal with particular content
+
+**Kind**: inner method of [<code>uport-transports/transport/ui</code>](#module_uport-transports/transport/ui)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| content | <code>String</code> | html string defining the inside of the modal |
+| [close] | <code>function</code> | the handler to fire when the modal's x button is pressed |
+
+<a name="BrowserTransport"></a>
+### BrowserTransport
+**Kind**: global class  
+
+* [BrowserTransport](#BrowserTransport)
+    * [new BrowserTransport()](#new_BrowserTransport_new)
+    * [.getIsMobile()](#BrowserTransport+getIsMobile) ⇒ <code>Boolean</code>
+    * [.getCallbackUrl(id)](#BrowserTransport+getCallbackUrl) ⇒ <code>String</code>
+    * [.getPushInfo()](#BrowserTransport+getPushInfo) ⇒ <code>Object</code>
+    * [.setPushInfo(pushToken, publicEncKey)](#BrowserTransport+setPushInfo)
+    * [.onResponse(id)](#BrowserTransport+onResponse) ⇒ <code>Promise</code>
+    * [.send(request, id, [opts], [cancel])](#BrowserTransport+send)
+    * [.mobileSend(request, id, [opts])](#BrowserTransport+mobileSend)
+    * [.pushSend(request, id)](#BrowserTransport+pushSend)
+    * [.qrSend(request, id, [opts], [cancel])](#BrowserTransport+qrSend)
+
+<a name="new_BrowserTransport_new"></a>
+
+### new BrowserTransport()
+Instantiates a new Browser Transport
+
+
+| Param | Type | Description |
+| --- | --- | --- |
+| [opts.pushToken] | <code>String</code> | A user's push token containing an endpoint for sending notifications |
+| [opts.publicEncKey] | <code>String</code> | A user's public key for encrypting messages pushed to them |
+| [opts.qrTitle] | <code>String</code> | Title text that appears in the QR modal |
+
+<a name="BrowserTransport+getIsMobile"></a>
+
+### browserTransport.getIsMobile() ⇒ <code>Boolean</code>
+**Kind**: instance method of [<code>BrowserTransport</code>](#BrowserTransport)  
+**Returns**: <code>Boolean</code> - true if detected as running on a mobile device  
+<a name="BrowserTransport+getCallbackUrl"></a>
+
+### browserTransport.getCallbackUrl(id) ⇒ <code>String</code>
+Generates a callbackUrl that can be used to create a request which will return its response to this application
+
+**Kind**: instance method of [<code>BrowserTransport</code>](#BrowserTransport)  
+**Returns**: <code>String</code> - a url that can be used as the callbackUrl option when creating a request with uport-credentials  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| id | <code>String</code> | id that will be used when sending the request that will contain this callback url |
+
+<a name="BrowserTransport+getPushInfo"></a>
+
+### browserTransport.getPushInfo() ⇒ <code>Object</code>
+**Kind**: instance method of [<code>BrowserTransport</code>](#BrowserTransport)  
+**Returns**: <code>Object</code> - object containing the currently configured pushToken and publicEncKey  
+<a name="BrowserTransport+setPushInfo"></a>
+
+### browserTransport.setPushInfo(pushToken, publicEncKey)
+Provide a user's push token and public encryption key to enable the configuration of a push transport
+
+**Kind**: instance method of [<code>BrowserTransport</code>](#BrowserTransport)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| pushToken | <code>String</code> | A user's push token containing an endpoint for sending notifications |
+| publicEncKey | <code>String</code> | A user's public key for encrypting messages pushed to them |
+
+<a name="BrowserTransport+onResponse"></a>
+
+### browserTransport.onResponse(id) ⇒ <code>Promise</code>
+Listens for responses to requests made by calling `send`. Returns a promise that resolves once with the resopnse.
+
+**Kind**: instance method of [<code>BrowserTransport</code>](#BrowserTransport)  
+**Returns**: <code>Promise</code> - resolves a response object with { payload, data } containing the jwt and extra optional data  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| id | <code>String</code> | id of the request that that we are listening for |
+
+<a name="BrowserTransport+send"></a>
+
+### browserTransport.send(request, id, [opts], [cancel])
+Sends a message by automatically selecting an appropriate transport
+
+**Kind**: instance method of [<code>BrowserTransport</code>](#BrowserTransport)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| request | <code>String</code> | request message to send |
+| id | <code>String</code> | id of the request that will be used to identify the response |
+| [opts] | <code>Object</code> | optional parameters for each transport |
+| [opts.data] | <code>String</code> | additional application data that can be included as part of the response |
+| [opts.redirectUrl] | <code>String</code> | url to send the response to |
+| [opts.type] | <code>String</code> | specifies callback type 'post' or 'redirect' for response |
+| [cancel] | <code>function</code> | called when user closes the QR modal |
+
+<a name="BrowserTransport+mobileSend"></a>
+
+### browserTransport.mobileSend(request, id, [opts])
+Sends a message using URL transport.
+
+**Kind**: instance method of [<code>BrowserTransport</code>](#BrowserTransport)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| request | <code>String</code> | request message to send |
+| id | <code>String</code> | id of the request that will be used to associate the response |
+| [opts] | <code>Object</code> | optional parameters specific to url transport |
+| [opts.data] | <code>String</code> | additional application data that can be included as part of the response |
+| [opts.redirectUrl] | <code>String</code> | url to send the response to |
+| [opts.type] | <code>String</code> | specifies callback type 'post' or 'redirect' for response |
+
+<a name="BrowserTransport+pushSend"></a>
+
+### browserTransport.pushSend(request, id)
+Sends a message using push transport.
+
+**Kind**: instance method of [<code>BrowserTransport</code>](#BrowserTransport)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| request | <code>String</code> | request message to send |
+| id | <code>String</code> | id of the request that will be used to identify the response |
+
+<a name="BrowserTransport+qrSend"></a>
+
+### browserTransport.qrSend(request, id, [opts], [cancel])
+Sends a message using a qr transport
+
+**Kind**: instance method of [<code>BrowserTransport</code>](#BrowserTransport)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| request | <code>String</code> | request message to send |
+| id | <code>String</code> | id of the request that will be used to identify the response |
+| [opts] | <code>Object</code> | optional parameters specific to qr transport |
+| [cancel] | <code>function</code> | called when user closes the QR modal |
 
 <a name="uportModal"></a>
-
-## uportModal ⇒ <code>String</code>
+### uportModal ⇒ <code>String</code>
 Skeleton for a modal popup, styled with css imported from './style.css'
 
 **Kind**: global constant  
-**Returns**: <code>String</code> - HTML string for the populated modal  
+**Returns**: <code>String</code> - html string for the populated modal  
 
 | Param | Type | Description |
 | --- | --- | --- |
-| innerHTML | <code>String</code> | HTML string defining content of modal |
+| innerHTML | <code>String</code> | html string defining content of modal |
 
 <a name="qrModal"></a>
-
-## qrModal ⇒ <code>Object</code>
+### qrModal ⇒ <code>Object</code>
 Format a modal with a QR code and a custom message, as well as links to
-the uPort mobile app on the App Store and Play Store
+the uport mobile app on the app store and play store
 
 **Kind**: global constant  
 **Returns**: <code>Object</code> - populated modal  
 
 | Param | Type | Description |
 | --- | --- | --- |
-| qrImageUri | <code>String</code> | Data URI defining the QR code to be displayed |
-| [modalText] | <code>String</code> | Message to be displayed above the QR code |
+| qrImageUri | <code>String</code> | data uri defining the QR code to be displayed |
+| [modalText] | <code>String</code> | message to be displayed above the QR code |
 
 <a name="pushModal"></a>
-
-## pushModal
-HTML string for a modal notifying a user that a push notification has been
+### pushModal
+Html string for a modal notifying a user that a push notification has been
 sent to their phone
 
 **Kind**: global constant  
 <a name="successModal"></a>
-
-## successModal
-HTML string for a modal displaying a success message
+### successModal
+Html string for a modal displaying a success message
 
 **Kind**: global constant  
 <a name="failureModal"></a>
+### failureModal
+Html string for a modal displaying a failure message
 
-## failureModal
-HTML string for a modal displaying a failure message
-!! Not used
+**Kind**: global constant  
+<a name="spinnerModal"></a>
+### spinnerModal
+HTML string for a modal displaying a spinner
+
+**Kind**: global constant  
+<a name="providerModal"></a>
+### providerModal
+HTML string for a modal displaying a provider dialog
 
 **Kind**: global constant  
 <a name="randomString"></a>
-
-## randomString(length) ⇒ <code>String</code>
+### randomString(length) ⇒ <code>String</code>
 Given a length, returns a random string of that length
 
 **Kind**: global function  
@@ -268,11 +439,10 @@ Given a length, returns a random string of that length
 
 | Param | Type | Description |
 | --- | --- | --- |
-| length | <code>Integer</code> | Specify length of string returned |
+| length | <code>Integer</code> | specify length of string returned |
 
 <a name="decryptResponse"></a>
-
-## decryptResponse(encrypted, secretKey) ⇒ <code>Promise.&lt;Object, Error&gt;</code>
+### decryptResponse(encrypted, secretKey) ⇒ <code>Promise.&lt;Object, Error&gt;</code>
 Decrypts a response from a promise. This is intended to be used to wrap the response from Chasqui or other transport
 
 **Kind**: global function  
@@ -288,26 +458,24 @@ Decrypts a response from a promise. This is intended to be used to wrap the resp
 | secretKey | <code>String</code> | The secret key as a Uint8Array |
 
 <a name="URIHandlerSend"></a>
-
-## URIHandlerSend(uriHandler, [config], message) ⇒ <code>function</code> &#124; <code>Promise.&lt;Object, Error&gt;</code>
+### URIHandlerSend(uriHandler, [config], message) ⇒ <code>function</code> \| <code>Promise.&lt;Object, Error&gt;</code>
 A general Chasqui Transport. Allows you to configure the transport with any uriHandler for the request,
  while the response will always be returned through Chasqui. Chasqui is a simple messaging server that
- allows responses to be relayed from a uPort client to the original callee.
+ allows responses to be relayed from a uport client to the original callee.
 
 **Kind**: global function  
 **Returns**: <code>function</code> - a configured QRTransport Function<code>Promise.&lt;Object, Error&gt;</code> - a function to close the QR modal  
 
 | Param | Type | Default | Description |
 | --- | --- | --- | --- |
-| uriHandler | <code>String</code> |  | A function called with the requestURI once it is formatted for this transport |
-| [config] | <code>Object</code> | <code>{}</code> | An optional config object |
-| [config.chasquiUrl] | <code>String</code> |  | URL of messaging server, defaults to Chasqui instance run by uPort |
-| [config.pollingInterval] | <code>String</code> |  | Milisecond interval at which the messaging server will be polled for a response |
-| message | <code>String</code> |  | A uPort client request message |
+| uriHandler | <code>String</code> |  | a function called with the requestURI once it is formatted for this transport |
+| [config] | <code>Object</code> | <code>{}</code> | an optional config object |
+| [config.chasquiUrl] | <code>String</code> |  | url of messaging server, defaults to Chasqui instance run by uPort |
+| [config.pollingInterval] | <code>String</code> |  | milisecond interval at which the messaging server will be polled for a response |
+| message | <code>String</code> |  | a uPort client request message |
 
 <a name="poll"></a>
-
-## poll(url, [pollingInterval], [cancelled]) ⇒ <code>Promise.&lt;Object, Error&gt;</code>
+### poll(url, [pollingInterval], [cancelled]) ⇒ <code>Promise.&lt;Object, Error&gt;</code>
 A polling function specifically for polling Chasqui.
 
 **Kind**: global function  
@@ -315,29 +483,27 @@ A polling function specifically for polling Chasqui.
 
 | Param | Type | Description |
 | --- | --- | --- |
-| url | <code>String</code> | A Chasqui URL polled |
+| url | <code>String</code> | a Chasqui url polled |
 | [pollingInterval] | <code>Integer</code> | ms interval at which the given url is polled |
-| [cancelled] | <code>function</code> | Function which returns boolean, if returns true, polling stops |
+| [cancelled] | <code>function</code> | function which returns boolean, if returns true, polling stops |
 
 <a name="poll"></a>
-
-## poll(url, messageParse, errorParse, [pollingInterval], [cancelled]) ⇒ <code>Promise.&lt;Object, Error&gt;</code>
-A general polling function. Polls a given URL and parse message according to a given parsing functions, promise resolves on response or error.
+### poll(url, messageParse, errorParse, [pollingInterval], [cancelled]) ⇒ <code>Promise.&lt;Object, Error&gt;</code>
+A general polling function. Polls a given url and parse message according to given parsing functions, promise resolves on response or error.
 
 **Kind**: global function  
 **Returns**: <code>Promise.&lt;Object, Error&gt;</code> - a promise which resolves with obj/message or rejects with an error  
 
 | Param | Type | Description |
 | --- | --- | --- |
-| url | <code>String</code> | URL polled |
-| messageParse | <code>function</code> | Function that parses response from get request, also determines if response is available to decide to continue polling or not |
-| errorParse | <code>function</code> | Function that parses response from get request and determines if error was returned. |
-| [pollingInterval] | <code>Integer</code> | ms interval at which the given URL is polled |
-| [cancelled] | <code>function</code> | Function which returns Boolean, if returns true, polling stops |
+| url | <code>String</code> | url polled |
+| messageParse | <code>function</code> | function that parses response from get request, also determines if response is available to decide to continue polling or not |
+| errorParse | <code>function</code> | function that parses response from get request and determines if error was returned. |
+| [pollingInterval] | <code>Integer</code> | ms interval at which the given url is polled |
+| [cancelled] | <code>function</code> | function which returns boolean, if returns true, polling stops |
 
 <a name="send"></a>
-
-## send(token, pubEncKey, [pushServiceUrl], message, [opts]) ⇒ <code>function</code> &#124; <code>Promise.&lt;Object, Error&gt;</code>
+### send(token, pubEncKey, [pushServiceUrl], message, [opts]) ⇒ <code>function</code> \| <code>Promise.&lt;Object, Error&gt;</code>
 A push notification transport for pushing requests to the uPort mobile client of a specific user
  for which you have been given a valid push token.
 
@@ -346,25 +512,23 @@ A push notification transport for pushing requests to the uPort mobile client of
 
 | Param | Type | Default | Description |
 | --- | --- | --- | --- |
-| token | <code>String</code> |  | A push notification token (get a pn token by requesting push permissions in a request) |
-| pubEncKey | <code>String</code> |  | The public encryption key of the receiver, encoded as a base64 string, found in a DID document |
-| [pushServiceUrl] | <code>String</code> | <code>PUTUTU_URL</code> | The URL of the push service, by default it is PUTUTU at https://api.uport.me/pututu/sns/ |
-| message | <code>String</code> |  | A uPort client request message |
-| [opts] | <code>Object</code> | <code>{}</code> | An optional config object |
-| opts.type | <code>String</code> |  | Specifies callback type 'post' or 'redirect' for response |
-| opts.redirectUrl | <code>String</code> |  | Specifies URL which a uPort client will return to control once the request is handled, depending on request type, it may or may not be returned with the response as well. |
+| token | <code>String</code> |  | a push notification token (get a pn token by requesting push permissions in a request) |
+| pubEncKey | <code>String</code> |  | the public encryption key of the receiver, encoded as a base64 string, found in a DID document |
+| [pushServiceUrl] | <code>String</code> | <code>PUTUTU_URL</code> | the url of the push service, by default it is PUTUTU at https://api.uport.me/pututu/sns/ |
+| message | <code>String</code> |  | a uport client request message |
+| [opts] | <code>Object</code> | <code>{}</code> | an optional config object |
+| opts.type | <code>String</code> |  | specifies callback type 'post' or 'redirect' for response |
+| opts.redirectUrl | <code>String</code> |  | specifies url which a uport client will return to control once the request is handled, depending on request type it may or may not be returned with the response as well. |
 
 <a name="sendAndNotify"></a>
-
-## sendAndNotify()
+### sendAndNotify()
 The same transport as above, but also display a self-dismissing modal notifying
-the user that push notification has been sent to their device.
+the user that push notification has been sent to their device
 
 **Kind**: global function  
 **See**: send  
 <a name="send"></a>
-
-## send(displayText, message, [opts]) ⇒ <code>function</code> \| <code>function</code>
+### send(displayText, message, [opts]) ⇒ <code>function</code> \| <code>function</code>
 A QR tranpsort which uses our provided QR modal to relay a request to a uPort client,
 optionally compressing the provided message if a compress function is provided
 
@@ -380,8 +544,7 @@ optionally compressing the provided message if a compress function is provided
 | [opts.compress] | <code>function</code> |  | a function to compress a JWT, returning a promise that resolves to a string |
 
 <a name="chasquiCompress"></a>
-
-## chasquiCompress(message, threshold) ⇒ <code>String</code>
+### chasquiCompress(message, threshold) ⇒ <code>String</code>
 A utility function for reducing the size of a QR code by uploading it to chasqui and
 replacing the contents with the topic url.
 
@@ -392,14 +555,13 @@ Below 650 characters the QR modal fits perfectly in the browser on a 13" MBP, wi
 **Kind**: global function  
 **Returns**: <code>String</code> - the chasqui url of the message, or the original message if less than threshold  
 
-| Param | Type | Default | Description |
-| --- | --- | --- | --- |
-| message | <code>String</code> |  | the request JWT |
-| threshold | <code>Number</code> | <code>650</code> | the smallest size (in string length) to compress |
+| Param | Type | Description |
+| --- | --- | --- |
+| message | <code>String</code> | the request JWT |
+| threshold | <code>Number</code> | the smallest size (in string length) to compress |
 
 <a name="chasquiSend"></a>
-
-## chasquiSend([config], message) ⇒ <code>function</code> \| <code>Promise.&lt;Object, Error&gt;</code>
+### chasquiSend([config], message) ⇒ <code>function</code> \| <code>Promise.&lt;Object, Error&gt;</code>
 A QR Code and Chasqui Transport. The QR modal is configured for tranporting the request, while the
  response will be returned through Chasqui.
 
@@ -408,15 +570,14 @@ A QR Code and Chasqui Transport. The QR modal is configured for tranporting the 
 
 | Param | Type | Default | Description |
 | --- | --- | --- | --- |
-| [config] | <code>Object</code> | <code>{}</code> | An optional config object |
-| [config.chasquiUrl] | <code>String</code> |  | URL of messaging server, defaults to Chasqui instance run by uPort |
-| [config.pollingInterval] | <code>String</code> |  | Milisecond interval at which the messaging server will be polled for a response |
-| message | <code>String</code> |  | A uPort client request message |
+| [config] | <code>Object</code> | <code>{}</code> | an optional config object |
+| [config.chasquiUrl] | <code>String</code> |  | url of messaging server, defaults to Chasqui instance run by uPort |
+| [config.pollingInterval] | <code>String</code> |  | milisecond interval at which the messaging server will be polled for a response |
+| message | <code>String</code> |  | a uPort client request message |
 
 <a name="send"></a>
-
-## send([config], uriHandler, message, [opts]) ⇒ <code>function</code>
-A mobile transport for handling and configuring requests which are sent from a mobile browser to a uPort client, in this case the uPort mobile app.
+### send([config], message, [opts]) ⇒ <code>function</code>
+A mobile transport for handling and configuring requests which are sent from a mobile browser to a uport client, in this case the uPort mobile app.
 
 **Kind**: global function  
 **Returns**: <code>function</code> - a configured MobileTransport Function  
@@ -434,66 +595,59 @@ A mobile transport for handling and configuring requests which are sent from a m
 | opts.callback | <code>String</code> |  | specifies url which a uport client will return to control once request is handled, depending on request type it may or may not be returned with the response as well. |
 
 <a name="getResponse"></a>
-
-## getResponse() ⇒ <code>Object</code>
+### getResponse() ⇒ <code>Object</code>
 A function to fetch a response from hash params appended to callback url, if available when function called.
 
 **Kind**: global function  
 **Returns**: <code>Object</code> - A response object if repsonse is available, otherwise null.  
 <a name="listenResponse"></a>
-
-## listenResponse(cb)
+### listenResponse(cb)
 A listener which calls given callback when a response becomes avaialble in the hash params (url fragment)
 
 **Kind**: global function  
 
 | Param | Type | Description |
 | --- | --- | --- |
-| cb | <code>function</code> | A callback function called as cb(err, res) when a response becomes available |
+| cb | <code>function</code> | a callback function called as cb(err, res) when a response becomes available |
 
 <a name="onResponse"></a>
-
-## onResponse() ⇒ <code>Promise.&lt;Object, Error&gt;</code>
-A promise which resolves once a response become available in the hash params (URL fragment)
+### onResponse() ⇒ <code>Promise.&lt;Object, Error&gt;</code>
+A promise which resolves once a response become available in the hash params (url fragment)
 
 **Kind**: global function  
 **Returns**: <code>Promise.&lt;Object, Error&gt;</code> - a promise which resolves with a response object or rejects with an error.  
 <a name="parseResponse"></a>
-
-## parseResponse() ⇒ <code>Object</code>
-Parses response from full response URL or hash param string
+### parseResponse() ⇒ <code>Object</code>
+Parses response from full response url or hash param string
 
 **Kind**: global function  
 **Returns**: <code>Object</code> - a response object of the form {id: ..., payload: ..., data: ...}  
 <a name="paramsToUrlFragment"></a>
-
-## paramsToUrlFragment(url, [params]) ⇒ <code>String</code>
-Add params as URL fragment (hash params)
+### paramsToUrlFragment(url, [params]) ⇒ <code>String</code>
+Add params as url fragment (hash params)
 
 **Kind**: global function  
-**Returns**: <code>String</code> - a URL with valid params added as url fragment (hash params)  
+**Returns**: <code>String</code> - a url with valid params added as url fragment (hash params)  
 
 | Param | Type | Default | Description |
 | --- | --- | --- | --- |
-| url | <code>String</code> |  | A URL |
-| [params] | <code>Object</code> | <code>{}</code> | Params object of valid params to add as URL fragment |
+| url | <code>String</code> |  | a url |
+| [params] | <code>Object</code> | <code>{}</code> | params object of valid params to add as url fragment |
 
 <a name="paramsToQueryString"></a>
-
-## paramsToQueryString(url, [params]) ⇒ <code>String</code>
+### paramsToQueryString(url, [params]) ⇒ <code>String</code>
 Add params as url query params
 
 **Kind**: global function  
-**Returns**: <code>String</code> - a URL with valid params added as URL query framents  
+**Returns**: <code>String</code> - a url with valid params added as url query framents  
 
 | Param | Type | Default | Description |
 | --- | --- | --- | --- |
-| url | <code>String</code> |  | A URL |
-| [params] | <code>Object</code> | <code>{}</code> | Params object of valid params to add as URL query params |
+| url | <code>String</code> |  | a url |
+| [params] | <code>Object</code> | <code>{}</code> | params object of valid params to add as url query params |
 
 <a name="getUrlQueryParams"></a>
-
-## getUrlQueryParams(url) ⇒ <code>Object</code>
+### getUrlQueryParams(url) ⇒ <code>Object</code>
 Returns params object of query params in given url
 
 **Kind**: global function  
@@ -501,11 +655,10 @@ Returns params object of query params in given url
 
 | Param | Type | Description |
 | --- | --- | --- |
-| url | <code>String</code> | A URL |
+| url | <code>String</code> | a url |
 
 <a name="getURLJWT"></a>
-
-## getURLJWT(url) ⇒ <code>String</code>
+### getURLJWT(url) ⇒ <code>String</code>
 Returns request token (JWT) from a request URI
 
 **Kind**: global function  
@@ -513,11 +666,10 @@ Returns request token (JWT) from a request URI
 
 | Param | Type | Description |
 | --- | --- | --- |
-| url | <code>String</code> | A URL |
+| url | <code>String</code> | a url |
 
 <a name="isJWT"></a>
-
-## isJWT(jwt) ⇒ <code>Boolean</code>
+### isJWT(jwt) ⇒ <code>Boolean</code>
 Given string, returns boolean if string is JWT
 
 **Kind**: global function  
@@ -526,9 +678,18 @@ Given string, returns boolean if string is JWT
 | --- | --- | --- |
 | jwt | <code>String</code> | A JWT string |
 
-<a name="messageToUniversalURI"></a>
+<a name="trimURI"></a>
+### trimURI(message)
+Remove both deeplink and universal link prefixes from a given message
 
-## messageToUniversalURI(message) ⇒ <code>String</code>
+**Kind**: global function  
+
+| Param | Type |
+| --- | --- |
+| message | <code>String</code> | 
+
+<a name="messageToUniversalURI"></a>
+### messageToUniversalURI(message) ⇒ <code>String</code>
 Wrap a JWT in a request URI using the Universal Link scheme based at id.uport.me
 
 **Kind**: global function  
@@ -539,8 +700,7 @@ Wrap a JWT in a request URI using the Universal Link scheme based at id.uport.me
 | message | <code>String</code> | A request message (JWT), or if given URI will just return |
 
 <a name="messageToDeeplinkURI"></a>
-
-## messageToDeeplinkURI(message, uri)
+### messageToDeeplinkURI(message, uri)
 Wrap a JWT in a request URI using the Deeplink scheme, using me.uport:
 
 **Kind**: global function  
@@ -551,8 +711,7 @@ Wrap a JWT in a request URI using the Deeplink scheme, using me.uport:
 | uri | <code>String</code> | The associated deeplink uri for the given message |
 
 <a name="messageToURI"></a>
-
-## messageToURI(message, type)
+### messageToURI(message, type)
 Wrap a JWT in a request URI according to the specified scheme
 
 **Kind**: global function  
