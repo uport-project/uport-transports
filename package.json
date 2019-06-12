@@ -1,6 +1,6 @@
 {
   "name": "uport-transports",
-  "version": "0.2.6",
+  "version": "0.2.7-dev.4",
   "description": "Set up communication channels between your app and a uPort client to handle requests and responses",
   "main": "lib/index.js",
   "scripts": {
@@ -10,8 +10,9 @@
     "build": "npm run build:es5 && npm run build:dist",
     "start": "webpack-dev-server --config webpack.config.dev.js --hot",
     "test": "./node_modules/.bin/mocha test/index.js",
+    "test:watch": "./node_modules/.bin/mocha --watch test/index.js",
     "build:docs:html": "./node_modules/.bin/jsdoc *.js -d docs",
-    "build:docs:md": "jsdoc2md -f src/* src/transport/* src/transport/ui/* src/message/* src/network/* --template template.hbs -c js2doc.conf  > docs/reference/index.md; echo",
+    "build:docs:md": "./node_modules/.bin/jsdoc2md -f src/* src/transport/* src/transport/ui/* src/message/* src/network/* -t template.hbs -c js2doc.conf  > docs/reference/index.md; echo",
     "build:docs": "npm run build:docs:html && npm run build:docs:md",
     "lint": "eslint ./src",
     "format": "eslint --fix ./src",
@@ -24,7 +25,9 @@
     "base64url": "^3.0.1",
     "did-jwt": "0.1.1",
     "mnid": "^0.1.1",
+    "mobile-detect": "^1.4.3",
     "nets": "^3.2.0",
+    "pubsub-js": "^1.7.0",
     "qr-image": "^3.1.0",
     "qs": "^6.2.1",
     "tweetnacl": "^1.0.0",

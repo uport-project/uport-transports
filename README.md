@@ -28,6 +28,7 @@ Install through npm:
 ```shell
 npm install uport-transports
 ```
+
 Import specific modules. You will primarily use transport. Message and crypto include utility functions for handling, parsing, encrypting, and decrypting messages for transports.
 
 ```javascript
@@ -77,6 +78,10 @@ tranport.url.onResponse().then(response => {
   ...
 })
 ```
+
+### <a name="browser-transport"></a> Browser Transport
+
+The `BrowserTransport` provides a single configurable object to automatically select the best transport to use given the browser environment that the code is running in.  More detailed documentation about its API can be found in the docs, and a live demo can be accessed here: https://browser-transport-demo-eb0eo8tuv.now.sh/
 
 ## <a name="development-guide"></a> Development Guide
 
